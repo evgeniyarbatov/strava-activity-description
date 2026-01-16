@@ -38,26 +38,7 @@ STRUCTURE
 - 1–2 sentences only
 - Each sentence should feel like a brushstroke, not a summary
 
-CONTEXT (DO NOT QUOTE DIRECTLY)
-
-Run details, time, location, weather, and route uniqueness are provided below.
-Use them as raw material, not as facts to restate.
-
-ACTIVITY CONTEXT
-
-Distance: {distance_km:.2f}km
-Duration: {moving_time}
-Average Pace: {avg_pace_min_km}
-Average HR: {average_heartrate}
-
-Started: {start_time_local}
-Time of Day: {time_of_day_description}
-City: {city_name}, {country}
-
-Feels like: {feels_like:.1f}°C
-Conditions: {weather_description}
-
-Route Uniqueness Score: {uniqueness_score:.2f}
+{activity_context}
 
 TASK
 

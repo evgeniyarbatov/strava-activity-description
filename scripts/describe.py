@@ -16,6 +16,7 @@ PROMPTS_DIR = Path("prompts")
 PROMPT_FILES = [
     (path.stem, path) for path in sorted(PROMPTS_DIR.glob("*.txt"), key=lambda path: path.name)
 ]
+ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "common" / "activity-context.txt"
 PROMPT_INPUT_KEYS = (
     "distance_km",
     "moving_time",
@@ -27,7 +28,7 @@ PROMPT_INPUT_KEYS = (
     "feels_like",
     "weather_description",
     "uniqueness_score",
-    "average_heartrate"
+    "average_hr"
 )
 
 
@@ -68,6 +69,7 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
     distance_km = int(activity["distance"]) / 1000.0
     moving_time = int(activity["moving_time"])
     avg_pace = format_pace(moving_time / distance_km)
+    average_hr = activity["average_hr"]
 
     start_time_local = parse_iso(activity["start_date_local"])
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
@@ -83,6 +85,7 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
         "distance_km": distance_km,
         "moving_time": format_duration(moving_time),
         "avg_pace_min_km": avg_pace,
+        "average_hr": average_hr,
         "start_time_local": start_time_local_str,
         "time_of_day_description": time_of_day,
         "feels_like": feels_like,
@@ -122,7 +125,9 @@ def prompt_inputs(payload: dict) -> dict:
 
 def render_prompt(template_path: Path, inputs: dict) -> str:
     prompt_template = template_path.read_text(encoding="utf-8")
-    return prompt_template.format(**inputs)
+    activity_context_template = ACTIVITY_CONTEXT_PATH.read_text(encoding="utf-8")
+    activity_context = activity_context_template.format(**inputs)
+    return prompt_template.format(**inputs, activity_context=activity_context)
 
 
 def run_model(prompt: str) -> str:

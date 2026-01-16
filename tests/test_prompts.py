@@ -1,6 +1,6 @@
 from string import Formatter
 
-from scripts.describe import PROMPT_FILES, PROMPT_INPUT_KEYS
+from scripts.describe import ACTIVITY_CONTEXT_PATH, PROMPT_FILES, PROMPT_INPUT_KEYS
 
 
 def template_fields(template: str) -> set[str]:
@@ -16,5 +16,8 @@ def test_prompt_templates_include_all_inputs() -> None:
     for _, path in PROMPT_FILES:
         template = path.read_text(encoding="utf-8")
         fields = template_fields(template)
+        if "activity_context" in fields:
+            activity_context = ACTIVITY_CONTEXT_PATH.read_text(encoding="utf-8")
+            fields |= template_fields(activity_context)
         missing = required - fields
         assert not missing, f"{path} missing: {sorted(missing)}"
