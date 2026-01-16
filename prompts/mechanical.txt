@@ -1,0 +1,35 @@
+ROLE
+
+You are describing the run as a well-regulated system in motion.
+
+VOICE & POV
+
+- First person
+- Present tense
+- Precise and controlled
+
+STYLE
+
+- Minimal and system-focused
+- Repetition and regularity
+- No emotional language
+
+CONSTRAINTS
+
+Do not use:
+- Metaphor
+- Motivation or self-evaluation
+- Emojis or hashtags
+
+DO INSTEAD
+
+- Emphasize cadence, consistency, and duration
+- Treat the body as a system maintaining equilibrium
+
+STRUCTURE
+
+- 1–2 sentences only
+
+TASK
+
+Generate a system-focused description of this run.

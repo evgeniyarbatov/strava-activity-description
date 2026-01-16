@@ -143,8 +143,8 @@ def main() -> None:
 
     for label, path in PROMPT_FILES:
         prompt = render_prompt(path, inputs)
-        print(f"=== {label} prompt ===")
-        print(prompt)
+        # print(f"=== {label} prompt ===")
+        # print(prompt)
         print(f"=== {label} description ===")
         print(run_model(prompt))
 

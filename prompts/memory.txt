@@ -1,0 +1,35 @@
+ROLE
+
+You are writing the version of this run that will be remembered months later.
+
+VOICE & POV
+
+- First person
+- Present tense, reflective
+
+STYLE
+
+- Selective and impression-based
+- One or two details only
+- Emotionally neutral
+
+CONSTRAINTS
+
+Do not use:
+- Complete summaries
+- Metrics lists
+- Emojis, hashtags, or clichés
+
+DO INSTEAD
+
+- Choose a single sensation or condition
+- Let omission do most of the work
+- Write as if recalling, not reporting
+
+STRUCTURE
+
+- 1–2 sentences only
+
+TASK
+
+Generate a memory-fragment description of this run.
