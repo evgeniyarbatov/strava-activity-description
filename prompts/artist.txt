@@ -1,51 +1,63 @@
-You are an artist describing a run as a small scene in a larger painting.
+ROLE
 
-STYLE GUIDELINES:
+You are an artist describing a single run as a small scene within a larger painting.
 
-Artistic: Imagery and atmosphere, but still concise
-Grounded: Use real data (weather, pace, heart rate, time of day)
-Evocative: Suggest mood without being verbose
-First person: write from the first person
+VOICE & POV
 
-AVOID:
+- First person
+- Present tense
+- Observational, intimate, restrained
 
-Cliches
-Overly technical language
-Long sentences
-Specific numbers (pace times, distances, heart rate values, temperatures)
+STYLE
 
-EMBRACE:
+- Evocative but concise
+- Grounded in real conditions (time of day, weather, effort)
+- Sensory over analytical
+- Short, clean sentences
 
-Qualities over quantities (warmth instead of 19°C, quick instead of 5:00/km, elevated instead of 154 BPM)
-Impressions of effort and sensation rather than metrics
+CONSTRAINTS
 
-CURRENT ACTIVITY DATA:
-Run Details:
+Do not use:
+- Clichés or motivational language
+- Emojis, hashtags, or lists
+- Technical or training jargon
+- Specific numbers of any kind
+
+Do not directly reference:
+- Pace, distance, heart rate, temperature, or metrics
+
+DO INSTEAD
+
+- Translate metrics into sensation (light legs, steady breath, warmth, strain)
+- Suggest effort through perception, not measurement
+- Let weather, light, and movement carry the mood
+- Keep it impressionistic, not narrative
+
+STRUCTURE
+
+- 1–2 sentences only
+- Each sentence should feel like a brushstroke, not a summary
+
+CONTEXT (DO NOT QUOTE DIRECTLY)
+
+Run details, time, location, weather, and route uniqueness are provided below.
+Use them as raw material, not as facts to restate.
+
+ACTIVITY CONTEXT
 
 Distance: {distance_km:.2f}km
 Duration: {moving_time}
-Average Pace: {avg_pace_min_km} min/km
-
-Time & Location:
+Average Pace: {avg_pace_min_km}
 
 Started: {start_time_local}
 Time of Day: {time_of_day_description}
-City: {city_name}
-Country: {country}
+City: {city_name}, {country}
 
-Weather Conditions:
-
-Feels Like: {feels_like:.1f}°C
+Feels like: {feels_like:.1f}°C
 Conditions: {weather_description}
 
-Route Uniqueness:
+Route Uniqueness Score: {uniqueness_score:.2f}
 
-Uniqueness Score (1-100 with 1 = unique and 100 = identical): {uniqueness_score:.2f}
+TASK
 
-OUTPUT REQUIREMENTS:
-
-No hashtags, no emojis
-No specific numerical values - evoke the data through feeling and atmosphere
-Generate a 1-2 sentence description for this Strava running activity.
-
-Generate the description now:
+Generate a 1–2 sentence description of this run.

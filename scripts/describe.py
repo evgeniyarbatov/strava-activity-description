@@ -7,7 +7,29 @@ from pathlib import Path
 import polyline
 from geopy.geocoders import Nominatim
 
-from scripts.utils import load_json, parse_iso
+from utils import load_json, parse_iso
+
+
+DATA_DIR = Path("data")
+ACTIVITIES_DIR = DATA_DIR / "activities"
+PROMPT_FILES = [
+    ("minimalist", Path("prompts/minimalist.txt")),
+    ("scientific", Path("prompts/scientist.txt")),
+    ("artist", Path("prompts/artist.txt")),
+    ("athlete", Path("prompts/athlete.txt")),
+]
+PROMPT_INPUT_KEYS = (
+    "distance_km",
+    "moving_time",
+    "avg_pace_min_km",
+    "start_time_local",
+    "time_of_day_description",
+    "city_name",
+    "country",
+    "feels_like",
+    "weather_description",
+    "uniqueness_score",
+)
 
 
 def format_duration(seconds: int) -> str:
@@ -31,16 +53,6 @@ def time_of_day_description(start_time: datetime) -> str:
     if 17 <= hour <= 20:
         return "evening"
     return "night"
-
-
-DATA_DIR = Path("data")
-ACTIVITIES_DIR = DATA_DIR / "activities"
-PROMPT_FILES = [
-    ("minimalist", Path("prompts/minimalist.txt")),
-    ("scientific", Path("prompts/scientist.txt")),
-    ("artist", Path("prompts/artist.txt")),
-    ("athlete", Path("prompts/athlete.txt")),
-]
 
 
 def payload_start_time(path: Path) -> datetime:

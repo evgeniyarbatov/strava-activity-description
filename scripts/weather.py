@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from scripts.utils import load_json, parse_iso, write_json
+from utils import load_json, parse_iso, write_json
 
 
 DATA_DIR = Path("data")
