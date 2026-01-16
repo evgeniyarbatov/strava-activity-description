@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import subprocess
 from datetime import datetime
 from pathlib import Path
@@ -8,11 +7,7 @@ from pathlib import Path
 import polyline
 from geopy.geocoders import Nominatim
 
-
-def parse_iso(value: str) -> datetime:
-    if value.endswith("Z"):
-        value = value[:-1] + "+00:00"
-    return datetime.fromisoformat(value)
+from scripts.utils import load_json, parse_iso
 
 
 def format_duration(seconds: int) -> str:
@@ -46,11 +41,6 @@ PROMPT_FILES = [
     ("artist", Path("prompts/artist.txt")),
     ("athlete", Path("prompts/athlete.txt")),
 ]
-
-
-def load_json(path: Path) -> dict:
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
 
 
 def payload_start_time(path: Path) -> datetime:

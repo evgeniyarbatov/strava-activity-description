@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
+from scripts.utils import load_json, write_json
 
 DATA_DIR = Path("data")
 ACTIVITIES_PATH = DATA_DIR / "strava_activities.json"
@@ -10,8 +10,7 @@ OUTPUT_DIR = DATA_DIR / "activities"
 
 
 def load_activities(path: Path) -> list[dict]:
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+    return load_json(path)
 
 
 def latest_activity(activities: list[dict]) -> dict:
@@ -31,8 +30,7 @@ def build_payload(activity: dict) -> dict:
 
 
 def write_payload(path: Path, payload: dict) -> None:
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(payload, handle, ensure_ascii=True, indent=2)
+    write_json(path, payload)
 
 
 def main() -> None:

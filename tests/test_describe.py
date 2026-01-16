@@ -1,11 +1,7 @@
 from datetime import datetime
 
-from scripts.describe import (
-    format_duration,
-    format_pace,
-    parse_iso,
-    time_of_day_description,
-)
+from scripts.describe import format_duration, format_pace, time_of_day_description
+from scripts.utils import parse_iso
 
 
 def test_parse_iso_supports_zulu_suffix() -> None:

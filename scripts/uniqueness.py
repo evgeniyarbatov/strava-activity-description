@@ -1,12 +1,12 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from statistics import median
 
 import polyline
 from fastdtw import fastdtw
 
+from scripts.utils import load_json, write_json
 
 UNIQUENESS_MIN = 1
 UNIQUENESS_MAX = 100
@@ -26,11 +26,6 @@ def decode_points(activity: dict) -> list[tuple[float, float]] | None:
 
 def point_distance(point_a: tuple[float, float], point_b: tuple[float, float]) -> float:
     return ((point_a[0] - point_b[0]) ** 2 + (point_a[1] - point_b[1]) ** 2) ** 0.5
-
-
-def load_json(path: Path) -> dict | list:
-    with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
 
 
 def build_reference_runs(strava_activities: list[dict]) -> list[dict]:
@@ -77,11 +72,6 @@ def uniqueness_for_activity(
         distance, _ = fastdtw(points, reference["points"], dist=point_distance)
         distances.append(float(distance))
     return calculate_uniqueness_score(distances)
-
-
-def write_json(path: Path, payload: dict) -> None:
-    with path.open("w", encoding="utf-8") as handle:
-        json.dump(payload, handle, ensure_ascii=True, indent=2)
 
 
 def main() -> None:
