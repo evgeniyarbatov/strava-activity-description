@@ -6,6 +6,7 @@ REQUIREMENTS := requirements.txt
 
 DATA_DIR = data
 STRAVA_ACTIVITIES = $(DATA_DIR)/strava_activities.json
+WEATHER_DATA = $(DATA_DIR)/weather.json
 DESCRIPTIONS = $(DATA_DIR)/descriptions.txt
 
 venv:
@@ -15,18 +16,24 @@ install: venv
 	@$(PIP) install --disable-pip-version-check -q --upgrade pip
 	@$(PIP) install --disable-pip-version-check -q -r $(REQUIREMENTS)
 
-data:
-	@mkdir -p $(dir $(STRAVA_ACTIVITIES))
+strava:
 	@aws dynamodb scan \
 	--table-name strava_activities_v2 \
 	--output json \
 	| unmarshal > $(STRAVA_ACTIVITIES)
 
+weather:
+	@aws dynamodb scan \
+	--table-name weather-data \
+	--output json \
+	| unmarshal > $(WEATHER_DATA)
+
 descriptions:
 	@jq -r '.[].activity.description | select(. != null and . != "")' \
 	$(STRAVA_ACTIVITIES) > $(DESCRIPTIONS)
 
+last:
+	jq 'sort_by(.activity.start_date) | last' $(STRAVA_ACTIVITIES)
+
 script:
 	@$(PYTHON) $(SCRIPTS_DIR)/script.py
-
-.PHONY: data
