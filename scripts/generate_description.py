@@ -78,11 +78,10 @@ prompt_inputs = {
 }
 
 prompt_files = [
-    ("story", Path("prompts/story_prompt.txt")),
-    ("minimalist", Path("prompts/minimalist_prompt.txt")),
-    ("scientific", Path("prompts/prompt_scientific.txt")),
-    ("artist", Path("prompts/prompt_artist.txt")),
-    ("athlete", Path("prompts/prompt_athlete.txt")),
+    ("minimalist", Path("prompts/minimalist.txt")),
+    ("scientific", Path("prompts/scientist.txt")),
+    ("artist", Path("prompts/artist.txt")),
+    ("athlete", Path("prompts/athlete.txt")),
 ]
 
 for label, path in prompt_files:
