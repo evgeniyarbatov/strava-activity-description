@@ -28,17 +28,16 @@ MINING THE DATA:
 Look for the interesting contrast or detail:
 - Did they start fast and fade? Start slow and build?
 - Was the weather noteworthy? (Dawn runs, rain, heat, cold, wind)
-- Does heart rate or cadence tell a story? (Steady control, rising effort, etc.)
+- Does heart rate tell a story? (Steady control, rising effort, etc.)
 - What time of day? What might that mean?
 - How does this pace compare to their typical efforts?
 - What's the arc of the run? How did it evolve?
 
 CURRENT ACTIVITY:
 Distance: {distance_km:.2f}km in {elapsed_time_formatted}
-Pace: {avg_pace_min_km} min/km (first km: {split1_pace}, last km: {last_split_pace})
-Heart Rate: {avg_hr:.1f} BPM average (max {max_hr})
-Cadence: {cadence:.1f} steps/min
+Pace: {avg_pace_min_km} min/km
+Heart Rate: {avg_hr:.1f} BPM average
 Time: {start_time_local} ({time_of_day_description})
-Weather: {weather_description}, {temp:.1f}°C, {humidity}% humidity, {wind_speed:.1f} m/s wind
+Weather: {weather_description}, feels like {feels_like:.1f}°C
 
 Write a 3-5 sentence description in the first person that makes this specific run memorable. Develop the scene, show the progression, and capture what made this run worth remembering:

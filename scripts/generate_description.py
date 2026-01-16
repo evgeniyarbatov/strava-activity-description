@@ -49,7 +49,6 @@ latest_payload = max(payloads, key=lambda item: item[0])[1]
 
 activity = latest_payload["activity"]["activity"]
 weather = latest_payload["weather"][0]
-splits = activity["splits_metric"]
 
 distance_m = int(activity["distance"])
 distance_km = distance_m / 1000
@@ -58,31 +57,13 @@ moving_time = int(activity.get("moving_time", elapsed_time))
 
 avg_pace = format_pace(moving_time / distance_km)
 avg_hr = float(activity["average_heartrate"])
-max_hr = int(activity["max_heartrate"])
-cadence = float(activity["average_cadence"])
 
 start_time_local = parse_iso(activity["start_date_local"])
 start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
 time_of_day = time_of_day_description(start_time_local)
 
-temp = float(weather["main_temp"])
 feels_like = float(weather["main_feels_like"])
 weather_description = str(weather["weather_0_description"])
-humidity = int(weather["main_humidity"])
-wind_speed = float(weather["wind_speed"])
-
-first_split = splits[0]
-last_split = splits[-1]
-
-first_split_pace_seconds = first_split["elapsed_time"] / (first_split["distance"] / 1000)
-last_split_pace_seconds = last_split["elapsed_time"] / (last_split["distance"] / 1000)
-
-first_split_pace = format_pace(first_split_pace_seconds)
-last_split_pace = format_pace(last_split_pace_seconds)
-
-pacing_description = (
-    "negative split" if last_split_pace_seconds <= first_split_pace_seconds else "positive split"
-)
 
 prompt_inputs = {
     "distance_m": distance_m,
@@ -90,26 +71,18 @@ prompt_inputs = {
     "elapsed_time_formatted": format_duration(elapsed_time),
     "avg_pace_min_km": avg_pace,
     "avg_hr": avg_hr,
-    "max_hr": max_hr,
-    "cadence": cadence,
     "start_time_local": start_time_local_str,
     "time_of_day_description": time_of_day,
-    "temp": temp,
     "feels_like": feels_like,
     "weather_description": weather_description,
-    "humidity": humidity,
-    "wind_speed": wind_speed,
-    "split1_pace": first_split_pace,
-    "last_split_pace": last_split_pace,
-    "pacing_description": pacing_description,
 }
 
 prompt_files = [
     ("story", Path("prompts/story_prompt.txt")),
-    # ("minimalist", Path("prompts/minimalist_prompt.txt")),
-    # ("scientific", Path("prompts/prompt_scientific.txt")),
-    # ("artist", Path("prompts/prompt_artist.txt")),
-    # ("athlete", Path("prompts/prompt_athlete.txt")),
+    ("minimalist", Path("prompts/minimalist_prompt.txt")),
+    ("scientific", Path("prompts/prompt_scientific.txt")),
+    ("artist", Path("prompts/prompt_artist.txt")),
+    ("athlete", Path("prompts/prompt_athlete.txt")),
 ]
 
 for label, path in prompt_files:

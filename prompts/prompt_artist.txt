@@ -24,8 +24,7 @@ Run Details:
 Distance: {distance_m}m ({distance_km:.2f}km)
 Duration: {elapsed_time_formatted}
 Average Pace: {avg_pace_min_km} min/km
-Heart Rate: {avg_hr:.1f} BPM (max {max_hr} BPM)
-Cadence: {cadence:.1f} steps/min
+Heart Rate: {avg_hr:.1f} BPM
 
 Time & Location:
 
@@ -34,16 +33,8 @@ Time of Day: {time_of_day_description}
 
 Weather Conditions:
 
-Temperature: {temp:.1f}°C (feels like {feels_like:.1f}°C)
+Feels Like: {feels_like:.1f}°C
 Conditions: {weather_description}
-Humidity: {humidity}%
-Wind: {wind_speed:.1f} m/s
-
-Pace Analysis:
-
-First km: {split1_pace} min/km
-Last km: {last_split_pace} min/km
-Pacing: {pacing_description}
 
 OUTPUT REQUIREMENTS:
 

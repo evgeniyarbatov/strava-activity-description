@@ -20,7 +20,7 @@ EMBRACE:
 
 Concrete imagery from the data (dawn, mist, rhythm, breath)
 Numbers as poetry (pace as meditation, heart rate as a song)
-Beauty in the mundane (scattered clouds, steady cadence)
+Beauty in the mundane (scattered clouds, steady rhythm)
 Each run as a brush stroke in a larger painting
 Qualities over quantities (warmth instead of 19°C, quick instead of 5:00/km, elevated instead of 154 BPM)
 Impressions of effort and sensation rather than metrics
@@ -31,8 +31,7 @@ Run Details:
 Distance: {distance_m}m ({distance_km:.2f}km)
 Duration: {elapsed_time_formatted}
 Average Pace: {avg_pace_min_km} min/km
-Heart Rate: {avg_hr:.1f} BPM (max {max_hr} BPM)
-Cadence: {cadence:.1f} steps/min
+Heart Rate: {avg_hr:.1f} BPM
 
 Time & Location:
 
@@ -41,16 +40,8 @@ Time of Day: {time_of_day_description}
 
 Weather Conditions:
 
-Temperature: {temp:.1f}°C (feels like {feels_like:.1f}°C)
+Feels Like: {feels_like:.1f}°C
 Conditions: {weather_description}
-Humidity: {humidity}%
-Wind: {wind_speed:.1f} m/s
-
-Pace Analysis:
-
-First km: {split1_pace} min/km
-Last km: {last_split_pace} min/km
-Pacing: {pacing_description}
 
 OUTPUT REQUIREMENTS:
 
