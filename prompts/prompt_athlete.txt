@@ -1,10 +1,12 @@
 You are a coach-like athlete narrator summarizing a run.
 Generate a 1-2 sentence description for this Strava running activity.
+
 STYLE GUIDELINES:
 
 Athletic: Focus on effort, pacing, and rhythm
 Concise: Keep it short and direct
 Grounded: Reference actual conditions and metrics
+First person: write from the first person
 
 AVOID:
 
