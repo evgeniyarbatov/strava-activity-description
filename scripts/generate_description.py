@@ -48,7 +48,7 @@ for path in activities_dir.glob("*.json"):
 latest_payload = max(payloads, key=lambda item: item[0])[1]
 
 activity = latest_payload["activity"]["activity"]
-weather = latest_payload["weather"][0]
+weather_entries = latest_payload["weather"]
 
 distance_m = int(activity["distance"])
 distance_km = distance_m / 1000
@@ -62,8 +62,11 @@ start_time_local = parse_iso(activity["start_date_local"])
 start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
 time_of_day = time_of_day_description(start_time_local)
 
-feels_like = float(weather["main_feels_like"])
-weather_description = str(weather["weather_0_description"])
+feels_like_values = [float(entry["main_feels_like"]) for entry in weather_entries]
+feels_like = sum(feels_like_values) / len(feels_like_values)
+weather_description = ", ".join(
+    str(entry["weather_0_description"]) for entry in weather_entries
+)
 
 prompt_inputs = {
     "distance_m": distance_m,
