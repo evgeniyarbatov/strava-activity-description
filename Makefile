@@ -22,18 +22,13 @@ strava:
 	--output json \
 	| unmarshal > $(STRAVA_ACTIVITIES)
 
+	@jq -r '.[].activity.description | select(. != null and . != "")' \
+	$(STRAVA_ACTIVITIES) > $(DESCRIPTIONS)
+
 weather:
 	@aws dynamodb scan \
 	--table-name weather-data \
 	--output json \
 	| unmarshal > $(WEATHER_DATA)
 
-descriptions:
-	@jq -r '.[].activity.description | select(. != null and . != "")' \
-	$(STRAVA_ACTIVITIES) > $(DESCRIPTIONS)
-
-last:
-	jq 'sort_by(.activity.start_date) | last' $(STRAVA_ACTIVITIES)
-
-script:
-	@$(PYTHON) $(SCRIPTS_DIR)/script.py
+	@$(PYTHON) scripts/last_activity_weather.py
