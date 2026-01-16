@@ -84,11 +84,9 @@ pacing_description = (
     "negative split" if last_split_pace_seconds <= first_split_pace_seconds else "positive split"
 )
 
-examples = (data_dir / "descriptions.txt").read_text(encoding="utf-8").strip()
 prompt_template = Path("prompt.txt").read_text(encoding="utf-8")
 
 prompt = prompt_template.format(
-    example_descriptions=examples,
     distance_m=distance_m,
     distance_km=distance_km,
     elapsed_time_formatted=format_duration(elapsed_time),

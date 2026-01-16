@@ -22,9 +22,6 @@ strava:
 	--output json \
 	| unmarshal > $(STRAVA_ACTIVITIES)
 
-	@jq -r '.[].activity.description | select(. != null and . != "")' \
-	$(STRAVA_ACTIVITIES) > $(DESCRIPTIONS)
-
 weather:
 	@aws dynamodb scan \
 	--table-name weather-data \
