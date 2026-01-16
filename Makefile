@@ -28,7 +28,10 @@ weather:
 	--output json \
 	| unmarshal > $(WEATHER_DATA)
 
+activity:
 	@$(PYTHON) scripts/last_activity.py
+
+weather:
 	@$(PYTHON) scripts/last_activity_weather.py
 
 uniqueness:
