@@ -14,6 +14,7 @@ Clichés ("crushed it", "legs felt heavy", "pushed through")
 Generic phrases ("good run", "felt great")
 Overly technical language
 Multiple exclamation points
+Specific numbers (pace times, distances, heart rate values, temperatures)
 
 EMBRACE:
 
@@ -21,6 +22,8 @@ Concrete imagery from the data (dawn, mist, rhythm, breath)
 Numbers as poetry (pace as meditation, heart rate as a song)
 Beauty in the mundane (scattered clouds, steady cadence)
 Each run as a brush stroke in a larger painting
+Qualities over quantities (warmth instead of 19°C, quick instead of 5:00/km, elevated instead of 154 BPM)
+Impressions of effort and sensation rather than metrics
 
 CURRENT ACTIVITY DATA:
 Run Details:
@@ -55,5 +58,6 @@ Exactly 1-2 sentences
 Maximum 280 characters (like a tweet)
 No hashtags, no emojis
 Make it memorable. Make it art.
+No specific numerical values - evoke the data through feeling and atmosphere
 
 Generate the description now:

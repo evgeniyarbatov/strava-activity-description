@@ -84,34 +84,44 @@ pacing_description = (
     "negative split" if last_split_pace_seconds <= first_split_pace_seconds else "positive split"
 )
 
-prompt_template = Path("prompt.txt").read_text(encoding="utf-8")
+prompt_inputs = {
+    "distance_m": distance_m,
+    "distance_km": distance_km,
+    "elapsed_time_formatted": format_duration(elapsed_time),
+    "avg_pace_min_km": avg_pace,
+    "avg_hr": avg_hr,
+    "max_hr": max_hr,
+    "cadence": cadence,
+    "start_time_local": start_time_local_str,
+    "time_of_day_description": time_of_day,
+    "temp": temp,
+    "feels_like": feels_like,
+    "weather_description": weather_description,
+    "humidity": humidity,
+    "wind_speed": wind_speed,
+    "split1_pace": first_split_pace,
+    "last_split_pace": last_split_pace,
+    "pacing_description": pacing_description,
+}
 
-prompt = prompt_template.format(
-    distance_m=distance_m,
-    distance_km=distance_km,
-    elapsed_time_formatted=format_duration(elapsed_time),
-    avg_pace_min_km=avg_pace,
-    avg_hr=avg_hr,
-    max_hr=max_hr,
-    cadence=cadence,
-    start_time_local=start_time_local_str,
-    time_of_day_description=time_of_day,
-    temp=temp,
-    feels_like=feels_like,
-    weather_description=weather_description,
-    humidity=humidity,
-    wind_speed=wind_speed,
-    split1_pace=first_split_pace,
-    last_split_pace=last_split_pace,
-    pacing_description=pacing_description,
-)
+prompt_files = [
+    ("minimalist", Path("minimalist_prompt.txt")),
+    ("scientific", Path("prompts/prompt_scientific.txt")),
+    ("artist", Path("prompts/prompt_artist.txt")),
+    ("athlete", Path("prompts/prompt_athlete.txt")),
+]
 
-result = subprocess.run(
-    ["ollama", "run", "mistral-nemo"],
-    input=prompt,
-    text=True,
-    capture_output=True,
-    check=True,
-)
-
-print(result.stdout.strip())
+for label, path in prompt_files:
+    prompt_template = path.read_text(encoding="utf-8")
+    prompt = prompt_template.format(**prompt_inputs)
+    print(f"=== {label} prompt ===")
+    print(prompt)
+    print(f"=== {label} description ===")
+    result = subprocess.run(
+        ["ollama", "run", "mistral-nemo"],
+        input=prompt,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    print(result.stdout.strip())
