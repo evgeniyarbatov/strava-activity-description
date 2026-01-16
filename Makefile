@@ -32,7 +32,7 @@ analyze:
 	@$(PYTHON) scripts/weather.py
 	@$(PYTHON) scripts/uniqueness.py
 
-description:
-	@$(PYTHON) scripts/generate_description.py
+describe:
+	@$(PYTHON) scripts/describe.py
 
 .PHONY: data
