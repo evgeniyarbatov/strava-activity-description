@@ -2,9 +2,12 @@ import polyline
 import pytest
 
 from scripts.uniqueness import (
+    UNIQUENESS_MIN,
     UNIQUENESS_MAX,
+    UNIQUENESS_WORDS,
     calculate_uniqueness_score,
     decode_points,
+    uniqueness_description,
 )
 
 
@@ -26,3 +29,8 @@ def test_calculate_uniqueness_score_median_zero() -> None:
 def test_calculate_uniqueness_score_ratio() -> None:
     score = calculate_uniqueness_score([10.0, 20.0, 30.0])
     assert score == pytest.approx(50.5)
+
+
+def test_uniqueness_description_mapping() -> None:
+    assert uniqueness_description(UNIQUENESS_MAX) == UNIQUENESS_WORDS[0]
+    assert uniqueness_description(UNIQUENESS_MIN) == UNIQUENESS_WORDS[-1]

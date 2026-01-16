@@ -17,4 +17,4 @@ City: {city_name}, {country}
 Feels like: {feels_like:.1f}°C
 Conditions: {weather_description}
 
-Route Uniqueness Score: {uniqueness_score:.2f}
+Route Uniqueness: {uniqueness_description}

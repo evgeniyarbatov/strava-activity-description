@@ -21,23 +21,6 @@ PROMPT_FILES = [
 ]
 ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "common" / "activity-context.txt"
 GEMINI_MODEL = "gemini-2.5-flash"
-PROMPT_INPUT_KEYS = (
-    "distance_km",
-    "moving_time",
-    "avg_pace_min_km",
-    "start_time_local",
-    "time_of_day_description",
-    "city_name",
-    "country",
-    "feels_like",
-    "weather_description",
-    "uniqueness_score",
-    "average_hr",
-    "max_hr",
-    "average_cadence",
-    "elevation_gain",
-)
-
 
 def format_duration(seconds: int) -> str:
     hours, remainder = divmod(seconds, 3600)
@@ -125,12 +108,12 @@ def prompt_inputs(payload: dict) -> dict:
     geolocator = Nominatim(user_agent="strava-activity-description")
     city, country = location_from_polyline(activity["map"]["polyline"], geolocator)
 
-    uniqueness_score = float(payload["uniqueness"]["score"])
+    uniqueness_description = payload["uniqueness"]["description"]
     summary.update(
         {
             "city_name": city,
             "country": country,
-            "uniqueness_score": uniqueness_score,
+            "uniqueness_description": uniqueness_description,
         }
     )
     return summary

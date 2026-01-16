@@ -10,6 +10,24 @@ from scripts.utils import load_json, write_json
 
 UNIQUENESS_MIN = 1
 UNIQUENESS_MAX = 100
+UNIQUENESS_WORDS = [
+    "mundane",
+    "repetitive",
+    "routine",
+    "familiar",
+    "commonplace",
+    "standard",
+    "ordinary",
+    "typical",
+    "distinct",
+    "notable",
+    "uncommon",
+    "rare",
+    "fresh",
+    "original",
+    "innovative",
+    "novel",
+]
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
@@ -74,6 +92,14 @@ def uniqueness_for_activity(
     return calculate_uniqueness_score(distances)
 
 
+def uniqueness_description(score: float | None) -> str | None:
+    if score is None:
+        return None
+    normalized = (score - UNIQUENESS_MIN) / (UNIQUENESS_MAX - UNIQUENESS_MIN)
+    index = int((1 - normalized) * (len(UNIQUENESS_WORDS) - 1))
+    return UNIQUENESS_WORDS[index]
+
+
 def main() -> None:
     strava_activities = load_json(STRAVA_ACTIVITIES_PATH)
     reference_runs = build_reference_runs(strava_activities)
@@ -82,7 +108,7 @@ def main() -> None:
         payload = load_json(path)
         activity = payload["activity"]
         score = uniqueness_for_activity(activity, reference_runs)
-        payload["uniqueness"] = {"score": score}
+        payload["uniqueness"] = {"description": uniqueness_description(score)}
         write_json(path, payload)
 
 
