@@ -26,11 +26,17 @@ Time & Location:
 
 Started: {start_time_local}
 Time of Day: {time_of_day_description}
+City: {city_name}
 
 Weather Conditions:
 
 Feels Like: {feels_like:.1f}°C
 Conditions: {weather_description}
+
+Route Uniqueness:
+
+Uniqueness Score: {uniqueness_score:.2f}
+Last Similar Run: {last_similar_run}
 
 OUTPUT REQUIREMENTS:
 

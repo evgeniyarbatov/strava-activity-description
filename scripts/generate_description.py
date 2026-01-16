@@ -5,6 +5,8 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
+import polyline
+from geopy.geocoders import Nominatim
 
 def parse_iso(value: str) -> datetime:
     if value.endswith("Z"):
@@ -68,6 +70,26 @@ weather_description = ", ".join(
     str(entry["weather_0_description"]) for entry in weather_entries
 )
 
+map_polyline = activity["map"]["polyline"]
+coordinates = polyline.decode(map_polyline)
+median_lat, median_lng = coordinates[len(coordinates) // 2]
+geolocator = Nominatim(user_agent="strava-activity-description")
+location = geolocator.reverse(
+    (median_lat, median_lng), language="en", addressdetails=True
+)
+address = location.raw.get("address", {}) if location else {}
+city = address.get("city")
+area = address.get("state")
+country = address.get("country")
+city_name = city or ""
+location_parts = [part for part in (city, area, country) if part]
+location_text = ", ".join(location_parts)
+
+uniqueness = latest_payload["uniqueness"]
+uniqueness_score = float(uniqueness["score"])
+similar_dates = [parse_iso(value) for value in uniqueness["similar_dates"]]
+last_similar_run = max(similar_dates).strftime("%Y-%m-%d")
+
 prompt_inputs = {
     "distance_m": distance_m,
     "distance_km": distance_km,
@@ -78,6 +100,9 @@ prompt_inputs = {
     "time_of_day_description": time_of_day,
     "feels_like": feels_like,
     "weather_description": weather_description,
+    "city_name": city_name,
+    "uniqueness_score": uniqueness_score,
+    "last_similar_run": last_similar_run,
 }
 
 prompt_files = [
@@ -90,6 +115,8 @@ prompt_files = [
 for label, path in prompt_files:
     prompt_template = path.read_text(encoding="utf-8")
     prompt = prompt_template.format(**prompt_inputs)
+    if location_text:
+        prompt = f"{prompt}\nLocation: {location_text}"
     print(f"=== {label} prompt ===")
     print(prompt)
     print(f"=== {label} description ===")
