@@ -30,5 +30,8 @@ weather:
 
 	@$(PYTHON) scripts/last_activity_weather.py
 
+uniqueness:
+	@$(PYTHON) scripts/activity_uniqueness.py
+
 description:
 	@$(PYTHON) scripts/generate_description.py
