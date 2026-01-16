@@ -34,7 +34,7 @@ Conditions: {weather_description}
 
 Route Uniqueness:
 
-Uniqueness Score: {uniqueness_score:.2f}
+Uniqueness Score (1-100 with 1 = unique and 100 = identical): {uniqueness_score:.2f}
 
 OUTPUT REQUIREMENTS:
 

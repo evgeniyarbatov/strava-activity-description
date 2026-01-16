@@ -20,6 +20,9 @@ def point_distance(point_a: tuple[float, float], point_b: tuple[float, float]) -
     return ((point_a[0] - point_b[0]) ** 2 + (point_a[1] - point_b[1]) ** 2) ** 0.5
 
 
+UNIQUENESS_MIN = 1
+UNIQUENESS_MAX = 100
+
 data_dir = Path("data")
 activities_dir = data_dir / "activities"
 strava_activities_path = data_dir / "strava_activities.json"
@@ -70,12 +73,10 @@ for path in activities_dir.glob("*.json"):
             nearest_distance = distances[0][0]
             median_distance = median(item[0] for item in distances)
             if median_distance == 0:
-                score = 10
+                score = UNIQUENESS_MAX
             else:
                 ratio = min(1.0, nearest_distance / median_distance)
-                score = 1 + 9 * (1 - ratio)
-
-            similar = distances[:5]
+                score = UNIQUENESS_MIN + (UNIQUENESS_MAX - UNIQUENESS_MIN) * (1 - ratio)
             payload["uniqueness"] = {
                 "score": score,
             }
