@@ -32,3 +32,6 @@ weather:
 	| unmarshal > $(WEATHER_DATA)
 
 	@$(PYTHON) scripts/last_activity_weather.py
+
+description:
+	@$(PYTHON) scripts/generate_description.py

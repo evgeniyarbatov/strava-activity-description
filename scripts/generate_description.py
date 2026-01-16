@@ -1,0 +1,119 @@
+from __future__ import annotations
+
+import json
+import subprocess
+from datetime import datetime
+from pathlib import Path
+
+
+def parse_iso(value: str) -> datetime:
+    if value.endswith("Z"):
+        value = value[:-1] + "+00:00"
+    return datetime.fromisoformat(value)
+
+
+def format_duration(seconds: int) -> str:
+    hours, remainder = divmod(seconds, 3600)
+    minutes, secs = divmod(remainder, 60)
+    return f"{hours}:{minutes:02d}:{secs:02d}"
+
+
+def format_pace(seconds_per_km: float) -> str:
+    total_seconds = int(round(seconds_per_km))
+    minutes, secs = divmod(total_seconds, 60)
+    return f"{minutes}:{secs:02d}"
+
+
+def time_of_day_description(start_time: datetime) -> str:
+    hour = start_time.hour
+    if 5 <= hour <= 11:
+        return "morning"
+    if 12 <= hour <= 16:
+        return "afternoon"
+    if 17 <= hour <= 20:
+        return "evening"
+    return "night"
+
+
+data_dir = Path("data")
+activities_dir = data_dir / "activities"
+
+payloads: list[tuple[datetime, dict]] = []
+for path in activities_dir.glob("*.json"):
+    with path.open("r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+    start_date = payload["activity"]["start_date"]
+    payloads.append((parse_iso(start_date), payload))
+
+latest_payload = max(payloads, key=lambda item: item[0])[1]
+
+activity = latest_payload["activity"]["activity"]
+weather = latest_payload["weather"][0]
+splits = activity["splits_metric"]
+
+distance_m = int(activity["distance"])
+distance_km = distance_m / 1000
+elapsed_time = int(activity["elapsed_time"])
+moving_time = int(activity.get("moving_time", elapsed_time))
+
+avg_pace = format_pace(moving_time / distance_km)
+avg_hr = float(activity["average_heartrate"])
+max_hr = int(activity["max_heartrate"])
+cadence = float(activity["average_cadence"])
+
+start_time_local = parse_iso(activity["start_date_local"])
+start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
+time_of_day = time_of_day_description(start_time_local)
+
+temp = float(weather["main_temp"])
+feels_like = float(weather["main_feels_like"])
+weather_description = str(weather["weather_0_description"])
+humidity = int(weather["main_humidity"])
+wind_speed = float(weather["wind_speed"])
+
+first_split = splits[0]
+last_split = splits[-1]
+
+first_split_pace_seconds = first_split["elapsed_time"] / (first_split["distance"] / 1000)
+last_split_pace_seconds = last_split["elapsed_time"] / (last_split["distance"] / 1000)
+
+first_split_pace = format_pace(first_split_pace_seconds)
+last_split_pace = format_pace(last_split_pace_seconds)
+
+pacing_description = (
+    "negative split" if last_split_pace_seconds <= first_split_pace_seconds else "positive split"
+)
+
+examples = (data_dir / "descriptions.txt").read_text(encoding="utf-8").strip()
+prompt_template = Path("prompt.txt").read_text(encoding="utf-8")
+
+prompt = prompt_template.format(
+    example_descriptions=examples,
+    distance_m=distance_m,
+    distance_km=distance_km,
+    elapsed_time_formatted=format_duration(elapsed_time),
+    avg_pace_min_km=avg_pace,
+    avg_hr=avg_hr,
+    max_hr=max_hr,
+    cadence=cadence,
+    start_time_local=start_time_local_str,
+    time_of_day_description=time_of_day,
+    temp=temp,
+    feels_like=feels_like,
+    weather_description=weather_description,
+    humidity=humidity,
+    wind_speed=wind_speed,
+    split1_pace=first_split_pace,
+    last_split_pace=last_split_pace,
+    pacing_description=pacing_description,
+)
+
+result = subprocess.run(
+    ["ollama", "run", "mistral-nemo"],
+    input=prompt,
+    text=True,
+    capture_output=True,
+    check=True,
+)
+
+print(result.stdout.strip())
