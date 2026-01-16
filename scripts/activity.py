@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from utils import load_json, write_json
+from scripts.utils import load_json, write_json
 
 DATA_DIR = Path("data")
 ACTIVITIES_PATH = DATA_DIR / "strava_activities.json"

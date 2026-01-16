@@ -6,7 +6,7 @@ from statistics import median
 import polyline
 from fastdtw import fastdtw
 
-from utils import load_json, write_json
+from scripts.utils import load_json, write_json
 
 UNIQUENESS_MIN = 1
 UNIQUENESS_MAX = 100

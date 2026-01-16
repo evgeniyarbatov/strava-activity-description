@@ -7,16 +7,14 @@ from pathlib import Path
 import polyline
 from geopy.geocoders import Nominatim
 
-from utils import load_json, parse_iso
+from scripts.utils import load_json, parse_iso
 
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
+PROMPTS_DIR = Path("prompts")
 PROMPT_FILES = [
-    ("minimalist", Path("prompts/minimalist.txt")),
-    ("scientific", Path("prompts/scientist.txt")),
-    ("artist", Path("prompts/artist.txt")),
-    ("athlete", Path("prompts/athlete.txt")),
+    (path.stem, path) for path in sorted(PROMPTS_DIR.glob("*.txt"), key=lambda path: path.name)
 ]
 PROMPT_INPUT_KEYS = (
     "distance_km",
