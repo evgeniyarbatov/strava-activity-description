@@ -105,7 +105,7 @@ prompt_inputs = {
 }
 
 prompt_files = [
-    ("minimalist", Path("minimalist_prompt.txt")),
+    ("minimalist", Path("prompts/minimalist_prompt.txt")),
     ("scientific", Path("prompts/prompt_scientific.txt")),
     ("artist", Path("prompts/prompt_artist.txt")),
     ("athlete", Path("prompts/prompt_athlete.txt")),

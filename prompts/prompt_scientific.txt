@@ -42,7 +42,6 @@ Pacing: {pacing_description}
 
 OUTPUT REQUIREMENTS:
 
-Exactly 1-2 sentences
-Maximum 280 characters
 No hashtags, no emojis
+
 Generate the description now:

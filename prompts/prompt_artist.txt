@@ -11,6 +11,12 @@ AVOID:
 Cliches
 Overly technical language
 Long sentences
+Specific numbers (pace times, distances, heart rate values, temperatures)
+
+EMBRACE:
+
+Qualities over quantities (warmth instead of 19°C, quick instead of 5:00/km, elevated instead of 154 BPM)
+Impressions of effort and sensation rather than metrics
 
 CURRENT ACTIVITY DATA:
 Run Details:
@@ -41,7 +47,7 @@ Pacing: {pacing_description}
 
 OUTPUT REQUIREMENTS:
 
-Exactly 1-2 sentences
-Maximum 280 characters
 No hashtags, no emojis
+No specific numerical values - evoke the data through feeling and atmosphere
+
 Generate the description now:

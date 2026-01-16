@@ -54,8 +54,6 @@ Pacing: {pacing_description}
 
 OUTPUT REQUIREMENTS:
 
-Exactly 1-2 sentences
-Maximum 280 characters (like a tweet)
 No hashtags, no emojis
 Make it memorable. Make it art.
 No specific numerical values - evoke the data through feeling and atmosphere
