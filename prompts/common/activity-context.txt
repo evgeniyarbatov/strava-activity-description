@@ -4,6 +4,7 @@ Distance: {distance_km:.2f}km
 Duration: {moving_time}
 Average Pace: {avg_pace_min_km} min/km
 Average HR: {average_hr}
+Max HR: {max_hr}
 
 Started: {start_time_local}
 Time of Day: {time_of_day_description}
