@@ -177,7 +177,10 @@ def main() -> None:
         print(run_model(prompt))
         if gemini_client:
             print(f"=== {label} description (gemini) ===")
-            print(run_gemini(prompt, gemini_client))
+            try:
+                print(run_gemini(prompt, gemini_client))
+            except Exception as exc:
+                print(f"gemini error: {exc}")
 
 
 if __name__ == "__main__":
