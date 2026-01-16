@@ -28,12 +28,12 @@ data:
 	| unmarshal > $(WEATHER_DATA)
 
 analyze:
-	@$(PYTHON) scripts/activity.py
-	@$(PYTHON) scripts/weather.py
-	@$(PYTHON) scripts/uniqueness.py
+	@$(PYTHON) -m scripts.activity
+	@$(PYTHON) -m scripts.weather
+	@$(PYTHON) -m scripts.uniqueness
 
 describe:
-	@$(PYTHON) scripts/describe.py
+	@$(PYTHON) -m scripts.describe
 
 test:
 	@$(PYTHON) -m pytest
