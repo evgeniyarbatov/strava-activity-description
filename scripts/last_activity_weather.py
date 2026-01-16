@@ -12,15 +12,23 @@ def parse_iso(value: str) -> datetime:
 
 
 data_dir = Path("data")
-activities_path = data_dir / "strava_activities.json"
+activities_dir = data_dir / "activities"
 weather_path = data_dir / "weather.json"
 
-with activities_path.open("r", encoding="utf-8") as handle:
-    activities = json.load(handle)
+def activity_start_date(path: Path) -> datetime:
+    with path.open("r", encoding="utf-8") as handle:
+        payload = json.load(handle)
+    return parse_iso(payload["activity"]["activity"]["start_date"])
 
-last_activity = sorted(
-    activities, key=lambda item: item["activity"]["start_date"]
-)[-1]
+
+activity_path = max(
+    activities_dir.glob("*.json"), key=activity_start_date
+)
+
+with activity_path.open("r", encoding="utf-8") as handle:
+    payload = json.load(handle)
+
+last_activity = payload["activity"]
 
 start_time = parse_iso(last_activity["activity"]["start_date"])
 elapsed_seconds = last_activity["activity"]["elapsed_time"]
@@ -36,13 +44,7 @@ weather_during_activity = [
 ]
 weather_during_activity.sort(key=lambda item: item["timestamp"])
 
-output_dir = data_dir / "activities"
-output_dir.mkdir(parents=True, exist_ok=True)
+payload["weather"] = weather_during_activity
 
-activity_id = str(last_activity["activity"]["id"])
-output_path = output_dir / f"{activity_id}.json"
-
-payload = {"activity": last_activity, "weather": weather_during_activity}
-
-with output_path.open("w", encoding="utf-8") as handle:
+with activity_path.open("w", encoding="utf-8") as handle:
     json.dump(payload, handle, ensure_ascii=True, indent=2)
