@@ -27,6 +27,7 @@ PROMPT_INPUT_KEYS = (
     "feels_like",
     "weather_description",
     "uniqueness_score",
+    "average_heartrate"
 )
 
 

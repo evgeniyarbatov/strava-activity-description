@@ -25,6 +25,7 @@ def build_payload(activity: dict) -> dict:
             "moving_time": activity["moving_time"],
             "start_date_local": activity["start_date_local"],
             "map": {"polyline": activity["map"]["polyline"]},
+            "average_hr": activity["average_heartrate"],
         }
     }
 
