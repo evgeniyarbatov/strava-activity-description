@@ -45,14 +45,13 @@ for path in activities_dir.glob("*.json"):
     with path.open("r", encoding="utf-8") as handle:
         payload = json.load(handle)
 
-    activity = payload["activity"]["activity"]
+    activity = payload["activity"]
     activity_id = str(activity.get("id"))
     points = decode_points(activity)
 
     if not points or not reference_runs:
         payload["uniqueness"] = {
             "score": None,
-            "similar_dates": [],
         }
     else:
         distances: list[tuple[float, dict]] = []
@@ -65,7 +64,6 @@ for path in activities_dir.glob("*.json"):
         if not distances:
             payload["uniqueness"] = {
                 "score": None,
-                "similar_dates": [],
             }
         else:
             distances.sort(key=lambda item: item[0])
@@ -80,7 +78,6 @@ for path in activities_dir.glob("*.json"):
             similar = distances[:5]
             payload["uniqueness"] = {
                 "score": score,
-                "similar_dates": [item[1]["date"] for item in similar],
             }
 
     with path.open("w", encoding="utf-8") as handle:
