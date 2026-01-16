@@ -30,6 +30,7 @@ PROMPT_INPUT_KEYS = (
     "uniqueness_score",
     "average_hr",
     "max_hr",
+    "average_cadence",
 )
 
 
@@ -72,6 +73,7 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
     avg_pace = format_pace(moving_time / distance_km)
     average_hr = activity["average_hr"]
     max_hr = activity["max_hr"]
+    average_cadence = activity["average_cadence"]
 
     start_time_local = parse_iso(activity["start_date_local"])
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
@@ -87,6 +89,7 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
         "distance_km": distance_km,
         "moving_time": format_duration(moving_time),
         "avg_pace_min_km": avg_pace,
+        "average_cadence": average_cadence,
         "average_hr": average_hr,
         "max_hr": max_hr,
         "start_time_local": start_time_local_str,
