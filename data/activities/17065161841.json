@@ -7,5 +7,11 @@
     "map": {
       "polyline": "udc_CejdeSnCB~@VBDDRpA?nCyAf@L@e@ACmDtBjC@mCAaB@DgA?_DCCsDIa@ZC`DBB|C@~@X@XnACHA|CgAHEBYCAEBmDhBjC?eF@CABoFmETAtC`DLd@PFd@nA?rDuAJ_@yDrBfC@cF?DyFiELCBKfDB@vCDn@P@BDb@nAC|DqAFi@sDtBfCJgFAAIDkFeE@AHMjDzCDh@NH`@B@v@@d@GbDgABCFa@?AE@wDpBfC@{E?FmFAGcEBOvDzCFn@PBb@jA?~DuAmDlADBdCAkFDDuFCC_E?MvD"
     }
-  }
+  },
+  "weather": [
+    {
+      "weather_0_description": "scattered clouds",
+      "main_feels_like": 19.34
+    }
+  ]
 }

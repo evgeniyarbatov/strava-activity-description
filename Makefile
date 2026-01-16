@@ -31,7 +31,7 @@ weather:
 activity:
 	@$(PYTHON) scripts/last_activity.py
 
-weather:
+activity-weather:
 	@$(PYTHON) scripts/last_activity_weather.py
 
 uniqueness:
