@@ -9,7 +9,8 @@
     },
     "average_hr": 154.4,
     "max_hr": 160,
-    "average_cadence": 79.6
+    "average_cadence": 79.6,
+    "elevation_gain": 0
   },
   "weather": [
     {

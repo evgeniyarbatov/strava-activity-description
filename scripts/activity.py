@@ -28,6 +28,7 @@ def build_payload(activity: dict) -> dict:
             "average_hr": activity["average_heartrate"],
             "max_hr": activity["max_heartrate"],
             "average_cadence": activity["average_cadence"],
+            "elevation_gain": activity["total_elevation_gain"],
         }
     }
 
