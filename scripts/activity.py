@@ -4,31 +4,48 @@ import json
 from pathlib import Path
 
 
-data_dir = Path("data")
-activities_path = data_dir / "strava_activities.json"
+DATA_DIR = Path("data")
+ACTIVITIES_PATH = DATA_DIR / "strava_activities.json"
+OUTPUT_DIR = DATA_DIR / "activities"
 
-with activities_path.open("r", encoding="utf-8") as handle:
-    activities = json.load(handle)
 
-last_activity = sorted(
-    activities, key=lambda item: item["activity"]["start_date"]
-)[-1]["activity"]
+def load_activities(path: Path) -> list[dict]:
+    with path.open("r", encoding="utf-8") as handle:
+        return json.load(handle)
 
-output_dir = data_dir / "activities"
-output_dir.mkdir(parents=True, exist_ok=True)
 
-activity_id = str(last_activity["id"])
-output_path = output_dir / f"{activity_id}.json"
+def latest_activity(activities: list[dict]) -> dict:
+    return max(activities, key=lambda item: item["activity"]["start_date"])["activity"]
 
-payload = {
-    "activity": {
-        "start_date": last_activity["start_date"],
-        "distance": last_activity["distance"],
-        "moving_time": last_activity["moving_time"],
-        "start_date_local": last_activity["start_date_local"],
-        "map": {"polyline": last_activity["map"]["polyline"]},
+
+def build_payload(activity: dict) -> dict:
+    return {
+        "activity": {
+            "start_date": activity["start_date"],
+            "distance": activity["distance"],
+            "moving_time": activity["moving_time"],
+            "start_date_local": activity["start_date_local"],
+            "map": {"polyline": activity["map"]["polyline"]},
+        }
     }
-}
 
-with output_path.open("w", encoding="utf-8") as handle:
-    json.dump(payload, handle, ensure_ascii=True, indent=2)
+
+def write_payload(path: Path, payload: dict) -> None:
+    with path.open("w", encoding="utf-8") as handle:
+        json.dump(payload, handle, ensure_ascii=True, indent=2)
+
+
+def main() -> None:
+    activities = load_activities(ACTIVITIES_PATH)
+    activity = latest_activity(activities)
+
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    output_path = OUTPUT_DIR / f"{activity['id']}.json"
+
+    # Normalize the latest activity into a compact payload for downstream scripts.
+    payload = build_payload(activity)
+    write_payload(output_path, payload)
+
+
+if __name__ == "__main__":
+    main()

@@ -35,4 +35,7 @@ analyze:
 describe:
 	@$(PYTHON) scripts/describe.py
 
-.PHONY: data
+test:
+	@$(PYTHON) -m pytest
+
+.PHONY: data test

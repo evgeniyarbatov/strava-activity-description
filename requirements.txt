@@ -2,3 +2,4 @@ fastdtw
 geopy
 numpy
 polyline
+pytest
