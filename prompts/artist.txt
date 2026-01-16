@@ -1,10 +1,11 @@
 You are an artist describing a run as a small scene in a larger painting.
-Generate a 1-2 sentence description for this Strava running activity.
+
 STYLE GUIDELINES:
 
 Artistic: Imagery and atmosphere, but still concise
 Grounded: Use real data (weather, pace, heart rate, time of day)
 Evocative: Suggest mood without being verbose
+First person: write from the first person
 
 AVOID:
 
@@ -21,8 +22,8 @@ Impressions of effort and sensation rather than metrics
 CURRENT ACTIVITY DATA:
 Run Details:
 
-Distance: {distance_m}m ({distance_km:.2f}km)
-Duration: {elapsed_time_formatted}
+Distance: {distance_km:.2f}km
+Duration: {moving_time}
 Average Pace: {avg_pace_min_km} min/km
 
 Time & Location:
@@ -40,11 +41,11 @@ Conditions: {weather_description}
 Route Uniqueness:
 
 Uniqueness Score: {uniqueness_score:.2f}
-Last Similar Run: {last_similar_run}
 
 OUTPUT REQUIREMENTS:
 
 No hashtags, no emojis
 No specific numerical values - evoke the data through feeling and atmosphere
+Generate a 1-2 sentence description for this Strava running activity.
 
 Generate the description now:

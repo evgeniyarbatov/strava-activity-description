@@ -49,12 +49,11 @@ for path in activities_dir.glob("*.json"):
 
 latest_payload = max(payloads, key=lambda item: item[0])[1]
 
-activity = latest_payload["activity"]["activity"]
+activity = latest_payload["activity"]
 weather_entries = latest_payload["weather"]
 
-distance_m = int(activity["distance"])
-distance_km = distance_m / 1000
-moving_time = int(activity.get("moving_time"))
+distance_km = int(activity["distance"]) / 1000.0
+moving_time = int(activity["moving_time"])
 
 avg_pace = format_pace(moving_time / distance_km)
 
@@ -81,13 +80,10 @@ country = address.get("country")
 
 uniqueness = latest_payload["uniqueness"]
 uniqueness_score = float(uniqueness["score"])
-similar_dates = [parse_iso(value) for value in uniqueness["similar_dates"]]
-last_similar_run = max(similar_dates).strftime("%Y-%m-%d")
 
 prompt_inputs = {
-    "distance_m": distance_m,
     "distance_km": distance_km,
-    "elapsed_time_formatted": format_duration(elapsed_time),
+    "moving_time": format_duration(moving_time),
     "avg_pace_min_km": avg_pace,
     "start_time_local": start_time_local_str,
     "time_of_day_description": time_of_day,
@@ -96,7 +92,6 @@ prompt_inputs = {
     "city_name": city,
     "country": country,
     "uniqueness_score": uniqueness_score,
-    "last_similar_run": last_similar_run,
 }
 
 prompt_files = [
