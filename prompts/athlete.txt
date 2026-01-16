@@ -20,13 +20,13 @@ Run Details:
 Distance: {distance_m}m ({distance_km:.2f}km)
 Duration: {elapsed_time_formatted}
 Average Pace: {avg_pace_min_km} min/km
-Heart Rate: {avg_hr:.1f} BPM
 
 Time & Location:
 
 Started: {start_time_local}
 Time of Day: {time_of_day_description}
 City: {city_name}
+Country: {country}
 
 Weather Conditions:
 

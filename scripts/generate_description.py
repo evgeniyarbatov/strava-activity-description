@@ -58,7 +58,6 @@ elapsed_time = int(activity["elapsed_time"])
 moving_time = int(activity.get("moving_time", elapsed_time))
 
 avg_pace = format_pace(moving_time / distance_km)
-avg_hr = float(activity["average_heartrate"])
 
 start_time_local = parse_iso(activity["start_date_local"])
 start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
@@ -79,11 +78,7 @@ location = geolocator.reverse(
 )
 address = location.raw.get("address", {}) if location else {}
 city = address.get("city")
-area = address.get("state")
 country = address.get("country")
-city_name = city or ""
-location_parts = [part for part in (city, area, country) if part]
-location_text = ", ".join(location_parts)
 
 uniqueness = latest_payload["uniqueness"]
 uniqueness_score = float(uniqueness["score"])
@@ -95,12 +90,12 @@ prompt_inputs = {
     "distance_km": distance_km,
     "elapsed_time_formatted": format_duration(elapsed_time),
     "avg_pace_min_km": avg_pace,
-    "avg_hr": avg_hr,
     "start_time_local": start_time_local_str,
     "time_of_day_description": time_of_day,
     "feels_like": feels_like,
     "weather_description": weather_description,
-    "city_name": city_name,
+    "city_name": city,
+    "country": country,
     "uniqueness_score": uniqueness_score,
     "last_similar_run": last_similar_run,
 }
@@ -115,8 +110,6 @@ prompt_files = [
 for label, path in prompt_files:
     prompt_template = path.read_text(encoding="utf-8")
     prompt = prompt_template.format(**prompt_inputs)
-    if location_text:
-        prompt = f"{prompt}\nLocation: {location_text}"
     print(f"=== {label} prompt ===")
     print(prompt)
     print(f"=== {label} description ===")
