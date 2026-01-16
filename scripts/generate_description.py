@@ -54,8 +54,7 @@ weather_entries = latest_payload["weather"]
 
 distance_m = int(activity["distance"])
 distance_km = distance_m / 1000
-elapsed_time = int(activity["elapsed_time"])
-moving_time = int(activity.get("moving_time", elapsed_time))
+moving_time = int(activity.get("moving_time"))
 
 avg_pace = format_pace(moving_time / distance_km)
 
