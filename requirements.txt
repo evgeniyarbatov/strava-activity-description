@@ -3,3 +3,5 @@ geopy
 numpy
 polyline
 pytest
+openai
+python-dotenv

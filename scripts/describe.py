@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import argparse
 import subprocess
 from datetime import datetime
 from pathlib import Path
 
 import polyline
 from geopy.geocoders import Nominatim
+from openai import OpenAI
+from dotenv import load_dotenv
 
 from scripts.utils import load_json, parse_iso
 
@@ -17,6 +20,7 @@ PROMPT_FILES = [
     (path.stem, path) for path in sorted(PROMPTS_DIR.glob("*.txt"), key=lambda path: path.name)
 ]
 ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "common" / "activity-context.txt"
+CHATGPT_MODEL = "gpt-4o-mini"
 PROMPT_INPUT_KEYS = (
     "distance_km",
     "moving_time",
@@ -150,16 +154,33 @@ def run_model(prompt: str) -> str:
     return result.stdout.strip()
 
 
+def run_chatgpt(prompt: str, client: OpenAI) -> str:
+    result = client.chat.completions.create(
+        model=CHATGPT_MODEL,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    return result.choices[0].message.content.strip()
+
+
 def main() -> None:
+    load_dotenv()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--chatgpt", action="store_true")
+    args = parser.parse_args()
+
     payload = latest_payload(ACTIVITIES_DIR)
     inputs = prompt_inputs(payload)
+    chatgpt_client = OpenAI() if args.chatgpt else None
 
     for label, path in PROMPT_FILES:
         prompt = render_prompt(path, inputs)
         # print(f"=== {label} prompt ===")
         # print(prompt)
-        print(f"=== {label} description ===")
+        print(f"=== {label} description (ollama) ===")
         print(run_model(prompt))
+        if chatgpt_client:
+            print(f"=== {label} description (chatgpt) ===")
+            print(run_chatgpt(prompt, chatgpt_client))
 
 
 if __name__ == "__main__":

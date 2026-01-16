@@ -33,7 +33,7 @@ analyze:
 	@$(PYTHON) -m scripts.uniqueness
 
 describe:
-	@$(PYTHON) -m scripts.describe
+	@$(PYTHON) -m scripts.describe --chatgpt
 
 test:
 	@$(PYTHON) -m pytest
