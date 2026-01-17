@@ -33,6 +33,7 @@ analyze:
 	@$(PYTHON) -m scripts.activity
 	@$(PYTHON) -m scripts.weather
 	@$(PYTHON) -m scripts.uniqueness
+	@$(PYTHON) -m scripts.context
 
 describe:
 	@$(PYTHON) -m scripts.describe --gemini

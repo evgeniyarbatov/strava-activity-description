@@ -116,6 +116,7 @@ def prompt_inputs(payload: dict) -> dict:
     activity = payload["activity"]
     weather_entries = payload["weather"]
     summary = activity_summary(activity, weather_entries)
+    activity_context = payload["activity_context"]
 
     # Reverse geocode the midpoint of the route for location context.
     geolocator = Nominatim(user_agent="strava-activity-description")
@@ -124,6 +125,11 @@ def prompt_inputs(payload: dict) -> dict:
     uniqueness_description = payload["uniqueness"]["description"]
     summary.update(
         {
+            "distance_context": activity_context["distance"],
+            "moving_time_context": activity_context["moving_time"],
+            "average_cadence_context": activity_context["average_cadence"],
+            "average_hr_context": activity_context["average_hr"],
+            "max_hr_context": activity_context["max_hr"],
             "city_name": city,
             "country": country,
             "uniqueness_description": uniqueness_description,
