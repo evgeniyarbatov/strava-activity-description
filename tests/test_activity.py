@@ -14,7 +14,7 @@ def make_point(lat: float, lon: float, ele: str, time: datetime) -> dict:
     }
 
 
-def test_activity_payload_elevation_uses_simplified_points() -> None:
+def test_activity_payload() -> None:
     start = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
     points = [
         make_point(0.0, 0.0, "0", start),
@@ -25,4 +25,3 @@ def test_activity_payload_elevation_uses_simplified_points() -> None:
     payload = activity_payload(points)
 
     assert payload["activity"]["start_date"] == "2026-01-01T00:00:00Z"
-    assert payload["activity"]["elevation_gain"] == 0

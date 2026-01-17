@@ -65,20 +65,13 @@ def activity_payload(points: list[dict]) -> dict:
     for prev, curr in zip(points, points[1:]):
         distance_m += geo_distance((prev["lat"], prev["lon"]), (curr["lat"], curr["lon"])).meters
 
-    elevation_gain = 0.0
-    simplified_points = simplify_points(points, SIMPLIFY_DISTANCE_M)
-    for prev, curr in zip(simplified_points, simplified_points[1:]):
-        if prev["ele"] is not None and curr["ele"] is not None:
-            delta = float(curr["ele"]) - float(prev["ele"])
-            if delta > 0:
-                elevation_gain += delta
-
     hr_values = [int(p["hr"]) for p in points if p["hr"]]
     cad_values = [int(p["cad"]) for p in points if p["cad"]]
     average_hr = round(sum(hr_values) / len(hr_values), 1)
     max_hr = max(hr_values)
     average_cadence = round(sum(cad_values) / len(cad_values), 1)
 
+    simplified_points = simplify_points(points, SIMPLIFY_DISTANCE_M)
     encoded = polyline.encode([(pt["lat"], pt["lon"]) for pt in simplified_points])
 
     return {
@@ -91,7 +84,6 @@ def activity_payload(points: list[dict]) -> dict:
             "average_hr": average_hr,
             "max_hr": max_hr,
             "average_cadence": average_cadence,
-            "elevation_gain": int(round(elevation_gain)),
         }
     }
 

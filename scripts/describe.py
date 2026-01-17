@@ -24,7 +24,6 @@ GEMINI_MODEL = "gemini-2.5-flash"
 PROMPT_INPUT_KEYS = [
     "distance_km",
     "moving_time",
-    "elevation_gain",
     "avg_pace_min_km",
     "average_cadence",
     "average_hr",
@@ -78,7 +77,6 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
     average_hr = activity["average_hr"]
     max_hr = activity["max_hr"]
     average_cadence = activity["average_cadence"]
-    elevation_gain = activity["elevation_gain"]
 
     start_time_local = parse_iso(activity["start_date_local"])
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
@@ -92,7 +90,6 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
 
     return {
         "distance_km": distance_km,
-        "elevation_gain": elevation_gain,
         "moving_time": format_duration(moving_time),
         "avg_pace_min_km": avg_pace,
         "average_cadence": average_cadence,

@@ -2,7 +2,6 @@ ACTIVITY CONTEXT
 
 Distance: {distance_km:.2f}km
 Duration: {moving_time}
-Elevation gain: {elevation_gain}
 
 Average Pace: {avg_pace_min_km} min/km
 Average Cadence: {average_cadence}
