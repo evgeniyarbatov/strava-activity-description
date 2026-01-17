@@ -16,12 +16,13 @@ install: venv
 	@$(PIP) install --disable-pip-version-check -q --upgrade pip
 	@$(PIP) install --disable-pip-version-check -q -r $(REQUIREMENTS)
 
-data:
+strava:
 	@aws dynamodb scan \
 	--table-name strava_activities_v2 \
 	--output json \
 	| unmarshal > $(STRAVA_ACTIVITIES)
 
+weather:
 	@aws dynamodb scan \
 	--table-name weather-data \
 	--output json \
