@@ -1,0 +1,24 @@
+{
+  "activity": {
+    "start_date": "2026-01-16T23:27:01Z",
+    "start_date_local": "2026-01-17T06:27:01Z",
+    "distance": 9758,
+    "moving_time": 3675,
+    "map": {
+      "polyline": "ajc_CipdeSq@dC`Cx@Jr@q@NJd@gCa@gC|@sJEe@jCPtCfSYfAYMyEu@_@Xk@sEXcMM?iAtGQ\\eDxCGCxCjFh@Zf@d@g@b@\\fCPjAqEf@fC~Dk@Rv@OrAYXkBMkAZSbIUVgAKc@s@Xr@S^gA]a@mIY`@@rCq@A@x@c@TcNH_G`A]nB~AzG~Bg@nFr@Ta@CyBU[yCFNtCnCRR[WoC{CIOfAPjBhD@McDyBUk@XJbDtCC\\W[sC{BUe@zCaDlAoCkKxDyBrQ@XWIuCcET_@{AcBL}@c@v@`@d@c@|@HLfAzEDd@lAIxA[RkQFQOnQAVoCO_@mEREaBfCMZOAs@_CZ{IMoCXU_B~Bi@r@ZdBQFmCnB[rALItBTv@nA[H}@lAi@"
+    },
+    "average_hr": 131.7,
+    "max_hr": 159,
+    "average_cadence": 75.0,
+    "elevation_gain": 109
+  },
+  "weather": [
+    {
+      "weather_0_description": "light rain",
+      "main_feels_like": 20.36
+    }
+  ],
+  "uniqueness": {
+    "description": "mundane"
+  }
+}

@@ -2,6 +2,7 @@ fastdtw
 geopy
 numpy
 polyline
+shapely
 pytest
 python-dotenv
 google-genai

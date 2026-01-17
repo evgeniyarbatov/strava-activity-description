@@ -21,6 +21,22 @@ PROMPT_FILES = [
 ]
 ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "common" / "activity-context.txt"
 GEMINI_MODEL = "gemini-2.5-flash"
+PROMPT_INPUT_KEYS = [
+    "distance_km",
+    "moving_time",
+    "elevation_gain",
+    "avg_pace_min_km",
+    "average_cadence",
+    "average_hr",
+    "max_hr",
+    "start_time_local",
+    "time_of_day_description",
+    "feels_like",
+    "weather_description",
+    "city_name",
+    "country",
+    "uniqueness_description",
+]
 
 def format_duration(seconds: int) -> str:
     hours, remainder = divmod(seconds, 3600)
