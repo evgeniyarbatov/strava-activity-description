@@ -1,0 +1,1 @@
+- [ ] Collect weather with longer retention. It's own lambda
