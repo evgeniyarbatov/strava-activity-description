@@ -35,6 +35,9 @@ analyze:
 describe:
 	@$(PYTHON) -m scripts.describe --gemini
 
+merge:
+	@$(PYTHON) -m scripts.merge_gpx
+
 test:
 	@$(PYTHON) -m pytest
 
