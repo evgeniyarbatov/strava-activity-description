@@ -29,15 +29,13 @@ weather:
 	| unmarshal > $(WEATHER_DATA)
 
 analyze:
+	@$(PYTHON) -m scripts.merge_gpx
 	@$(PYTHON) -m scripts.activity
 	@$(PYTHON) -m scripts.weather
 	@$(PYTHON) -m scripts.uniqueness
 
 describe:
 	@$(PYTHON) -m scripts.describe --gemini
-
-merge:
-	@$(PYTHON) -m scripts.merge_gpx
 
 test:
 	@$(PYTHON) -m pytest
