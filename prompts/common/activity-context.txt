@@ -1,13 +1,13 @@
 ACTIVITY CONTEXT
 
-Distance: {distance_km:.2f}km ({distance_context})
-Duration: {moving_time} ({moving_time_context})
+Distance: {distance_context}
+Duration: {moving_time_context}
 
 Average Pace: {avg_pace_min_km} min/km
-Average Cadence: {average_cadence} ({average_cadence_context})
+Average Cadence: {average_cadence_context}
 
-Average HR: {average_hr} ({average_hr_context})
-Max HR: {max_hr} ({max_hr_context})
+Average HR: {average_hr_context}
+Max HR: {max_hr_context}
 
 Started: {start_time_local}
 Time of Day: {time_of_day_description}

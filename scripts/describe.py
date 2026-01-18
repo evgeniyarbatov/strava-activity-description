@@ -22,12 +22,12 @@ PROMPT_FILES = [
 ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "common" / "activity-context.txt"
 GEMINI_MODEL = "gemini-2.5-flash"
 PROMPT_INPUT_KEYS = [
-    "distance_km",
-    "moving_time",
+    "distance_context",
+    "moving_time_context",
     "avg_pace_min_km",
-    "average_cadence",
-    "average_hr",
-    "max_hr",
+    "average_cadence_context",
+    "average_hr_context",
+    "max_hr_context",
     "start_time_local",
     "time_of_day_description",
     "feels_like",
@@ -89,12 +89,7 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
     )
 
     return {
-        "distance_km": distance_km,
-        "moving_time": format_duration(moving_time),
         "avg_pace_min_km": avg_pace,
-        "average_cadence": average_cadence,
-        "average_hr": average_hr,
-        "max_hr": max_hr,
         "start_time_local": start_time_local_str,
         "time_of_day_description": time_of_day,
         "feels_like": feels_like,
