@@ -125,14 +125,14 @@ def write_gpx(points: list[GpxPoint], tcx_data: dict[str, tuple[int | None, int 
 
 def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    if any(p.suffix.lower() == ".gpx" for p in OUT_DIR.iterdir()):
-        return
     tcx_files = list_files(RAW_DIR, ".tcx")
     gpx_files = list_files(RAW_DIR, ".gpx")
     gpx_cache: dict[Path, tuple[list[GpxPoint], set[str]]] = {}
-    merged_points: list[GpxPoint] = []
-    merged_tcx: dict[str, tuple[int | None, int | None]] = {}
     for tcx_file in tcx_files:
+        output_id = uuid.uuid5(uuid.NAMESPACE_URL, tcx_file.name)
+        output_path = OUT_DIR / f"{output_id}.gpx"
+        if output_path.exists():
+            continue
         tcx_data = parse_tcx(tcx_file)
         tcx_keys = set(tcx_data)
         match_file: Path | None = None
@@ -153,12 +153,7 @@ def main() -> None:
         gpx_points = [pt for pt in match_points if pt.time_key in tcx_data]
         if not gpx_points:
             continue
-        merged_points.extend(gpx_points)
-        merged_tcx.update(tcx_data)
-
-    if merged_points:
-        output_path = OUT_DIR / f"{uuid.uuid4()}.gpx"
-        write_gpx(merged_points, merged_tcx, output_path)
+        write_gpx(gpx_points, tcx_data, output_path)
 
 
 if __name__ == "__main__":

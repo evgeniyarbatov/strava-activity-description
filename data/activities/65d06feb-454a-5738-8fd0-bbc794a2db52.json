@@ -11,12 +11,6 @@
     "max_hr": 159,
     "average_cadence": 75.0
   },
-  "weather": [
-    {
-      "weather_0_description": "light rain",
-      "main_feels_like": 20.36
-    }
-  ],
   "uniqueness": {
     "description": "mundane"
   },
