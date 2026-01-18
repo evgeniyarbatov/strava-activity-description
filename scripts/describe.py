@@ -15,6 +15,7 @@ from scripts.utils import load_json, parse_iso
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
+DESCRIPTIONS_DIR = DATA_DIR / "descriptions"
 PROMPTS_DIR = Path("prompts")
 PROMPT_FILES = [
     (path.stem, path) for path in sorted(PROMPTS_DIR.glob("*.txt"), key=lambda path: path.name)
@@ -64,9 +65,8 @@ def payload_start_time(path: Path) -> datetime:
     return parse_iso(payload["activity"]["start_date"])
 
 
-def latest_payload(activities_dir: Path) -> dict:
-    latest_path = max(activities_dir.glob("*.json"), key=payload_start_time)
-    return load_json(latest_path)
+def latest_payload_path(activities_dir: Path) -> Path:
+    return max(activities_dir.glob("*.json"), key=payload_start_time)
 
 
 def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
@@ -147,28 +147,47 @@ def run_gemini(prompt: str, client: genai.Client) -> str:
     return result.text.strip()
 
 
+def build_markdown(
+    activity_id: str,
+    inputs: dict,
+    gemini_client: genai.Client | None,
+) -> str:
+    lines = [f"# {activity_id}", ""]
+    for label, path in PROMPT_FILES:
+        prompt = render_prompt(path, inputs)
+        ollama_output = run_model(prompt)
+        print(label)
+        print(ollama_output)
+        lines.append(f"## {label}")
+        lines.append("### ollama")
+        lines.append(ollama_output)
+        if gemini_client:
+            lines.append("### gemini")
+            try:
+                lines.append(run_gemini(prompt, gemini_client))
+            except Exception as exc:
+                lines.append(f"gemini error: {exc}")
+        lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
+
+
 def main() -> None:
     load_dotenv()
     parser = argparse.ArgumentParser()
     parser.add_argument("--gemini", action="store_true")
     args = parser.parse_args()
 
-    payload = latest_payload(ACTIVITIES_DIR)
+    activity_path = latest_payload_path(ACTIVITIES_DIR)
+    payload = load_json(activity_path)
     inputs = prompt_inputs(payload)
     gemini_client = genai.Client() if args.gemini else None
 
-    for label, path in PROMPT_FILES:
-        prompt = render_prompt(path, inputs)
-        print(f"=== {label} prompt ===")
-        print(prompt)
-        print(f"=== {label} description (ollama) ===")
-        print(run_model(prompt))
-        if gemini_client:
-            print(f"=== {label} description (gemini) ===")
-            try:
-                print(run_gemini(prompt, gemini_client))
-            except Exception as exc:
-                print(f"gemini error: {exc}")
+    activity_id = activity_path.stem
+    output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
+    output_path.write_text(
+        build_markdown(activity_id, inputs, gemini_client),
+        encoding="utf-8",
+    )
 
 
 if __name__ == "__main__":
