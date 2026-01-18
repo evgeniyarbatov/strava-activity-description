@@ -16,9 +16,9 @@
   },
   "activity_context": {
     "distance": "solid",
-    "moving_time": "brisk",
-    "average_hr": "hard",
+    "moving_time": "expeditious",
+    "average_hr": "moderately-hard",
     "max_hr": "fierce",
-    "average_cadence": "casual"
+    "average_cadence": "easygoing"
   }
 }

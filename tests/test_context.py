@@ -52,8 +52,8 @@ def test_build_context_combines_goal_and_history() -> None:
 
     context = build_context(activity, history, goals)
 
-    assert context["distance"] == DISTANCE_WORDS[7]
-    assert context["moving_time"] == MOVING_TIME_WORDS[7]
-    assert context["average_hr"] == AVERAGE_HR_WORDS[10]
-    assert context["max_hr"] == MAX_HR_WORDS[10]
-    assert context["average_cadence"] == CADENCE_WORDS[5]
+    assert context["distance"] == DISTANCE_WORDS[11]
+    assert context["moving_time"] == MOVING_TIME_WORDS[11]
+    assert context["average_hr"] == AVERAGE_HR_WORDS[16]
+    assert context["max_hr"] == MAX_HR_WORDS[16]
+    assert context["average_cadence"] == CADENCE_WORDS[8]

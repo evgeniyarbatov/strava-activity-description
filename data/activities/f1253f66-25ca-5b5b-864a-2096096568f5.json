@@ -21,10 +21,10 @@
     "description": "mundane"
   },
   "activity_context": {
-    "distance": "medium",
-    "moving_time": "short",
-    "average_hr": "searing",
-    "max_hr": "redline",
-    "average_cadence": "snappy"
+    "distance": "respectable",
+    "moving_time": "brisk",
+    "average_hr": "maximal",
+    "max_hr": "all-out",
+    "average_cadence": "smooth"
   }
 }
