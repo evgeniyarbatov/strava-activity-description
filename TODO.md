@@ -1,1 +1,2 @@
 - [ ] Collect weather with longer retention. It's own lambda
+- [ ] I need traffic data collection as well
