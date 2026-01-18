@@ -3,7 +3,6 @@ ACTIVITY CONTEXT
 Distance: {distance_context}
 Duration: {moving_time_context}
 
-Average Pace: {avg_pace_min_km} min/km
 Average Cadence: {average_cadence_context}
 
 Average HR: {average_hr_context}

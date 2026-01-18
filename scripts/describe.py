@@ -24,7 +24,6 @@ GEMINI_MODEL = "gemini-2.5-flash"
 PROMPT_INPUT_KEYS = [
     "distance_context",
     "moving_time_context",
-    "avg_pace_min_km",
     "average_cadence_context",
     "average_hr_context",
     "max_hr_context",
@@ -71,13 +70,6 @@ def latest_payload(activities_dir: Path) -> dict:
 
 
 def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
-    distance_km = int(activity["distance"]) / 1000.0
-    moving_time = int(activity["moving_time"])
-    avg_pace = format_pace(moving_time / distance_km)
-    average_hr = activity["average_hr"]
-    max_hr = activity["max_hr"]
-    average_cadence = activity["average_cadence"]
-
     start_time_local = parse_iso(activity["start_date_local"])
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
     time_of_day = time_of_day_description(start_time_local)
@@ -89,7 +81,6 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
     )
 
     return {
-        "avg_pace_min_km": avg_pace,
         "start_time_local": start_time_local_str,
         "time_of_day_description": time_of_day,
         "feels_like": feels_like,
@@ -168,8 +159,8 @@ def main() -> None:
 
     for label, path in PROMPT_FILES:
         prompt = render_prompt(path, inputs)
-        # print(f"=== {label} prompt ===")
-        # print(prompt)
+        print(f"=== {label} prompt ===")
+        print(prompt)
         print(f"=== {label} description (ollama) ===")
         print(run_model(prompt))
         if gemini_client:
