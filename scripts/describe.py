@@ -162,11 +162,13 @@ def build_markdown(
         lines.append("### ollama")
         lines.append(ollama_output)
         if gemini_client:
-            lines.append("### gemini")
             try:
-                lines.append(run_gemini(prompt, gemini_client))
+                result = run_gemini(prompt, gemini_client)
+                lines.append("### gemini")
+                lines.append(result)
             except Exception as exc:
                 continue
+
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
