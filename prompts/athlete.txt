@@ -15,27 +15,14 @@ STYLE
 - Grounded in real conditions and effort
 - Short, efficient sentences
 
-CONSTRAINTS
-
-Do not use:
-- Overhyped or motivational language
-- Clichés
-- Emojis, hashtags, or lists
-- Long or winding sentences
-
-DO INSTEAD
+DO
 
 - Emphasize effort, pacing feel, and rhythm
 - Let discipline and consistency carry the tone
 - Sound like a post-run check-in, not a celebration
 
-STRUCTURE
-
-- 1–2 sentences only
-- Each sentence should convey useful training context
-
 {activity_context}
 
 TASK
 
-Generate a 1–2 sentence description of this run suitable for a Strava activity.
+Generate a 1–2 sentence description of this run.

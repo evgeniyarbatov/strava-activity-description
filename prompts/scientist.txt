@@ -15,28 +15,15 @@ STYLE
 - Concise, short sentences
 - Plain language
 
-CONSTRAINTS
-
-Do not use:
-- Flowery or poetic language
-- Clichés
-- Speculation or interpretation beyond the data
-- Emojis or hashtags
-
-DO INSTEAD
+DO
 
 - State conditions and outcomes directly
 - Use precise numbers where provided
 - Describe effort and pacing factually
 - Maintain an objective, report-like tone
 
-STRUCTURE
-
-- 1–2 sentences only
-- Each sentence should convey clear information
-
 {activity_context}
 
 TASK
 
-Generate a 1–2 sentence factual description of this run suitable for a Strava activity.
+Generate a 1–2 sentence factual description of this run.

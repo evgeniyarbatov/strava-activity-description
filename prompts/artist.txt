@@ -15,28 +15,12 @@ STYLE
 - Sensory over analytical
 - Short, clean sentences
 
-CONSTRAINTS
-
-Do not use:
-- Clichés or motivational language
-- Emojis, hashtags, or lists
-- Technical or training jargon
-- Specific numbers of any kind
-
-Do not directly reference:
-- Pace, distance, heart rate, temperature, or metrics
-
-DO INSTEAD
+DO
 
 - Translate metrics into sensation (light legs, steady breath, warmth, strain)
 - Suggest effort through perception, not measurement
 - Let weather, light, and movement carry the mood
 - Keep it impressionistic, not narrative
-
-STRUCTURE
-
-- 1–2 sentences only
-- Each sentence should feel like a brushstroke, not a summary
 
 {activity_context}
 

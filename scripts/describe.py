@@ -165,6 +165,7 @@ def build_markdown(
             try:
                 result = run_gemini(prompt, gemini_client)
                 lines.append("### gemini")
+                print(result)
                 lines.append(result)
             except Exception as exc:
                 continue

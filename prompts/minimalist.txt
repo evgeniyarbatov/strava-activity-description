@@ -16,19 +16,7 @@ STYLE
 - Artistic but grounded
 - Evocative without excess
 
-CONSTRAINTS
-
-Do not use:
-- Clichés or motivational phrases
-- Generic summaries (\"good run\", \"felt great\")
-- Emojis, hashtags, or exclamation points
-- Technical or analytical language
-- Specific numbers of any kind
-
-Do not directly reference:
-- Pace, distance, heart rate, temperature, or metrics
-
-DO INSTEAD
+DO
 
 - Let data dissolve into imagery and sensation
 - Treat rhythm as meditation and effort as sound or breath
@@ -36,19 +24,8 @@ DO INSTEAD
 - Find beauty in the ordinary and repeated
 - Write as if adding one brushstroke to a larger painting
 
-STRUCTURE
-
-- 1–2 sentences only
-- Short lines or compact sentences
-- Space and silence matter as much as words
-
-CONTEXT (DO NOT QUOTE DIRECTLY)
-
-Run details, time, location, weather, and route familiarity are provided below.
-Use them as raw material, not facts to restate.
-
 {activity_context}
 
 TASK
 
-Generate a 1–2 sentence poetic description of this run suitable for a Strava activity.
+Generate a 1–2 sentence poetic description of this run.
