@@ -1,0 +1,30 @@
+{
+  "activity": {
+    "start_date": "2026-01-21T01:21:52Z",
+    "start_date_local": "2026-01-21T08:21:52Z",
+    "distance": 7408,
+    "moving_time": 2389,
+    "map": {
+      "polyline": "edc_CiudeS}Cn@i@bFb@DYd@{AXiAeDmAIRlAUz@uCPg@GQg@i@h@aB?BvArJ?EqAu@i@MwAhAWrADNjCfDJj@v@Re@l@Xj@[UsDBpCr@VnBB~B|@tDoAGO}C~AcGRUuCm@sAp@vBu@|@g@Dc@u@{DJe@gBoAq@i@d@?hBmDD]k@]l@}AICxAzJEEwAq@g@CcBvBWt@bA@dB~DBNh@l@?Zi@LwC`@hDz@MtDvAfCGwBBRi@jC}@{Aj@iAlAoFq@g@wE`@dC{BjAI]eBWaBHyAkCeANJvByBKgAVYe@_@d@iBGPtAfJQDyAeAi@QkAp@c@jBFt@j@CjB|CCxAz@TuB_@kAX[x@zCjC^vBxAHq@vCmAyCbB}CIcA`@kAgAc@Rc@SIVKc@gBC"
+    },
+    "average_hr": 151.7,
+    "max_hr": 162,
+    "average_cadence": 78.9
+  },
+  "weather": [
+    {
+      "weather_0_description": "overcast clouds",
+      "main_feels_like": 18.44
+    }
+  ],
+  "uniqueness": {
+    "description": "mundane"
+  },
+  "activity_context": {
+    "distance": "moderate",
+    "moving_time": "nippy",
+    "average_hr": "maximal",
+    "max_hr": "all-out",
+    "average_cadence": "whirring"
+  }
+}
