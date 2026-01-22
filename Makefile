@@ -27,12 +27,9 @@ strava:
 analyze:
 	@$(PYTHON) -m scripts.merge
 	@$(PYTHON) -m scripts.activity
-	@$(PYTHON) -m scripts.weather
+	@$(PYTHON) -m scripts.weather-traffic
 	@$(PYTHON) -m scripts.uniqueness
 	@$(PYTHON) -m scripts.context
-
-weather:
-	@$(PYTHON) -m scripts.weather
 
 describe:
 	@$(PYTHON) -m scripts.describe --gemini
