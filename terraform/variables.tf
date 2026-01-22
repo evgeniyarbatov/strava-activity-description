@@ -34,11 +34,11 @@ variable "night_lambda_schedule" {
 }
 
 variable "latitude" {
-  type        = number
-  default     = 20.998192714122073
+  type    = number
+  default = 20.998192714122073
 }
 
 variable "longitude" {
-  type        = number
-  default     = 105.86742081433422
+  type    = number
+  default = 105.86742081433422
 }

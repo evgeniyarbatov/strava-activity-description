@@ -51,10 +51,18 @@ def lambda_handler(event, context):
         weather_json = json.loads(api_response)
 
         current_time = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
+        date = current_time.date().isoformat()
         ttl = int((current_time + timedelta(days=TTL_DAYS)).timestamp())
+
+        feels_like = weather_json["main"]["feels_like"]
+        weather_description = weather_json["weather"][0]["description"]
 
         item = {
             "ttl": ttl,
+            "context": "weather",
+            "date": date,
+            "feels_like": feels_like,
+            "weather_description": weather_description,
         }
 
         table.put_item(Item=item)

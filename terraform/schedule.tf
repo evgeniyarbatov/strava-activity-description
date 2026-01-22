@@ -22,7 +22,7 @@ resource "aws_cloudwatch_event_target" "night" {
 }
 
 resource "aws_lambda_permission" "morning" {
-  statement_id  = "AllowExecutionFromEventBridge"
+  statement_id  = "AllowExecutionFromEventBridgeMorning"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda.function_name
   principal     = "events.amazonaws.com"
@@ -30,7 +30,7 @@ resource "aws_lambda_permission" "morning" {
 }
 
 resource "aws_lambda_permission" "night" {
-  statement_id  = "AllowExecutionFromEventBridge"
+  statement_id  = "AllowExecutionFromEventBridgeNight"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.lambda.function_name
   principal     = "events.amazonaws.com"

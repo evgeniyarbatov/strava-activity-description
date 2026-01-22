@@ -2,6 +2,11 @@ data "archive_file" "lambda_zip" {
   type        = "zip"
   source_dir  = "${path.module}/lambda"
   output_path = "${path.module}/lambda.zip"
+  excludes = [
+    "__pycache__",
+    "**/__pycache__/**",
+    "*.pyc",
+  ]
 }
 
 resource "aws_lambda_function" "lambda" {
@@ -19,12 +24,12 @@ resource "aws_lambda_function" "lambda" {
   environment {
     variables = {
       DYNAMODB_TABLE = aws_dynamodb_table.activity_context.name
-      TTL_DAYS = var.ttl_days
+      TTL_DAYS       = var.ttl_days
 
       OPENWEATHER_API_KEY = var.openweather_api_key
 
-      LATITUDE       = var.latitude
-      LONGITUDE      = var.longitude
+      LATITUDE  = var.latitude
+      LONGITUDE = var.longitude
     }
   }
 }
