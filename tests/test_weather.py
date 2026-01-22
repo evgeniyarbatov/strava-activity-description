@@ -1,29 +1,30 @@
-from datetime import datetime, timezone
-from scripts.weather import build_weather_entries, filter_weather
+from scripts.weather import (
+    build_traffic_entries,
+    build_weather_entries,
+    filter_items_by_hour,
+)
 
 
-def test_filter_weather_orders_and_filters() -> None:
+def test_filter_items_by_hour_orders_and_filters() -> None:
     items = [
-        {"timestamp": "2026-01-01T00:10:00Z", "weather_0_description": "rain", "main_feels_like": 1},
-        {"timestamp": "2026-01-01T00:05:00Z", "weather_0_description": "cloudy", "main_feels_like": 2},
-        {"timestamp": "2026-01-01T00:20:00Z", "weather_0_description": "sunny", "main_feels_like": 3},
+        {"hour": 10, "data": {}},
+        {"hour": 5, "data": {}},
+        {"hour": 20, "data": {}},
     ]
-    start_time = datetime(2026, 1, 1, 0, 5, tzinfo=timezone.utc)
-    end_time = datetime(2026, 1, 1, 0, 15, tzinfo=timezone.utc)
 
-    filtered = filter_weather(items, start_time, end_time)
+    filtered = filter_items_by_hour(items, 5, 15)
 
-    assert [item["timestamp"] for item in filtered] == [
-        "2026-01-01T00:05:00Z",
-        "2026-01-01T00:10:00Z",
+    assert [item["hour"] for item in filtered] == [
+        5,
+        10,
     ]
 
 
 def test_build_weather_entries_keeps_expected_fields() -> None:
     entries = build_weather_entries(
         [
-            {"weather_0_description": "rain", "main_feels_like": 1, "extra": 5},
-            {"weather_0_description": "clear", "main_feels_like": 3},
+            {"data": {"weather_description": "rain", "feels_like": 1, "extra": 5}},
+            {"data": {"weather_description": "clear", "feels_like": 3}},
         ]
     )
 
@@ -32,3 +33,16 @@ def test_build_weather_entries_keeps_expected_fields() -> None:
         {"weather_0_description": "clear", "main_feels_like": 3},
     ]
 
+
+def test_build_traffic_entries_keeps_expected_fields() -> None:
+    entries = build_traffic_entries(
+        [
+            {"data": {"currentSpeed": 10, "freeFlowSpeed": 20, "extra": 5}},
+            {"data": {"currentSpeed": 12, "freeFlowSpeed": 22}},
+        ]
+    )
+
+    assert entries == [
+        {"currentSpeed": 10, "freeFlowSpeed": 20},
+        {"currentSpeed": 12, "freeFlowSpeed": 22},
+    ]

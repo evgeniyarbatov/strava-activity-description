@@ -23,5 +23,6 @@
   "activity_context": {
     "distance": "moderate",
     "moving_time": "nippy"
-  }
+  },
+  "traffic": []
 }

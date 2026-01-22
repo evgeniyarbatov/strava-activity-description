@@ -23,5 +23,6 @@
       "weather_0_description": "overcast clouds",
       "main_feels_like": 11.2
     }
-  ]
+  ],
+  "traffic": []
 }

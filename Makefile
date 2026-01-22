@@ -24,18 +24,15 @@ strava:
 	--output json \
 	| unmarshal > $(STRAVA_ACTIVITIES)
 
-weather:
-	@aws dynamodb scan \
-	--table-name weather-data \
-	--output json \
-	| unmarshal > $(WEATHER_DATA)
-
 analyze:
 	@$(PYTHON) -m scripts.merge
 	@$(PYTHON) -m scripts.activity
 	@$(PYTHON) -m scripts.weather
 	@$(PYTHON) -m scripts.uniqueness
 	@$(PYTHON) -m scripts.context
+
+weather:
+	@$(PYTHON) -m scripts.weather
 
 describe:
 	@$(PYTHON) -m scripts.describe --gemini
