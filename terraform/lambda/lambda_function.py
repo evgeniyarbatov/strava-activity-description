@@ -90,8 +90,10 @@ def lambda_handler(event, context):
             "ttl": ttl,
             "context": "weather",
             "date": date,
-            "feels_like": feels_like,
-            "weather_description": weather_description,
+            "data": {
+                "feels_like": feels_like,
+                "weather_description": weather_description,
+            }
         }
         table.put_item(Item=weather_item)
 
@@ -103,8 +105,10 @@ def lambda_handler(event, context):
             "ttl": ttl,
             "context": "traffic",
             "date": date,
-            "currentSpeed": Decimal(str(traffic["currentSpeed"])),
-            "freeFlowSpeed": Decimal(str(traffic["freeFlowSpeed"])),
+            "data": {
+                "currentSpeed": Decimal(str(traffic["currentSpeed"])),
+                "freeFlowSpeed": Decimal(str(traffic["freeFlowSpeed"])),
+            }
         }
         table.put_item(Item=traffic_item)
 
