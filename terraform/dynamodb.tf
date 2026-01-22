@@ -13,4 +13,9 @@ resource "aws_dynamodb_table" "activity_context" {
     name = "date"
     type = "S"
   }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
 }
