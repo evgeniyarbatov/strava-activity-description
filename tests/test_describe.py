@@ -37,15 +37,19 @@ def test_time_of_day_description() -> None:
 def test_activity_summary_builds_fields() -> None:
     activity = {"start_date_local": "2026-01-01T06:30:00Z"}
     weather_entries = [
-        {"main_feels_like": 10, "weather_description": "rain"},
-        {"main_feels_like": 12, "weather_description": "cloudy"},
+        {"feels_like": "cool", "description": "rain"},
+        {"feels_like": "cool", "description": "cloudy"},
+    ]
+    traffic_entries = [
+        {"description": "heavy"},
+        {"description": "gridlock"},
     ]
 
-    summary = activity_summary(activity, weather_entries)
+    summary = activity_summary(activity, weather_entries, traffic_entries)
 
     assert summary["start_time_local"] == "2026-01-01 06:30"
     assert summary["time_of_day_description"] == "morning"
-    assert summary["feels_like"] == 11
+    assert summary["feels_like"] == "cool"
     assert summary["weather_description"] == "rain, cloudy"
 
 
@@ -78,8 +82,9 @@ def test_render_prompt_includes_activity_context(tmp_path) -> None:
         "moving_time_context": "solid",
         "start_time_local": "2026-01-01 06:30",
         "time_of_day_description": "morning",
-        "feels_like": 11.2,
+        "feels_like": "cool",
         "weather_description": "cloudy",
+        "traffic_description": "gridlock",
         "city_name": "Paris",
         "country": "France",
         "uniqueness_description": "distinct",

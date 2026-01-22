@@ -34,11 +34,41 @@ def to_number(value: object) -> object:
     return value
 
 
+def feels_like_description(feels_like_c: float) -> str:
+    if feels_like_c <= 0:
+        return "freezing"
+    if feels_like_c <= 5:
+        return "cold"
+    if feels_like_c <= 10:
+        return "cool"
+    if feels_like_c <= 16:
+        return "mild"
+    if feels_like_c <= 22:
+        return "warm"
+    if feels_like_c <= 28:
+        return "hot"
+    return "scorching"
+
+
+def traffic_description(speed_ratio: float) -> str:
+    if speed_ratio <= 0.4:
+        return "gridlock"
+    if speed_ratio <= 0.6:
+        return "heavy"
+    if speed_ratio <= 0.8:
+        return "moderate"
+    if speed_ratio <= 0.95:
+        return "light"
+    return "clear"
+
+
 def build_weather_entries(items: list[dict]) -> list[dict]:
     return [
         {
-            "weather_description": item["data"]["weather_description"],
-            "main_feels_like": to_number(item["data"]["feels_like"]),
+            "description": item["data"]["weather_description"],
+            "feels_like": feels_like_description(
+                float(to_number(item["data"]["feels_like"]))
+            ),
         }
         for item in items
     ]
@@ -47,8 +77,10 @@ def build_weather_entries(items: list[dict]) -> list[dict]:
 def build_traffic_entries(items: list[dict]) -> list[dict]:
     return [
         {
-            "currentSpeed": to_number(item["data"]["currentSpeed"]),
-            "freeFlowSpeed": to_number(item["data"]["freeFlowSpeed"]),
+            "description": traffic_description(
+                float(to_number(item["data"]["currentSpeed"]))
+                / float(to_number(item["data"]["freeFlowSpeed"]))
+            ),
         }
         for item in items
     ]

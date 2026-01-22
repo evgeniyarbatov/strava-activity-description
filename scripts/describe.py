@@ -32,6 +32,7 @@ PROMPT_INPUT_KEYS = [
     "city_name",
     "country",
     "uniqueness_description",
+    "traffic_description"
 ]
 
 def format_duration(seconds: int) -> str:
@@ -57,15 +58,23 @@ def time_of_day_description(start_time: datetime) -> str:
     return "night"
 
 
-def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
+def activity_summary(
+    activity: dict,
+    weather_entries: list[dict],
+    traffic_entries: list[dict],
+) -> dict:
     start_time_local = parse_iso(activity["start_date_local"])
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
     time_of_day = time_of_day_description(start_time_local)
 
-    feels_like_values = [float(entry["main_feels_like"]) for entry in weather_entries]
-    feels_like = sum(feels_like_values) / len(feels_like_values)
+    feels_like_values = [str(entry["feels_like"]) for entry in weather_entries]
+    feels_like = max(feels_like_values, key=feels_like_values.count)
     weather_description = ", ".join(
-        str(entry["weather_description"]) for entry in weather_entries
+        str(entry["description"]) for entry in weather_entries
+    )
+
+    traffic_description = ", ".join(
+        str(entry["description"]) for entry in traffic_entries
     )
 
     return {
@@ -73,6 +82,7 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
         "time_of_day_description": time_of_day,
         "feels_like": feels_like,
         "weather_description": weather_description,
+        "traffic_description": traffic_description,
     }
 
 

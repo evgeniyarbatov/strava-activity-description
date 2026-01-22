@@ -1,4 +1,4 @@
-from scripts.weather import (
+from scripts.weather_traffic import (
     build_traffic_entries,
     build_weather_entries,
     filter_items_by_hour,
@@ -29,8 +29,8 @@ def test_build_weather_entries_keeps_expected_fields() -> None:
     )
 
     assert entries == [
-        {"weather_description": "rain", "main_feels_like": 1},
-        {"weather_description": "clear", "main_feels_like": 3},
+        {"description": "rain", "feels_like": "cold"},
+        {"description": "clear", "feels_like": "cold"},
     ]
 
 
@@ -43,6 +43,10 @@ def test_build_traffic_entries_keeps_expected_fields() -> None:
     )
 
     assert entries == [
-        {"currentSpeed": 10, "freeFlowSpeed": 20},
-        {"currentSpeed": 12, "freeFlowSpeed": 22},
+        {
+            "description": "heavy",
+        },
+        {
+            "description": "heavy",
+        },
     ]

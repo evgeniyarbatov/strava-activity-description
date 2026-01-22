@@ -7,7 +7,9 @@ Started: {start_time_local}
 Time of Day: {time_of_day_description}
 City: {city_name}, {country}
 
-Feels like: {feels_like:.1f}°C
+Feels like: {feels_like}
 Conditions: {weather_description}
+
+Traffic: {traffic_description}
 
 Route Uniqueness: {uniqueness_description}
