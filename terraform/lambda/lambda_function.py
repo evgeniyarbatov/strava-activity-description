@@ -8,7 +8,7 @@ import boto3
 import urllib3
 
 DYNAMODB_TABLE = os.environ["DYNAMODB_TABLE"]
-TTL_DAYS = os.environ["TTL_DAYS"]
+TTL_DAYS = int(os.environ["TTL_DAYS"])
 
 LAT = os.environ["LATITUDE"]
 LON = os.environ["LONGITUDE"]

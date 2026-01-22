@@ -9,6 +9,8 @@ STRAVA_ACTIVITIES = $(DATA_DIR)/strava_activities.json
 WEATHER_DATA = $(DATA_DIR)/weather.json
 DESCRIPTIONS = $(DATA_DIR)/descriptions.txt
 
+TERRAFORM_DIR = terraform
+
 venv:
 	@python3 -m venv $(VENV_PATH)
 
@@ -40,5 +42,8 @@ describe:
 
 test:
 	@$(PYTHON) -m pytest
+
+deploy:
+	cd $(TERRAFORM_DIR) && terraform apply -auto-approve
 
 .PHONY: data test
