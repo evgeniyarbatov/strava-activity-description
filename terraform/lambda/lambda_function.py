@@ -31,7 +31,7 @@ def call_weather_api(lat, lon):
     }
     query_params = urlencode(params)
 
-    response = http.request("GET", f"{WEATHER_BASE_URL}?{query_params}")
+    response = http.request("GET", f"{url}?{query_params}")
     if response.status != 200:
         return None
 
