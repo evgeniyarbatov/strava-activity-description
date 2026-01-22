@@ -37,7 +37,7 @@ def to_number(value: object) -> object:
 def build_weather_entries(items: list[dict]) -> list[dict]:
     return [
         {
-            "weather_0_description": item["data"]["weather_description"],
+            "weather_description": item["data"]["weather_description"],
             "main_feels_like": to_number(item["data"]["feels_like"]),
         }
         for item in items

@@ -29,8 +29,8 @@ def test_build_weather_entries_keeps_expected_fields() -> None:
     )
 
     assert entries == [
-        {"weather_0_description": "rain", "main_feels_like": 1},
-        {"weather_0_description": "clear", "main_feels_like": 3},
+        {"weather_description": "rain", "main_feels_like": 1},
+        {"weather_description": "clear", "main_feels_like": 3},
     ]
 
 

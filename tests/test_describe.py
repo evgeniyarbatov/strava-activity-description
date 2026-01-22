@@ -37,8 +37,8 @@ def test_time_of_day_description() -> None:
 def test_activity_summary_builds_fields() -> None:
     activity = {"start_date_local": "2026-01-01T06:30:00Z"}
     weather_entries = [
-        {"main_feels_like": 10, "weather_0_description": "rain"},
-        {"main_feels_like": 12, "weather_0_description": "cloudy"},
+        {"main_feels_like": 10, "weather_description": "rain"},
+        {"main_feels_like": 12, "weather_description": "cloudy"},
     ]
 
     summary = activity_summary(activity, weather_entries)

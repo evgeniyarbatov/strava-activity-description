@@ -65,7 +65,7 @@ def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
     feels_like_values = [float(entry["main_feels_like"]) for entry in weather_entries]
     feels_like = sum(feels_like_values) / len(feels_like_values)
     weather_description = ", ".join(
-        str(entry["weather_0_description"]) for entry in weather_entries
+        str(entry["weather_description"]) for entry in weather_entries
     )
 
     return {
