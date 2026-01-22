@@ -11,15 +11,6 @@ ACTIVITIES_DIR = DATA_DIR / "activities"
 WEATHER_PATH = DATA_DIR / "weather.json"
 
 
-def activity_start_date(path: Path) -> datetime:
-    payload = load_json(path)
-    return parse_iso(payload["activity"]["start_date"])
-
-
-def latest_activity_path(activities_dir: Path) -> Path:
-    return max(activities_dir.glob("*.json"), key=activity_start_date)
-
-
 def filter_weather(
     weather_items: list[dict], start_time: datetime, end_time: datetime
 ) -> list[dict]:
@@ -43,19 +34,20 @@ def build_weather_entries(weather_items: list[dict]) -> list[dict]:
 
 
 def main() -> None:
-    activity_path = latest_activity_path(ACTIVITIES_DIR)
-    payload = load_json(activity_path)
-
-    activity = payload["activity"]
-    start_time = parse_iso(activity["start_date"])
-    end_time = start_time + timedelta(seconds=activity["moving_time"])
-
-    # Keep only weather items that fall within the activity window.
     weather_items = load_json(WEATHER_PATH)
-    weather_during_activity = filter_weather(weather_items, start_time, end_time)
-    payload["weather"] = build_weather_entries(weather_during_activity)
+    for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
+        payload = load_json(activity_path)
+        if "weather" in payload:
+            continue
+        activity = payload["activity"]
+        start_time = parse_iso(activity["start_date"])
+        end_time = start_time + timedelta(seconds=activity["moving_time"])
 
-    write_json(activity_path, payload)
+        # Keep only weather items that fall within the activity window.
+        weather_during_activity = filter_weather(weather_items, start_time, end_time)
+        payload["weather"] = build_weather_entries(weather_during_activity)
+
+        write_json(activity_path, payload)
 
 
 if __name__ == "__main__":

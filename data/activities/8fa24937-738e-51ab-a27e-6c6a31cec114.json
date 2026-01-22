@@ -1,0 +1,30 @@
+{
+  "activity": {
+    "start_date": "2026-01-21T22:34:40Z",
+    "start_date_local": "2026-01-22T05:34:40Z",
+    "distance": 11554,
+    "moving_time": 3913,
+    "map": {
+      "polyline": "qic_CmpdeSc@pDo@OM^w@wBmDSZlCaHWElAd@P`Pa@`BQRm@j@lA`@i@k@iCYbCnAOlFrA`AE`CuB@Q{@T}BzAo@UaDJcAuCYdBqAbAx@FC^G]{@OsBHkA{B{@\\UlBmJMHsArDZfBOXoCzBGOhDlACjDl@\\x@SRi@GVA]eAp@Gn@~GS~@aJKkJh@i@{GtEi@t@ZdAYlDNzDc@j@rHwGb@oGKgD\\]aGTs@tRS^QYSrAy@Ge@iAKcCNuA_D{@Rk@o@s@f@qEYu@vB`@RUjAVh@rI?HiBj@o@Td@hCz@rAa@b@l@NSRRXoAaAeBh@KVV_@b@Ht@|Cj@lClAf@CnAiAlAEFYuDtAeESi@Kw@wBq@e@ZAPt@a@~@n@h@dDI~AdAlD@kCIfA_A|AKFa@yDxAoFe@a@kDFnA[d@d@b@tC?~AlA|CD_CIlAoArACLUcEhAmFE_@mDbDu@lB|CY|@Tp@tCDoBDOUfAkAvAFd@_@iHnAZaEcADkAs@eAj@b@dD`BGdCj@rAgAfBIsDlAqEM_BZOk@k@XMm@s@Lo@]"
+    },
+    "average_hr": 149.1,
+    "max_hr": 166,
+    "average_cadence": 76.8
+  },
+  "weather": [
+    {
+      "weather_0_description": "light rain",
+      "main_feels_like": 10.28
+    }
+  ],
+  "uniqueness": {
+    "description": "mundane"
+  },
+  "activity_context": {
+    "distance": "considerable",
+    "moving_time": "efficient",
+    "average_hr": "redline",
+    "max_hr": "maxed",
+    "average_cadence": "brisk"
+  }
+}

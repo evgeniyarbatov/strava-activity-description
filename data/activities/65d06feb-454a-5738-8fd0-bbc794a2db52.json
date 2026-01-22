@@ -20,5 +20,6 @@
     "average_hr": "moderately-hard",
     "max_hr": "fierce",
     "average_cadence": "easygoing"
-  }
+  },
+  "weather": []
 }

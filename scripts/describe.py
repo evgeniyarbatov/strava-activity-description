@@ -60,15 +60,6 @@ def time_of_day_description(start_time: datetime) -> str:
     return "night"
 
 
-def payload_start_time(path: Path) -> datetime:
-    payload = load_json(path)
-    return parse_iso(payload["activity"]["start_date"])
-
-
-def latest_payload_path(activities_dir: Path) -> Path:
-    return max(activities_dir.glob("*.json"), key=payload_start_time)
-
-
 def activity_summary(activity: dict, weather_entries: list[dict]) -> dict:
     start_time_local = parse_iso(activity["start_date_local"])
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
@@ -180,17 +171,18 @@ def main() -> None:
     parser.add_argument("--gemini", action="store_true")
     args = parser.parse_args()
 
-    activity_path = latest_payload_path(ACTIVITIES_DIR)
-    payload = load_json(activity_path)
-    inputs = prompt_inputs(payload)
     gemini_client = genai.Client() if args.gemini else None
-
-    activity_id = activity_path.stem
-    output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
-    output_path.write_text(
-        build_markdown(activity_id, inputs, gemini_client),
-        encoding="utf-8",
-    )
+    for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
+        activity_id = activity_path.stem
+        output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
+        if output_path.exists():
+            continue
+        payload = load_json(activity_path)
+        inputs = prompt_inputs(payload)
+        output_path.write_text(
+            build_markdown(activity_id, inputs, gemini_client),
+            encoding="utf-8",
+        )
 
 
 if __name__ == "__main__":
