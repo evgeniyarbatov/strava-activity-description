@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime, timedelta
+from decimal import Decimal
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
@@ -54,7 +55,7 @@ def lambda_handler(event, context):
         date = current_time.date().isoformat()
         ttl = int((current_time + timedelta(days=TTL_DAYS)).timestamp())
 
-        feels_like = weather_json["main"]["feels_like"]
+        feels_like = Decimal(str(weather_json["main"]["feels_like"]))
         weather_description = weather_json["weather"][0]["description"]
 
         item = {
@@ -72,7 +73,6 @@ def lambda_handler(event, context):
             "body": json.dumps(
                 {
                     "message": "Weather data stored successfully",
-                    "timestamp": timestamp,
                 }
             ),
         }
