@@ -23,6 +23,11 @@ variable "openweather_api_key" {
   default = "***REMOVED***"
 }
 
+variable "tomtom_api_key" {
+  type    = string
+  default = "***REMOVED***"
+}
+
 variable "morning_lambda_schedule" {
   type    = string
   default = "cron(0 22-23,0 ? * * *)" # 05:00, 06:00, 07:00 Hanoi time
