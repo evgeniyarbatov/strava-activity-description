@@ -35,31 +35,45 @@ def to_number(value: object) -> object:
 
 
 def feels_like_description(feels_like_c: float) -> str:
-    if feels_like_c <= 0:
+    if feels_like_c < 5:
         return "freezing"
-    if feels_like_c <= 5:
+    if feels_like_c < 10:
+        return "icy"
+    if feels_like_c < 14:
+        return "very cold"
+    if feels_like_c < 18:
         return "cold"
-    if feels_like_c <= 10:
-        return "cool"
-    if feels_like_c <= 16:
+    if feels_like_c < 20:
+        return "quite cold"
+    if feels_like_c < 23:
         return "mild"
-    if feels_like_c <= 22:
+    if feels_like_c < 26:
+        return "pleasant"
+    if feels_like_c < 29:
         return "warm"
-    if feels_like_c <= 28:
+    if feels_like_c < 32:
         return "hot"
-    return "scorching"
+    if feels_like_c < 35:
+        return "muggy"
+    return "sweltering"
 
 
 def traffic_description(speed_ratio: float) -> str:
+    if speed_ratio <= 0.25:
+        return "standstill"
     if speed_ratio <= 0.4:
         return "gridlock"
-    if speed_ratio <= 0.6:
-        return "heavy"
-    if speed_ratio <= 0.8:
-        return "moderate"
+    if speed_ratio <= 0.55:
+        return "crawling"
+    if speed_ratio <= 0.7:
+        return "slow"
+    if speed_ratio <= 0.85:
+        return "busy"
     if speed_ratio <= 0.95:
-        return "light"
-    return "clear"
+        return "steady"
+    if speed_ratio <= 1.05:
+        return "smooth"
+    return "open"
 
 
 def build_weather_entries(items: list[dict]) -> list[dict]:

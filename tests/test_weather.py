@@ -29,8 +29,8 @@ def test_build_weather_entries_keeps_expected_fields() -> None:
     )
 
     assert entries == [
-        {"description": "rain", "feels_like": "cold"},
-        {"description": "clear", "feels_like": "cold"},
+        {"description": "rain", "feels_like": "freezing"},
+        {"description": "clear", "feels_like": "freezing"},
     ]
 
 
@@ -44,9 +44,9 @@ def test_build_traffic_entries_keeps_expected_fields() -> None:
 
     assert entries == [
         {
-            "description": "heavy",
+            "description": "crawling",
         },
         {
-            "description": "heavy",
+            "description": "crawling",
         },
     ]
