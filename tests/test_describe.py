@@ -76,9 +76,6 @@ def test_render_prompt_includes_activity_context(tmp_path) -> None:
     inputs = {
         "distance_context": "medium",
         "moving_time_context": "solid",
-        "average_cadence_context": "steady",
-        "average_hr_context": "hard",
-        "max_hr_context": "fierce",
         "start_time_local": "2026-01-01 06:30",
         "time_of_day_description": "morning",
         "feels_like": 11.2,

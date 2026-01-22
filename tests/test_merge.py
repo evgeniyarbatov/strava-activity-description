@@ -5,14 +5,13 @@ from scripts.merge import (
     GpxPoint,
     list_files,
     parse_gpx,
-    parse_tcx,
     parse_time,
     time_key,
     write_gpx,
 )
 
 
-def test_write_gpx_includes_hr_and_cadence(tmp_path) -> None:
+def test_write_gpx_writes_points(tmp_path) -> None:
     points = [
         GpxPoint(
             lat="1.0",
@@ -22,15 +21,16 @@ def test_write_gpx_includes_hr_and_cadence(tmp_path) -> None:
             time_key="2026-01-01T00:00:00Z",
         )
     ]
-    tcx_data = {"2026-01-01T00:00:00Z": (120, 80)}
     output = tmp_path / "activity.gpx"
 
-    write_gpx(points, tcx_data, output)
+    write_gpx(points, {}, output)
 
     tree = ET.parse(output)
     root = tree.getroot()
-    assert root.find(".//{*}hr").text == "120"
-    assert root.find(".//{*}cad").text == "80"
+    trkpt = root.find(".//{*}trkpt")
+    assert trkpt.attrib == {"lat": "1.0", "lon": "2.0"}
+    assert trkpt.findtext("{*}ele") == "3"
+    assert trkpt.findtext("{*}time") == "2026-01-01T00:00:00Z"
 
 
 def test_parse_time_and_key() -> None:
@@ -48,34 +48,6 @@ def test_list_files_filters_by_suffix(tmp_path) -> None:
     files = list_files(tmp_path, ".gpx")
 
     assert [path.name for path in files] == ["a.gpx", "b.gpx"]
-
-
-def test_parse_tcx_reads_metrics(tmp_path) -> None:
-    tcx_path = tmp_path / "sample.tcx"
-    tcx_path.write_text(
-        """<?xml version="1.0" encoding="UTF-8"?>
-<TrainingCenterDatabase>
-  <Activities>
-    <Activity>
-      <Lap>
-        <Track>
-          <Trackpoint>
-            <Time>2026-01-01T00:00:00Z</Time>
-            <HeartRateBpm><Value>150</Value></HeartRateBpm>
-            <Cadence>80</Cadence>
-          </Trackpoint>
-        </Track>
-      </Lap>
-    </Activity>
-  </Activities>
-</TrainingCenterDatabase>
-""",
-        encoding="utf-8",
-    )
-
-    data = parse_tcx(tcx_path)
-
-    assert data == {"2026-01-01T00:00:00Z": (150, 80)}
 
 
 def test_parse_gpx_reads_points(tmp_path) -> None:

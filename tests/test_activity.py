@@ -11,8 +11,6 @@ def make_point(lat: float, lon: float, ele: str, time: datetime) -> dict:
         "lon": lon,
         "ele": ele,
         "time": time,
-        "hr": "100",
-        "cad": "80",
     }
 
 
@@ -39,12 +37,6 @@ def test_parse_points_reads_track_data(tmp_path: Path) -> None:
       <trkpt lat="1.0" lon="2.0">
         <ele>3</ele>
         <time>2026-01-01T00:00:00Z</time>
-        <extensions>
-          <gpxtpx:TrackPointExtension xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1">
-            <gpxtpx:hr>100</gpxtpx:hr>
-            <gpxtpx:cad>80</gpxtpx:cad>
-          </gpxtpx:TrackPointExtension>
-        </extensions>
       </trkpt>
     </trkseg>
   </trk>
@@ -61,8 +53,6 @@ def test_parse_points_reads_track_data(tmp_path: Path) -> None:
             "lon": 2.0,
             "ele": "3",
             "time": datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
-            "hr": "100",
-            "cad": "80",
         }
     ]
 

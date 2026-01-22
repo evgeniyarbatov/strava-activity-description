@@ -1,5 +1,4 @@
 from __future__ import annotations
-from bisect import bisect_right
 from pathlib import Path
 from scripts.utils import load_json, write_json
 
@@ -67,25 +66,13 @@ GOAL_FIELDS = [
 ]
 
 
-def describe_value(value: float, values: list[float], words: list[str]) -> str | None:
-    if not values:
-        return None
-    position = bisect_right(values, value)
-    percentile = position / len(values)
-    index = min(len(words) - 1, int(percentile * len(words)))
-    return words[index]
-
-
 def describe_goal(value: float, goal: float, words: list[str]) -> str:
     ratio = value / goal
     index = min(len(words) - 1, int(ratio * (len(words) - 1)))
     return words[index]
 
 
-def build_context(
-    activity: dict,
-    goals: dict[str, float],
-) -> dict:
+def build_context(activity: dict, goals: dict[str, float]) -> dict:
     context: dict[str, str] = {}
     for field, words in GOAL_FIELDS:
         value = activity.get(field)
@@ -98,7 +85,8 @@ def build_context(
 
 def main() -> None:
     goals = load_json(GOALS_PATH)
-    for path in ACTIVITIES_DIR.glob("*.json"):
+    activity_paths = sorted(ACTIVITIES_DIR.glob("*.json"))
+    for path in activity_paths:
         payload = load_json(path)
         activity = payload.get("activity") or {}
         payload["activity_context"] = build_context(activity, goals)

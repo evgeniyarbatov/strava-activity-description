@@ -24,13 +24,21 @@ def parse_points(path: Path) -> list[dict]:
         time_text = trkpt.findtext("{*}time")
         if not time_text:
             continue
-        points.append(
-            {
-                "lat": float(trkpt.attrib["lat"]),
-                "lon": float(trkpt.attrib["lon"]),
-                "time": parse_iso(time_text),
-            }
-        )
+        point = {
+            "lat": float(trkpt.attrib["lat"]),
+            "lon": float(trkpt.attrib["lon"]),
+            "time": parse_iso(time_text),
+        }
+        ele = trkpt.findtext("{*}ele")
+        if ele is not None:
+            point["ele"] = ele
+        hr = trkpt.findtext(".//{*}hr")
+        if hr is not None:
+            point["hr"] = hr
+        cad = trkpt.findtext(".//{*}cad")
+        if cad is not None:
+            point["cad"] = cad
+        points.append(point)
     return points
 
 
