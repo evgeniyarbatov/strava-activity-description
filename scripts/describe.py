@@ -25,9 +25,6 @@ GEMINI_MODEL = "gemini-2.5-flash"
 PROMPT_INPUT_KEYS = [
     "distance_context",
     "moving_time_context",
-    "average_cadence_context",
-    "average_hr_context",
-    "max_hr_context",
     "start_time_local",
     "time_of_day_description",
     "feels_like",
@@ -104,9 +101,6 @@ def prompt_inputs(payload: dict) -> dict:
         {
             "distance_context": activity_context["distance"],
             "moving_time_context": activity_context["moving_time"],
-            "average_cadence_context": activity_context["average_cadence"],
-            "average_hr_context": activity_context["average_hr"],
-            "max_hr_context": activity_context["max_hr"],
             "city_name": city,
             "country": country,
             "uniqueness_description": uniqueness_description,

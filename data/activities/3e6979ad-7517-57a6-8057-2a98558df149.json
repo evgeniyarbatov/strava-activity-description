@@ -16,10 +16,7 @@
   },
   "activity_context": {
     "distance": "respectable",
-    "moving_time": "brisk",
-    "average_hr": "redline",
-    "max_hr": "intense",
-    "average_cadence": "relaxed"
+    "moving_time": "brisk"
   },
   "weather": [
     {

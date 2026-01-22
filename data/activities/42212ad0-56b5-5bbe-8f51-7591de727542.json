@@ -22,9 +22,6 @@
   },
   "activity_context": {
     "distance": "moderate",
-    "moving_time": "nippy",
-    "average_hr": "maximal",
-    "max_hr": "all-out",
-    "average_cadence": "whirring"
+    "moving_time": "nippy"
   }
 }

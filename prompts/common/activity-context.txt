@@ -3,11 +3,6 @@ ACTIVITY CONTEXT
 Distance: {distance_context}
 Duration: {moving_time_context}
 
-Average Cadence: {average_cadence_context}
-
-Average HR: {average_hr_context}
-Max HR: {max_hr_context}
-
 Started: {start_time_local}
 Time of Day: {time_of_day_description}
 City: {city_name}, {country}

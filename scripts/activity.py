@@ -28,10 +28,7 @@ def parse_points(path: Path) -> list[dict]:
             {
                 "lat": float(trkpt.attrib["lat"]),
                 "lon": float(trkpt.attrib["lon"]),
-                "ele": trkpt.findtext("{*}ele"),
                 "time": parse_iso(time_text),
-                "hr": trkpt.findtext(".//{*}hr"),
-                "cad": trkpt.findtext(".//{*}cad"),
             }
         )
     return points
@@ -65,12 +62,6 @@ def activity_payload(points: list[dict]) -> dict:
     for prev, curr in zip(points, points[1:]):
         distance_m += geo_distance((prev["lat"], prev["lon"]), (curr["lat"], curr["lon"])).meters
 
-    hr_values = [int(p["hr"]) for p in points if p["hr"]]
-    cad_values = [int(p["cad"]) for p in points if p["cad"]]
-    average_hr = round(sum(hr_values) / len(hr_values), 1)
-    max_hr = max(hr_values)
-    average_cadence = round(sum(cad_values) / len(cad_values), 1)
-
     simplified_points = simplify_points(points, SIMPLIFY_DISTANCE_M)
     encoded = polyline.encode([(pt["lat"], pt["lon"]) for pt in simplified_points])
 
@@ -81,9 +72,6 @@ def activity_payload(points: list[dict]) -> dict:
             "distance": int(round(distance_m)),
             "moving_time": moving_time,
             "map": {"polyline": encoded},
-            "average_hr": average_hr,
-            "max_hr": max_hr,
-            "average_cadence": average_cadence,
         }
     }
 

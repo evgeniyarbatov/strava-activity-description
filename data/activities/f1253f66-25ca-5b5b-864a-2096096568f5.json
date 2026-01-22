@@ -22,9 +22,6 @@
   },
   "activity_context": {
     "distance": "respectable",
-    "moving_time": "brisk",
-    "average_hr": "maximal",
-    "max_hr": "all-out",
-    "average_cadence": "smooth"
+    "moving_time": "brisk"
   }
 }
