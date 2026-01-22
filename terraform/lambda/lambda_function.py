@@ -81,6 +81,7 @@ def lambda_handler(event, context):
 
         current_time = datetime.now(ZoneInfo("Asia/Ho_Chi_Minh"))
         date = current_time.date().isoformat()
+        hour = current_time.hour
         ttl = int((current_time + timedelta(days=TTL_DAYS)).timestamp())
 
         feels_like = Decimal(str(weather_json["main"]["feels_like"]))
@@ -90,6 +91,7 @@ def lambda_handler(event, context):
             "ttl": ttl,
             "context": "weather",
             "date": date,
+            "hour": hour,
             "data": {
                 "feels_like": feels_like,
                 "weather_description": weather_description,
@@ -105,6 +107,7 @@ def lambda_handler(event, context):
             "ttl": ttl,
             "context": "traffic",
             "date": date,
+            "hour": hour,
             "data": {
                 "currentSpeed": Decimal(str(traffic["currentSpeed"])),
                 "freeFlowSpeed": Decimal(str(traffic["freeFlowSpeed"])),
