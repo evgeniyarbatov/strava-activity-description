@@ -24,5 +24,12 @@
     "distance": "short",
     "moving_time": "nippy"
   },
-  "traffic": []
+  "traffic": [],
+  "geo": {
+    "points_of_interest": [
+      "forest",
+      "park",
+      "pond"
+    ]
+  }
 }

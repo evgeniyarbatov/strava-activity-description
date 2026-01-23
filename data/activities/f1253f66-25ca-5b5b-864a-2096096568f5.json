@@ -24,5 +24,10 @@
     "distance": "short",
     "moving_time": "brisk"
   },
-  "traffic": []
+  "traffic": [],
+  "geo": {
+    "points_of_interest": [
+      "forest"
+    ]
+  }
 }

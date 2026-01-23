@@ -11,12 +11,12 @@
   "weather": [
     {
       "description": "overcast clouds",
-      "feels_like": "very cold"
+      "feels_like": "raw, unrelenting winter bite"
     }
   ],
   "traffic": [
     {
-      "description": "busy"
+      "description": "pulsating urban flow"
     }
   ],
   "uniqueness": {
@@ -25,5 +25,12 @@
   "activity_context": {
     "distance": "short",
     "moving_time": "brisk"
+  },
+  "geo": {
+    "points_of_interest": [
+      "forest",
+      "park",
+      "pond"
+    ]
   }
 }

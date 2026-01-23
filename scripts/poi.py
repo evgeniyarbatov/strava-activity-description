@@ -14,7 +14,6 @@ DATA_DIR = Path("data/activities")
 OSM_PATH = Path("osm/hanoi.osm")
 
 POI_TAGS = [
-    ("tourism", None),
     ("leisure", {"park", "garden", "nature_reserve"}),
     ("natural", {"tree", "wood", "water", "wetland", "grassland"}),
     ("water", {"pond", "lake", "reservoir", "river"}),
@@ -34,25 +33,22 @@ def parse_tags(element: ET.Element) -> dict:
 
 
 def match_poi(tags: dict) -> str | None:
-    for key, allowed in POI_TAGS:
-        if key in tags:
-            value = tags[key]
-            if allowed is None or value in allowed:
-                return f"{key}:{value}"
+    water_value = tags.get("water")
+    if water_value in {"pond", "lake", "reservoir", "river"}:
+        return water_value
+    waterway_value = tags.get("waterway")
+    if waterway_value in {"river", "stream", "canal"}:
+        return waterway_value
+    natural_value = tags.get("natural")
+    if natural_value in {"tree", "wood", "water", "wetland", "grassland"}:
+        return natural_value
+    leisure_value = tags.get("leisure")
+    if leisure_value in {"park", "garden", "nature_reserve"}:
+        return leisure_value
+    landuse_value = tags.get("landuse")
+    if landuse_value in {"park", "forest", "recreation_ground", "village_green"}:
+        return landuse_value
     return None
-
-
-def build_poi(osm_type: str, osm_id: str, lat: float, lon: float, tags: dict) -> dict | None:
-    category = match_poi(tags)
-    if not category:
-        return None
-    return {
-        "id": f"{osm_type}/{osm_id}",
-        "name": tags.get("name"),
-        "category": category,
-        "lat": lat,
-        "lon": lon,
-    }
 
 
 def load_pois(osm_path: Path) -> list[dict]:
@@ -67,9 +63,10 @@ def load_pois(osm_path: Path) -> list[dict]:
             if node_id and lat and lon:
                 nodes[node_id] = (float(lat), float(lon))
                 tags = parse_tags(element)
-                poi = build_poi("node", node_id, float(lat), float(lon), tags)
-                if poi:
-                    pois.append(poi)
+                category = match_poi(tags)
+                if category:
+                    pois.append({"category": category, "lat": float(lat), "lon": float(lon)})
+            element.clear()
         elif element.tag == "way":
             tags = parse_tags(element)
             category = match_poi(tags)
@@ -86,16 +83,8 @@ def load_pois(osm_path: Path) -> list[dict]:
                     else:
                         geom = LineString(coords)
                     centroid = geom.centroid
-                    pois.append(
-                        {
-                            "id": f"way/{element.get('id')}",
-                            "name": tags.get("name"),
-                            "category": category,
-                            "lat": centroid.y,
-                            "lon": centroid.x,
-                        }
-                    )
-        element.clear()
+                    pois.append({"category": category, "lat": centroid.y, "lon": centroid.x})
+            element.clear()
     return pois
 
 
@@ -129,8 +118,10 @@ def enrich_activity(path: Path, pois: list[dict]) -> None:
     activity["geo"] = geo
 
     polyline_value = None
-    if isinstance(activity.get("map"), dict):
-        polyline_value = activity["map"].get("polyline")
+    if isinstance(activity.get("activity"), dict):
+        activity_map = activity["activity"].get("map")
+        if isinstance(activity_map, dict):
+            polyline_value = activity_map.get("polyline")
 
     if not polyline_value:
         geo["points_of_interest"] = []
@@ -139,12 +130,12 @@ def enrich_activity(path: Path, pois: list[dict]) -> None:
 
     hull = hull_from_polyline(polyline_value)
     buffered = buffer_in_meters(hull, 20)
-    matches = []
+    categories = set()
     for poi in pois:
         point = Point(poi["lon"], poi["lat"])
         if buffered.contains(point):
-            matches.append(poi)
-    geo["points_of_interest"] = matches
+            categories.add(poi["category"])
+    geo["points_of_interest"] = sorted(categories)
     write_json(path, activity)
 
 

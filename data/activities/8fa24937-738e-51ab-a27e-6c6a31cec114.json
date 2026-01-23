@@ -21,5 +21,13 @@
     "distance": "modest",
     "moving_time": "efficient"
   },
-  "traffic": []
+  "traffic": [],
+  "geo": {
+    "points_of_interest": [
+      "forest",
+      "garden",
+      "park",
+      "pond"
+    ]
+  }
 }

@@ -44,6 +44,7 @@ analyze:
 	@$(PYTHON) -m scripts.weather_traffic
 	@$(PYTHON) -m scripts.uniqueness
 	@$(PYTHON) -m scripts.context
+	@$(PYTHON) -m scripts.poi
 
 describe:
 	@$(PYTHON) -m scripts.describe --gemini

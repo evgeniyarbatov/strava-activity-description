@@ -24,5 +24,13 @@
       "main_feels_like": 11.2
     }
   ],
-  "traffic": []
+  "traffic": [],
+  "geo": {
+    "points_of_interest": [
+      "forest",
+      "garden",
+      "park",
+      "pond"
+    ]
+  }
 }

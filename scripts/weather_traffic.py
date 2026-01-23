@@ -194,13 +194,13 @@ def feels_like_description(feels_like_c: float) -> str:
 def traffic_description(speed_ratio: float) -> str:
     if speed_ratio <= 0.25:
         return random.choice([
-            "complete standstill, motorbikes frozen",
-            "absolute gridlock paralysis",
-            "total traffic apocalypse",
+            "complete road standstill, motorbikes frozen",
+            "absolute road gridlock paralysis",
+            "total road traffic apocalypse",
             "utterly immobilized chaos",
-            "hopelessly jammed, zero movement",
-            "catastrophically stuck everywhere",
-            "nightmarish parking lot situation",
+            "hopelessly jammed roads, zero movement",
+            "catastrophically stuck on every street",
+            "nightmarish road parking lot situation",
             "exhaustingly stationary madness",
             "frustratingly cemented in place",
             "monumentally congested hell",
@@ -209,9 +209,9 @@ def traffic_description(speed_ratio: float) -> str:
         ])
     if speed_ratio <= 0.4:
         return random.choice([
-            "severe gridlock choking the streets",
-            "brutal congestion everywhere",
-            "mercilessly jammed citywide",
+            "severe road gridlock choking the streets",
+            "brutal road congestion everywhere",
+            "mercilessly jammed roads citywide",
             "agonizingly slow gridlock",
             "punishingly dense traffic",
             "oppressively packed roads",
@@ -224,10 +224,10 @@ def traffic_description(speed_ratio: float) -> str:
         ])
     if speed_ratio <= 0.55:
         return random.choice([
-            "crawling at snail's pace",
-            "inching forward painfully",
-            "barely moving, extreme patience required",
-            "creeping along grudgingly",
+            "crawling along roads at snail's pace",
+            "inching forward on streets painfully",
+            "barely moving on roads, extreme patience required",
+            "creeping along roadways grudgingly",
             "sluggishly advancing inch by inch",
             "tediously slow-motion traffic",
             "maddeningly gradual progress",
