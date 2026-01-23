@@ -34,7 +34,8 @@ PROMPT_INPUT_KEYS = [
     "city_name",
     "country",
     "uniqueness_description",
-    "traffic_description"
+    "traffic_description",
+    "points_of_interest",
 ]
 
 def format_duration(seconds: int) -> str:
@@ -194,6 +195,7 @@ def prompt_inputs(payload: dict) -> dict:
     traffic_entries = payload["traffic"]
     summary = activity_summary(activity, weather_entries, traffic_entries)
     activity_context = payload["activity_context"]
+    points_of_interest = ", ".join(payload["geo"]["points_of_interest"])
 
     # Reverse geocode the midpoint of the route for location context.
     geolocator = Nominatim(user_agent="strava-activity-description")
@@ -207,6 +209,7 @@ def prompt_inputs(payload: dict) -> dict:
             "city_name": city,
             "country": country,
             "uniqueness_description": uniqueness_description,
+            "points_of_interest": points_of_interest,
         }
     )
     return summary

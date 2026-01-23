@@ -12,4 +12,6 @@ Conditions: {weather_description}
 
 Traffic: {traffic_description}
 
+Points of Interest: {points_of_interest}
+
 Route Uniqueness: {uniqueness_description}

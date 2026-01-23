@@ -28,10 +28,21 @@ def test_build_weather_entries_keeps_expected_fields() -> None:
         ]
     )
 
-    assert entries == [
-        {"description": "rain", "feels_like": "freezing"},
-        {"description": "clear", "feels_like": "freezing"},
-    ]
+    freezing = {
+        "bone-chilling, rare Hanoi frost",
+        "shockingly frigid for Vietnam",
+        "once-in-a-decade freezing",
+        "arctic winds invading the tropics",
+        "glacial morning paralyzing the city",
+        "perishingly cold, unprecedented chill",
+        "numbing frost gripping the capital",
+        "mercilessly frozen, almost Siberian",
+        "devastatingly icy, historic low",
+    }
+    assert entries[0]["description"] == "rain"
+    assert entries[1]["description"] == "clear"
+    assert entries[0]["feels_like"] in freezing
+    assert entries[1]["feels_like"] in freezing
 
 
 def test_build_traffic_entries_keeps_expected_fields() -> None:
@@ -42,11 +53,19 @@ def test_build_traffic_entries_keeps_expected_fields() -> None:
         ]
     )
 
-    assert entries == [
-        {
-            "description": "crawling",
-        },
-        {
-            "description": "crawling",
-        },
-    ]
+    crawling = {
+        "crawling along roads at snail's pace",
+        "inching forward on streets painfully",
+        "barely moving on roads, extreme patience required",
+        "creeping along roadways grudgingly",
+        "sluggishly advancing inch by inch",
+        "tediously slow-motion traffic",
+        "maddeningly gradual progress",
+        "torturously crawling forward",
+        "glacially slow movement",
+        "laboriously inching through chaos",
+        "ploddingly slow, testing patience",
+        "excruciatingly sluggish flow",
+    }
+    assert entries[0]["description"] in crawling
+    assert entries[1]["description"] in crawling
