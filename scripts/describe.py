@@ -191,7 +191,8 @@ def location_from_polyline(map_polyline: str, geolocator: Nominatim) -> tuple[st
 def prompt_inputs(payload: dict) -> dict:
     activity = payload["activity"]
     weather_entries = payload["weather"]
-    summary = activity_summary(activity, weather_entries)
+    traffic_entries = payload["traffic"]
+    summary = activity_summary(activity, weather_entries, traffic_entries)
     activity_context = payload["activity_context"]
 
     # Reverse geocode the midpoint of the route for location context.
@@ -242,6 +243,7 @@ def build_markdown(
     lines = [f"# {activity_id}", ""]
     for label, path in PROMPT_FILES:
         prompt = render_prompt(path, inputs)
+        # print(prompt)
         ollama_output = run_model(prompt)
         print(label)
         print(ollama_output)

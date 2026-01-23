@@ -7,3 +7,5 @@ Generate activity description based on weather data and geometric properties of 
 Add GPX and TCX to `data/raw`
 
 Run `make analyze` to merge GPX/TCX, to get context and weather / traffic data.
+
+`make describe` to generate the descriptions.
