@@ -116,7 +116,11 @@ def main() -> None:
             continue
         activity = payload["activity"]
         start_time = parse_iso(activity["start_date_local"])
-        end_time = start_time + timedelta(seconds=activity["moving_time"])
+        end_time = (
+            start_time
+            + timedelta(seconds=activity["moving_time"])
+            + timedelta(hours=1)
+        )
         date = start_time.date().isoformat()
         start_hour = start_time.hour
         end_hour = end_time.hour
