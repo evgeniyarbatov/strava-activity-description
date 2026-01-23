@@ -16,6 +16,33 @@ DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
 DYNAMODB_TABLE = "strava-activity-context"
 
+FEELS_LIKE_FREEZING = [
+    "bone-chilling, rare Hanoi frost",
+    "shockingly frigid for Vietnam",
+    "once-in-a-decade freezing",
+    "arctic winds invading the tropics",
+    "glacial morning paralyzing the city",
+    "perishingly cold, unprecedented chill",
+    "numbing frost gripping the capital",
+    "mercilessly frozen, almost Siberian",
+    "devastatingly icy, historic low",
+]
+
+TRAFFIC_CRAWLING = [
+    "crawling along roads at snail's pace",
+    "inching forward on streets painfully",
+    "barely moving on roads, extreme patience required",
+    "creeping along roadways grudgingly",
+    "sluggishly advancing inch by inch",
+    "tediously slow-motion traffic",
+    "maddeningly gradual progress",
+    "torturously crawling forward",
+    "glacially slow movement",
+    "laboriously inching through chaos",
+    "ploddingly slow, testing patience",
+    "excruciatingly sluggish flow",
+]
+
 
 def filter_items_by_hour(
     items: list[dict], start_hour: int, end_hour: int
@@ -39,17 +66,7 @@ import random
 
 def feels_like_description(feels_like_c: float) -> str:
     if feels_like_c < 5:
-        return random.choice([
-            "bone-chilling, rare Hanoi frost",
-            "shockingly frigid for Vietnam",
-            "once-in-a-decade freezing",
-            "arctic winds invading the tropics",
-            "glacial morning paralyzing the city",
-            "perishingly cold, unprecedented chill",
-            "numbing frost gripping the capital",
-            "mercilessly frozen, almost Siberian",
-            "devastatingly icy, historic low"
-        ])
+        return random.choice(FEELS_LIKE_FREEZING)
     if feels_like_c < 10:
         return random.choice([
             "icy northern winds sweeping through",
@@ -223,20 +240,7 @@ def traffic_description(speed_ratio: float) -> str:
             "relentlessly packed streets"
         ])
     if speed_ratio <= 0.55:
-        return random.choice([
-            "crawling along roads at snail's pace",
-            "inching forward on streets painfully",
-            "barely moving on roads, extreme patience required",
-            "creeping along roadways grudgingly",
-            "sluggishly advancing inch by inch",
-            "tediously slow-motion traffic",
-            "maddeningly gradual progress",
-            "torturously crawling forward",
-            "glacially slow movement",
-            "laboriously inching through chaos",
-            "ploddingly slow, testing patience",
-            "excruciatingly sluggish flow"
-        ])
+        return random.choice(TRAFFIC_CRAWLING)
     if speed_ratio <= 0.7:
         return random.choice([
             "slow but steady movement",

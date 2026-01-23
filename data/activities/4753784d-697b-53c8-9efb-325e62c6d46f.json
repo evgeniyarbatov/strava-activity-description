@@ -24,7 +24,8 @@
   },
   "activity_context": {
     "distance": "short",
-    "moving_time": "brisk"
+    "moving_time": "brisk",
+    "time_of_day_description": "the bustling morning"
   },
   "geo": {
     "points_of_interest": [

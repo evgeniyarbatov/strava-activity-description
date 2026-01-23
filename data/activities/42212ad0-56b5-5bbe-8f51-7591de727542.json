@@ -22,7 +22,8 @@
   },
   "activity_context": {
     "distance": "short",
-    "moving_time": "nippy"
+    "moving_time": "nippy",
+    "time_of_day_description": "breakfast aftermath"
   },
   "traffic": [],
   "geo": {
