@@ -9,6 +9,11 @@ STRAVA_ACTIVITIES = $(DATA_DIR)/strava_activities.json
 WEATHER_DATA = $(DATA_DIR)/weather.json
 DESCRIPTIONS = $(DATA_DIR)/descriptions.txt
 
+BOUNDARY_POLY = osm/hanoi.poly
+OSM_URL = https://download.geofabrik.de/asia/vietnam-latest.osm.pbf
+COUNTRY_OSM_FILE = $$(basename $(OSM_URL))
+
+OSM_DIR = osm
 TERRAFORM_DIR = terraform
 
 venv:
@@ -23,6 +28,15 @@ strava:
 	--table-name strava_activities_v2 \
 	--output json \
 	| unmarshal > $(STRAVA_ACTIVITIES)
+
+country:
+	if [ ! -f $(OSM_DIR)/$(COUNTRY_OSM_FILE) ]; then \
+		wget $(OSM_URL) -P $(OSM_DIR); \
+	fi
+
+city:
+	@osmconvert $(OSM_DIR)/$(COUNTRY_OSM_FILE) -B=$(BOUNDARY_POLY) -o=$(OSM_DIR)/hanoi.osm.pbf
+	@osmium cat --overwrite $(OSM_DIR)/hanoi.osm.pbf -o $(OSM_DIR)/hanoi.osm
 
 analyze:
 	@$(PYTHON) -m scripts.merge
