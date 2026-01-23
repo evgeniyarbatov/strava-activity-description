@@ -30,7 +30,7 @@ variable "tomtom_api_key" {
 
 variable "morning_lambda_schedule" {
   type    = string
-  default = "cron(0 22-23,0 ? * * *)" # 05:00, 06:00, 07:00 Hanoi time
+  default = "cron(0 22-23,0-2 ? * * *)" # 05:00, 06:00, 07:00, 08:00, 09:00 Hanoi time
 }
 
 variable "night_lambda_schedule" {
