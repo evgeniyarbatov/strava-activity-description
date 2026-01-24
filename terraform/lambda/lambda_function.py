@@ -1,5 +1,6 @@
 import json
 import os
+import uuid
 from datetime import datetime, timedelta
 from decimal import Decimal
 from urllib.parse import urlencode
@@ -88,6 +89,7 @@ def lambda_handler(event, context):
         weather_description = weather_json["weather"][0]["description"]
 
         weather_item = {
+            "id": str(uuid.uuid4()),
             "ttl": ttl,
             "context": "weather",
             "date": date,
@@ -104,6 +106,7 @@ def lambda_handler(event, context):
             raise Exception("Failed to get traffic data from API")
 
         traffic_item = {
+            "id": str(uuid.uuid4()),
             "ttl": ttl,
             "context": "traffic",
             "date": date,

@@ -7,14 +7,14 @@ from pathlib import Path
 import random
 
 import boto3
-from boto3.dynamodb.conditions import Key
+from boto3.dynamodb.conditions import Attr
 
 from scripts.utils import load_json, parse_iso, write_json
 
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
-DYNAMODB_TABLE = "strava-activity-context"
+DYNAMODB_TABLE = "strava-activity-context-v2"
 
 FEELS_LIKE_FREEZING = [
     "bone-chilling, rare Hanoi frost",
@@ -45,12 +45,13 @@ TRAFFIC_CRAWLING = [
 
 
 def filter_items_by_hour(
-    items: list[dict], start_hour: int, end_hour: int
+    items: list[dict], start_hour: int, end_hour: int, context: str
 ) -> list[dict]:
     items = [
         item
         for item in items
-        if start_hour <= int(item["hour"]) <= end_hour
+        if item.get("context") == context
+        and start_hour <= int(item["hour"]) <= end_hour
     ]
     items.sort(key=lambda item: int(item["hour"]))
     return items
@@ -61,8 +62,6 @@ def to_number(value: object) -> object:
         return float(value)
     return value
 
-
-import random
 
 def feels_like_description(feels_like_c: float) -> str:
     if feels_like_c < 5:
@@ -340,11 +339,17 @@ def build_traffic_entries(items: list[dict]) -> list[dict]:
     ]
 
 
-def query_context_items(table, context: str, date: str) -> list[dict]:
-    response = table.query(
-        KeyConditionExpression=Key("context").eq(context) & Key("date").eq(date)
-    )
-    return response.get("Items", [])
+def query_items(table, date: str) -> list[dict]:
+    items = []
+    response = table.scan(FilterExpression=Attr("date").eq(date))
+    items.extend(response.get("Items", []))
+    while "LastEvaluatedKey" in response:
+        response = table.scan(
+            FilterExpression=Attr("date").eq(date),
+            ExclusiveStartKey=response["LastEvaluatedKey"],
+        )
+        items.extend(response.get("Items", []))
+    return items
 
 
 def main() -> None:
@@ -352,7 +357,7 @@ def main() -> None:
     table = dynamodb.Table(DYNAMODB_TABLE)
     for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
         payload = load_json(activity_path)
-        if "weather" in payload and "traffic" in payload:
+        if payload.get("weather") and payload.get("traffic"):
             continue
         activity = payload["activity"]
         start_time = parse_iso(activity["start_date_local"])
@@ -365,17 +370,17 @@ def main() -> None:
         start_hour = start_time.hour
         end_hour = end_time.hour
 
-        if "weather" not in payload:
-            weather_items = query_context_items(table, "weather", date)
+        if not payload.get("weather"):
+            items = query_items(table, date)
             weather_during_activity = filter_items_by_hour(
-                weather_items, start_hour, end_hour
+                items, start_hour, end_hour, "weather"
             )
             payload["weather"] = build_weather_entries(weather_during_activity)
 
-        if "traffic" not in payload:
-            traffic_items = query_context_items(table, "traffic", date)
+        if not payload.get("traffic"):
+            traffic_items = query_items(table, date)
             traffic_during_activity = filter_items_by_hour(
-                traffic_items, start_hour, end_hour
+                traffic_items, start_hour, end_hour, "traffic"
             )
             payload["traffic"] = build_traffic_entries(traffic_during_activity)
 

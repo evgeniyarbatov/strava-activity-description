@@ -212,7 +212,8 @@ def main() -> None:
     for path in activity_paths:
         payload = load_json(path)
         activity = payload.get("activity") or {}
-        payload["activity_context"] = build_context(activity, goals)
+        if payload.get("activity_context") is None:
+            payload["activity_context"] = build_context(activity, goals)
         write_json(path, payload)
 
 

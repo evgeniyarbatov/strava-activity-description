@@ -10,12 +10,12 @@ variable "lambda_name" {
 
 variable "dynamodb_table_name" {
   type    = string
-  default = "strava-activity-context"
+  default = "strava-activity-context-v2"
 }
 
 variable "ttl_days" {
   type    = number
-  default = 30
+  default = 2
 }
 
 variable "openweather_api_key" {

@@ -1,11 +1,11 @@
 resource "aws_dynamodb_table" "activity_context" {
   name         = var.dynamodb_table_name
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "context"
+  hash_key     = "id"
   range_key    = "date"
 
   attribute {
-    name = "context"
+    name = "id"
     type = "S"
   }
 
