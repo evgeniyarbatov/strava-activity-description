@@ -134,7 +134,7 @@ def enrich_activity(path: Path, pois: list[dict]) -> None:
     for poi in pois:
         point = Point(poi["lon"], poi["lat"])
         if buffered.contains(point):
-            categories.add(poi["category"])
+            categories.add(poi["category"].replace("_", " "))
     geo["points_of_interest"] = sorted(categories)
     write_json(path, activity)
 

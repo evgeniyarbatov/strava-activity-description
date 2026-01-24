@@ -20,22 +20,22 @@
     }
   ],
   "uniqueness": {
-    "description": "mundane"
+    "description": "novel"
   },
   "activity_context": {
     "distance": "massive",
     "moving_time": "marathon",
-    "time_of_day_description": "the void hours"
+    "time_of_day_description": "lunar hours"
   },
   "geo": {
     "points_of_interest": [
       "forest",
       "garden",
       "lake",
-      "nature_reserve",
+      "nature reserve",
       "park",
       "pond",
-      "recreation_ground",
+      "recreation ground",
       "reservoir",
       "tree",
       "water"
