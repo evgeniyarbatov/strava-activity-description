@@ -1,0 +1,44 @@
+{
+  "activity": {
+    "start_date": "2026-01-23T21:50:35Z",
+    "start_date_local": "2026-01-24T04:50:35Z",
+    "distance": 31016,
+    "moving_time": 11870,
+    "map": {
+      "polyline": "_kc_CepdeSTFwEDn@f@_AIiAs@NMiBh@iCU{AhD`@TqAdAmBAd@jAmAbB`@FpAbFk@jAhDnKl@bFaHlAg]hA@~Kc@Ff@jE[|Q_A\\kIJ[kC`AuAm@m@pAaAGiALfAoA`Ah@f@aCzACtB{DJgA_A_@iCLeBd@@VfAtAN^tAMn@l@h@kErBeDJsD]q@v@qAFpB~Hi@tEq@`@sCj@cTcA}IXg@[gGv@aA_@}C\\eJ_AiBy@kC@iEqAaNeAg@aAw@ZwBOyEaAsOyAgHIaGfCi@z@UlFv@xA`Br@~KmArEj@bJsALn@uAxHAhBeAbGs@~@a@tEk@hAwAhJwAd@Vl@i@`DgClB_ArBuHxEmJhJyABEvAgKjJElA~@PCTcVyBg@vE]X{B?sNiBy@ZYpAYB{C{@s@NiB}@_Le@Mg@}Bg@yCeDmEgCwDg@yAw@qGnDc@xA}CbDaIbEkGt@mGlBsA|@kACqElAqBvGz@lGrCdFjBdB_B|Cc@DqBeAcGcHeAeDgAk@aIbM?^fBtBbC`AzB|CvCrB~GnH`AZrAvBzDjJ|EzHe@pA{C`ChBbDk@e@i@`@hA_@wA{CvDwDeFyHuDiJ}A{BaAa@}FoGcDqBcCaD{C}A}AiBbIqNnAl@lApDxEjFzCrB`Ao@n@gBoG_JMq@^aA_AyB`@oCrAkDdFeA`ADdJuDhFe@rCkApBuBlAQLu@|@@nCaEhGiDlGxA~EzCdElEhKd@vHrAbBz@j@uAnAc@jQlBb@a@z@sEvUjC|@qDdGmFIm@h@uB`ADhUaTD_@|CuBd@?MkDvBmBd@cHx@{B`@gFtAoBjAqLnAuDe@k@x@cAbA_F~GDXb@dCt@jBSzG|AjAOjExAb@c@fFhBnA]bBr@nCBj@_@pA\\tEa@PWrGQhOf@fBf@~BINi@vDXn@cA@wIi@cDjCg@~HAdCo@Ki@y@J_@w@HeC_A_@XyA`@FGpA`@dAhAM`@b@XvBfAD?wCbA}@^uAlA_@DeAYJ^|@jGwBj@cCOaGh@Bc@_E?kFpf@uCUqA[KBkCs@gAYeEgAoDhFkBbRAJiEy@aAPu@UE~@YBc@yBe@"
+    }
+  },
+  "weather": [
+    {
+      "description": "overcast clouds",
+      "feels_like": "dank coldness clinging stubbornly"
+    }
+  ],
+  "traffic": [
+    {
+      "description": "delightfully open conditions"
+    }
+  ],
+  "uniqueness": {
+    "description": "mundane"
+  },
+  "activity_context": {
+    "distance": "massive",
+    "moving_time": "marathon",
+    "time_of_day_description": "the void hours"
+  },
+  "geo": {
+    "points_of_interest": [
+      "forest",
+      "garden",
+      "lake",
+      "nature_reserve",
+      "park",
+      "pond",
+      "recreation_ground",
+      "reservoir",
+      "tree",
+      "water"
+    ]
+  }
+}
