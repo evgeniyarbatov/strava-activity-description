@@ -1,0 +1,55 @@
+{
+  "activity": {
+    "start_date": "2026-01-24T23:24:22Z",
+    "start_date_local": "2026-01-25T06:24:22Z",
+    "distance": 17711,
+    "moving_time": 6483,
+    "map": {
+      "polyline": "_mc_CgqdeSqCMHk@k@MSi@oAJYf@w@?uBhAw@lBP`@YdAwDn@LtCvAdG}@dArClH|@rDPjDcEbAiF^oFKsQt@`@fLo@H`@tFw@fCs@l@qHlBoJE[fA\\nCOz@bAyBrAa@gAqBYDOdAdBrFoEl@sD?yB\\S`@mA?x@vHWrFoGd@{GB_J]Ya@cF|@yAOsA\\mJVmCi@Ko@{CB}D{@eC?mAu@qKyAgEM[c@}@LkJcBeEKoGeAeGOiCZmEtBc@tHlAvAzA^~K_BfEh@rI{Aj@c@fDkMUc@cAQ}@tDs@ZeEGcEy@yJYiBTcFvC_@hHnAlArA\\rJyAlFh@xJmBjDwNcAq@}BfFsMoAeIYoA\\}E~Bg@vHjApAbA\\bLkAdGVpIiBtAcGdAQbFRhCtA`CObFjAtBIfMjC`BC`Bl@pNGpBo@fHYdEd@vFBtAh@~BYlCTlAeANqKw@yBdFc@nFDnBc@@q@}@Bu@kA[cCTkBb@JR`A~@@rBhAfB{@ZmAlA]Iw@TOUAXdA|FkB|@{CCeT|e@cCCuA_@MDsBeDaNrGkBvQAJmFcAORsAUAx@CHe@gCm@"
+    }
+  },
+  "weather": [
+    {
+      "description": "overcast clouds",
+      "feels_like": "blustery gusts whipping through"
+    },
+    {
+      "description": "overcast clouds",
+      "feels_like": "penetrating dampness seeping everywhere"
+    },
+    {
+      "description": "overcast clouds",
+      "feels_like": "blustery gusts whipping through"
+    }
+  ],
+  "traffic": [
+    {
+      "description": "peacefully flowing streets"
+    },
+    {
+      "description": "serenely easy navigation"
+    },
+    {
+      "description": "tranquilly smooth movement"
+    }
+  ],
+  "uniqueness": {
+    "description": "ordinary"
+  },
+  "activity_context": {
+    "distance": "respectable",
+    "moving_time": "prolonged",
+    "time_of_day_description": "aurora"
+  },
+  "geo": {
+    "points_of_interest": [
+      "forest",
+      "garden",
+      "lake",
+      "park",
+      "pond",
+      "tree",
+      "water"
+    ]
+  }
+}
