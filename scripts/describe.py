@@ -58,11 +58,11 @@ def activity_summary(
     feels_like_values = [str(entry["feels_like"]) for entry in weather_entries]
     feels_like = max(feels_like_values, key=feels_like_values.count)
     weather_description = ", ".join(
-        str(entry["description"]) for entry in weather_entries
+        dict.fromkeys(str(entry["description"]) for entry in weather_entries)
     )
 
     traffic_description = ", ".join(
-        str(entry["description"]) for entry in traffic_entries
+        dict.fromkeys(str(entry["description"]) for entry in traffic_entries)
     )
 
     return {
