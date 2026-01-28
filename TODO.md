@@ -1,2 +1,3 @@
-- [ ] Collect weather with longer retention. It's own lambda
-- [ ] I need traffic data collection as well
+- [x] Collect weather with longer retention. It's own lambda
+- [x] I need traffic data collection as well
+- [ ] Traffic description seems to be off - which polyline it uses?
