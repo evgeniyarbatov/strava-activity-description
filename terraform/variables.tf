@@ -20,12 +20,12 @@ variable "ttl_days" {
 
 variable "openweather_api_key" {
   type    = string
-  default = "***REMOVED***"
+  default = null
 }
 
 variable "tomtom_api_key" {
   type    = string
-  default = "***REMOVED***"
+  default = null
 }
 
 variable "morning_lambda_schedule" {

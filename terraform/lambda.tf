@@ -26,8 +26,8 @@ resource "aws_lambda_function" "lambda" {
       DYNAMODB_TABLE = aws_dynamodb_table.activity_context.name
       TTL_DAYS       = var.ttl_days
 
-      OPENWEATHER_API_KEY = var.openweather_api_key
-      TOMTOM_API_KEY      = var.tomtom_api_key
+      OPENWEATHER_API_KEY = local.openweather_api_key
+      TOMTOM_API_KEY      = local.tomtom_api_key
 
       LATITUDE  = var.latitude
       LONGITUDE = var.longitude
