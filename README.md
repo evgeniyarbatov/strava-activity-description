@@ -9,3 +9,9 @@ Add GPX and TCX to `data/raw`
 Run `make analyze` to merge GPX/TCX, to get context and weather / traffic data.
 
 `make describe` to generate the descriptions.
+
+## Update
+
+`make test` to run tests
+
+`make deploy` to update Lambda
