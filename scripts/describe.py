@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import runpy
-import argparse
 import subprocess
 from pathlib import Path
 
@@ -139,11 +138,7 @@ def run_gemini(prompt: str, client: genai.Client) -> str:
     return result.text.strip()
 
 
-def build_markdown(
-    activity_id: str,
-    inputs: dict,
-    gemini_client: genai.Client | None,
-) -> str:
+def build_markdown(activity_id: str, inputs: dict, gemini_client: genai.Client) -> str:
     lines = [f"# {activity_id}", ""]
     for label, path in PROMPT_FILES:
         prompt = render_prompt(path, inputs)
@@ -154,25 +149,17 @@ def build_markdown(
         lines.append(f"## {label}")
         lines.append("### ollama")
         lines.append(ollama_output)
-        if gemini_client:
-            try:
-                result = run_gemini(prompt, gemini_client)
-                lines.append("### gemini")
-                print(result)
-                lines.append(result)
-            except Exception as exc:
-                continue
+        result = run_gemini(prompt, gemini_client)
+        lines.append("### gemini")
+        print(result)
+        lines.append(result)
 
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--gemini", action="store_true")
-    args = parser.parse_args()
-
-    gemini_client = genai.Client() if args.gemini else None
+    gemini_client = genai.Client()
     for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
         activity_id = activity_path.stem
         output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
