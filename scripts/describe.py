@@ -40,12 +40,50 @@ PROMPT_INPUT_KEYS = [
     "points_of_interest",
 ]
 VARIATION_PROMPTS = [
+    # Sensory & Perceptual
     "Lean on a single vivid sensory detail (sound, smell, or texture).",
-    "Include one brief, unexpected metaphor rooted in the surroundings.",
     "Name one color or quality of light.",
-    "Let a small contrast shape the sentence (calm body, busy street).",
     "Use one unusual verb to describe movement or air.",
+    "Let a single sound anchor the whole scene.",
+    "Name one smell that defines the moment.",
+    "Notice one texture underfoot or against skin.",
+    "Let temperature be the dominant sensation.",
+    "Focus on breath — its rhythm, weight, or quality.",
+
+    # Compositional & Structural
     "Frame the moment as a snapshot rather than a sequence.",
+    "Include one brief, unexpected metaphor rooted in the surroundings.",
+    "Let a small contrast shape the sentence (calm body, busy street).",
+    "Build the sentence around a single object noticed in passing.",
+    "Open with the environment, close with the body.",
+    "Open with the body, close with the environment.",
+    "Use juxtaposition between effort and stillness.",
+    "Let the sentence turn on a single conjunction — but, yet, while.",
+
+    # Temporal & Mood
+    "Capture the feeling of a specific moment mid-run, not the whole.",
+    "Suggest time of day without naming it directly.",
+    "Evoke the mood of transition — beginning settling into rhythm.",
+    "Let the city feel like it's waking up, winding down, or indifferent.",
+    "Imply weather through its effect on the body, not its name.",
+    "Convey effort as something almost forgotten rather than felt.",
+    "Suggest the run is already over before it fully began.",
+
+    # Voice & Distance
+    "Write as if observing yourself from just outside your body.",
+    "Be the last person noticing you as you pass.",
+    "Let the surroundings be indifferent to the run entirely.",
+    "Write as if describing a photograph taken mid-stride.",
+    "Adopt the distance of a painter noting a small figure in a landscape.",
+    "Make the city a character with no awareness of you.",
+
+    # Constraint-based
+    "Use no adjectives — carry everything with verbs and nouns.",
+    "Use exactly one adjective. Make it count.",
+    "Avoid any word that could appear in a fitness app.",
+    "Say nothing about speed, distance, or time — only sensation.",
+    "Let silence or absence be the defining quality.",
+    "End on an image, not a feeling.",
 ]
 GEMINI_TEMPERATURE_RANGE = (0.9, 1.3)
 GEMINI_TOP_P_RANGE = (0.85, 0.98)
