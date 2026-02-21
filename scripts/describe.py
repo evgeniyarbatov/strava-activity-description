@@ -1,16 +1,21 @@
 from __future__ import annotations
 
+import runpy
 import argparse
 import subprocess
 from pathlib import Path
 
 import polyline
 from geopy.geocoders import Nominatim
-from dotenv import load_dotenv
 from google import genai
 
 from scripts.utils import load_json, parse_iso
 
+api_secrets = Path.home() / "gitRepo" / "api-secrets"
+env_loader = api_secrets / "scripts" / "env_loader.py"
+load_env = runpy.run_path(env_loader)["load_env"]
+
+load_env(api_secrets / "gemini.env")
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
@@ -163,7 +168,6 @@ def build_markdown(
 
 
 def main() -> None:
-    load_dotenv()
     parser = argparse.ArgumentParser()
     parser.add_argument("--gemini", action="store_true")
     args = parser.parse_args()
