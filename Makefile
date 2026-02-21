@@ -4,7 +4,6 @@ PIP := $(VENV_PATH)/bin/pip
 REQUIREMENTS := requirements.txt
 
 DATA_DIR = data
-STRAVA_ACTIVITIES = $(DATA_DIR)/strava_activities.json
 WEATHER_DATA = $(DATA_DIR)/weather.json
 DESCRIPTIONS = $(DATA_DIR)/descriptions.txt
 
@@ -21,12 +20,6 @@ venv:
 install: venv
 	@$(PIP) install --disable-pip-version-check -q --upgrade pip
 	@$(PIP) install --disable-pip-version-check -q -r $(REQUIREMENTS)
-
-strava:
-	@aws dynamodb scan \
-	--table-name strava_activities_v2 \
-	--output json \
-	| unmarshal > $(STRAVA_ACTIVITIES)
 
 country:
 	if [ ! -f $(OSM_DIR)/$(COUNTRY_OSM_FILE) ]; then \
