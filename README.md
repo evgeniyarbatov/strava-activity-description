@@ -30,6 +30,6 @@ Run `make analyze` to merge GPX/TCX, to get context and weather / traffic data.
 
 `scripts/poi.py` loads OSM data from `osm/hanoi.osm` and adds nearby points-of-interest categories to the activity payload.
 
-`scripts/describe.py` renders prompt templates in `prompts/` and writes description markdown to `data/descriptions`, using Ollama and optional Gemini output.
+`scripts/describe.py` renders prompt templates in `prompts/` and writes description markdown to `data/descriptions`, using Ollama and Gemini output.
 
 `scripts/utils.py` provides shared JSON and ISO timestamp helpers used by the pipeline.

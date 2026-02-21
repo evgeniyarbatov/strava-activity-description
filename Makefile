@@ -39,7 +39,7 @@ analyze:
 	@$(PYTHON) -m scripts.poi
 
 describe:
-	@$(PYTHON) -m scripts.describe --gemini
+	@$(PYTHON) -m scripts.describe
 
 test:
 	@$(PYTHON) -m pytest
