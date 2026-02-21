@@ -51,7 +51,7 @@ describe:
 test:
 	@$(PYTHON) -m pytest
 
-deploy:
+deploy: test
 	@cd $(TERRAFORM_DIR) && terraform apply -auto-approve
 
 .PHONY: data test
