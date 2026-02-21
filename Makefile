@@ -1,5 +1,4 @@
 VENV_PATH := .venv
-
 PYTHON := $(VENV_PATH)/bin/python
 PIP := $(VENV_PATH)/bin/pip
 REQUIREMENTS := requirements.txt
