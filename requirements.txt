@@ -4,7 +4,6 @@ numpy
 polyline
 shapely
 pytest
-python-dotenv
 google-genai
 boto3
 pyproj
