@@ -1,0 +1,6 @@
+*
+!.gitignore
+!activities/
+!activities/**
+!descriptions/
+!descriptions/**
