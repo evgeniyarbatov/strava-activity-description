@@ -1,16 +1,15 @@
 from __future__ import annotations
 
 from pathlib import Path
-from statistics import mean
+from statistics import median
 
 import polyline
-from shapely.geometry import LineString
+from fastdtw import fastdtw
 
 from scripts.utils import load_json, write_json
 
 UNIQUENESS_MIN = 1
 UNIQUENESS_MAX = 100
-RESAMPLE_POINTS = 50
 UNIQUENESS_WORDS = [
     "mundane",
     "repetitive",
@@ -46,70 +45,58 @@ def point_distance(point_a: tuple[float, float], point_b: tuple[float, float]) -
     return ((point_a[0] - point_b[0]) ** 2 + (point_a[1] - point_b[1]) ** 2) ** 0.5
 
 
-def resample_points(
-    points: list[tuple[float, float]], count: int
-) -> list[tuple[float, float]]:
-    line = LineString([(lon, lat) for lat, lon in points])
-    if count <= 1:
-        return [points[0]]
-    length = line.length
-    if length == 0:
-        return [points[0]] * count
-    step = length / (count - 1)
-    resampled = []
-    for i in range(count):
-        point = line.interpolate(step * i)
-        resampled.append((point.y, point.x))
-    return resampled
-
-
-def build_reference_runs() -> list[dict]:
+def build_reference_runs(activities: list[dict] | None = None) -> list[dict]:
     runs: list[dict] = []
-    for path in ACTIVITIES_DIR.glob("*.json"):
-        payload = load_json(path)
+    if activities is None:
+        for path in ACTIVITIES_DIR.glob("*.json"):
+            payload = load_json(path)
+            activity = payload["activity"]
+            points = decode_points(activity)
+            if not points:
+                continue
+            activity_id = str(activity.get("id") or path.stem)
+            runs.append({"id": activity_id, "points": points})
+        return runs
+
+    for payload in activities:
         activity = payload["activity"]
         points = decode_points(activity)
         if not points:
             continue
-        activity_id = str(activity.get("id") or path.stem)
-        runs.append(
-            {
-                "id": activity_id,
-                "resampled": resample_points(points, RESAMPLE_POINTS),
-            }
-        )
+        activity_id = str(activity.get("id"))
+        runs.append({"id": activity_id, "points": points})
     return runs
 
 
-def mean_distance(distances: list[float]) -> float | None:
+def calculate_uniqueness_score(distances: list[float]) -> float | None:
     if not distances:
         return None
-    return mean(distances)
+    median_distance = median(distances)
+    if median_distance == 0:
+        return UNIQUENESS_MAX
+    ratio = min(distances) / median_distance
+    return UNIQUENESS_MAX - ratio * (UNIQUENESS_MAX - UNIQUENESS_MIN)
 
 
-def uniqueness_for_activity(
-    activity: dict, reference_runs: list[dict], activity_id: str
-) -> float | None:
+def uniqueness_for_activity(activity: dict, reference_runs: list[dict]) -> float | None:
     points = decode_points(activity)
     if not points or not reference_runs:
         return None
-    resampled = resample_points(points, RESAMPLE_POINTS)
+    activity_id = str(activity.get("id"))
     distances: list[float] = []
     for reference in reference_runs:
         if reference["id"] == activity_id:
             continue
-        distance = mean(
-            point_distance(a, b) for a, b in zip(resampled, reference["resampled"])
-        )
+        distance, _ = fastdtw(points, reference["points"], dist=point_distance)
         distances.append(float(distance))
-    return mean_distance(distances)
+    return calculate_uniqueness_score(distances)
 
 
 def uniqueness_description(score: float | None) -> str | None:
     if score is None:
         return None
     normalized = (score - UNIQUENESS_MIN) / (UNIQUENESS_MAX - UNIQUENESS_MIN)
-    index = int(normalized * (len(UNIQUENESS_WORDS) - 1))
+    index = int((1 - normalized) * (len(UNIQUENESS_WORDS) - 1))
     return UNIQUENESS_WORDS[index]
 
 
@@ -120,10 +107,7 @@ def main() -> None:
     for path in ACTIVITIES_DIR.glob("*.json"):
         payload = load_json(path)
         activity = payload["activity"]
-        activity_id = str(activity.get("id") or path.stem)
-        raw_scores[path] = uniqueness_for_activity(
-            activity, reference_runs, activity_id
-        )
+        raw_scores[path] = uniqueness_for_activity(activity, reference_runs)
 
     valid_scores = [score for score in raw_scores.values() if score is not None]
     if not valid_scores:

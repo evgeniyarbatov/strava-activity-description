@@ -45,12 +45,12 @@ TRAFFIC_CRAWLING = [
 
 
 def filter_items_by_hour(
-    items: list[dict], start_hour: int, end_hour: int, context: str
+    items: list[dict], start_hour: int, end_hour: int, context: str | None = None
 ) -> list[dict]:
     items = [
         item
         for item in items
-        if item.get("context") == context
+        if (context is None or item.get("context") == context)
         and start_hour <= int(item["hour"]) <= end_hour
     ]
     items.sort(key=lambda item: int(item["hour"]))
