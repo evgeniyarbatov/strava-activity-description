@@ -47,7 +47,7 @@ def call_traffic_api(point):
         "key": TOMTOM_API_KEY,
         "point": point.replace(" ", ""),
     }
-    query_params = urllib3.request.urlencode(params)
+    query_params = urlencode(params)
 
     response = http.request("GET", f"{url}?{query_params}")
     if response.status != 200:
