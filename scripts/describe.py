@@ -60,7 +60,9 @@ def activity_summary(
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
 
     feels_like_values = [str(entry["feels_like"]) for entry in weather_entries]
-    feels_like = max(feels_like_values, key=feels_like_values.count)
+    feels_like = ""
+    if feels_like_values:
+        feels_like = max(feels_like_values, key=feels_like_values.count)
     weather_description = ", ".join(
         dict.fromkeys(str(entry["description"]) for entry in weather_entries)
     )
