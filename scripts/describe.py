@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 import runpy
 import subprocess
 from pathlib import Path
@@ -38,6 +39,16 @@ PROMPT_INPUT_KEYS = [
     "traffic_description",
     "points_of_interest",
 ]
+VARIATION_PROMPTS = [
+    "Lean on a single vivid sensory detail (sound, smell, or texture).",
+    "Include one brief, unexpected metaphor rooted in the surroundings.",
+    "Name one color or quality of light.",
+    "Let a small contrast shape the sentence (calm body, busy street).",
+    "Use one unusual verb to describe movement or air.",
+    "Frame the moment as a snapshot rather than a sequence.",
+]
+GEMINI_TEMPERATURE_RANGE = (0.9, 1.3)
+GEMINI_TOP_P_RANGE = (0.85, 0.98)
 
 def format_duration(seconds: int) -> str:
     hours, remainder = divmod(seconds, 3600)
@@ -121,7 +132,9 @@ def render_prompt(template_path: Path, inputs: dict) -> str:
     prompt_template = template_path.read_text(encoding="utf-8")
     activity_context_template = ACTIVITY_CONTEXT_PATH.read_text(encoding="utf-8")
     activity_context = activity_context_template.format(**inputs)
-    return prompt_template.format(**inputs, activity_context=activity_context)
+    prompt = prompt_template.format(**inputs, activity_context=activity_context)
+    variation = random.choice(VARIATION_PROMPTS)
+    return f"{prompt}\n\nVARIATION\n{variation}"
 
 
 def run_model(prompt: str) -> str:
@@ -136,7 +149,11 @@ def run_model(prompt: str) -> str:
 
 
 def run_gemini(prompt: str, client: genai.Client) -> str:
-    result = client.models.generate_content(model=GEMINI_MODEL, contents=prompt)
+    config = genai.types.GenerateContentConfig(
+        temperature=random.uniform(*GEMINI_TEMPERATURE_RANGE),
+        top_p=random.uniform(*GEMINI_TOP_P_RANGE),
+    )
+    result = client.models.generate_content(model=GEMINI_MODEL, contents=prompt, config=config)
     return result.text.strip()
 
 
