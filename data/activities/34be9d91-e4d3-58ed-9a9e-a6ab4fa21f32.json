@@ -1,0 +1,52 @@
+{
+  "activity": {
+    "start_date": "2026-02-22T00:04:32Z",
+    "start_date_local": "2026-02-22T07:04:32Z",
+    "distance": 9637,
+    "moving_time": 3698,
+    "map": {
+      "polyline": "ghc_C_rdeSa@t@Hg@yDl@C]m@DfAMpA^Cj@sAdB^f@e@~@oJ\\uAYDuAlHGCwB`@i@~@MrAt@JbC~BOnARBx@}@V`@\\c@R\\Q\\|@PzE_DZ{KAoCb@[oDHsBvC_@tFZ|Cc@v@Tz@[l@pAHbE}@TeNBiDZe@yEb@uAxM?RjAzCYt@HPf@DdCWZwQHuAb@u@qEj@aBbQ@dAwAUXn@E\\cA^A\\^TYhANnBa@jA~@bDLeCOjDiBeDbAcA{CkDsAi@t@JpAWXd@tA~Aw@~CbAtCiAThBa@n@iE@CxIY\\gAFuAQa@a@O_Ig@^JhFOiFj@YZlBg@lA}@IGuAgFAMqAtDSOa@x@OPu@oAa@yBFg@oBk@i@eBJb@zAa@v@gDGUi@e@j@{AGDnAlJ?RmBjAm@e@iAoBFRfB]h@oHEGv@`@d@tF?~AUJsAd@o@r@PNn@xAQ"
+    }
+  },
+  "weather": [
+    {
+      "description": "light rain",
+      "feels_like": "gentle sunshine, pleasant breeze"
+    },
+    {
+      "description": "light rain",
+      "feels_like": "exquisitely mild, picture-perfect"
+    },
+    {
+      "description": "overcast clouds",
+      "feels_like": "blissfully agreeable conditions"
+    }
+  ],
+  "traffic": [
+    {
+      "description": "serenely easy navigation"
+    },
+    {
+      "description": "smooth sailing through streets"
+    },
+    {
+      "description": "vibrantly packed but progressing"
+    }
+  ],
+  "uniqueness": {
+    "description": "mundane"
+  },
+  "activity_context": {
+    "distance": "compact",
+    "moving_time": "expeditious",
+    "time_of_day_description": "dew-kissed morning"
+  },
+  "geo": {
+    "points_of_interest": [
+      "forest",
+      "garden",
+      "park",
+      "pond"
+    ]
+  }
+}
