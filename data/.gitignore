@@ -1,6 +1,7 @@
 *
 !.gitignore
-!activities/
-!activities/**
-!descriptions/
-!descriptions/**
+!gpx/
+!gpx/34be9d91-e4d3-58ed-9a9e-a6ab4fa21f32.gpx
+!raw/
+!raw/activity_21943608635.gpx
+!raw/Evgeny_Arbatov_2026-02-22_07-04-08.TCX

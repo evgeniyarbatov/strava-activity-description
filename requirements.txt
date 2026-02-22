@@ -7,3 +7,4 @@ pytest
 google-genai
 boto3
 pyproj
+python-dotenv
