@@ -20,9 +20,10 @@ Generate short Strava activity descriptions from run polylines, weather, traffic
 
 ## Run
 
-1. Add GPX/TCX to `data/raw`.
-2. Run `make analyze` to merge GPX/TCX and enrich activities with weather/traffic context.
-3. Run `make describe` to generate descriptions in `data/descriptions`.
+1. Update `goals.json` to set your personal distance and moving time targets.
+2. Add GPX/TCX to `data/raw`.
+3. Run `make analyze` to merge GPX/TCX and enrich activities with weather/traffic context.
+4. Run `make describe` to generate descriptions in `data/descriptions`.
 
 ## Dev Setup
 
