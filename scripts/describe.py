@@ -87,6 +87,13 @@ VARIATION_PROMPTS = [
 ]
 GEMINI_TEMPERATURE_RANGE = (0.9, 1.3)
 GEMINI_TOP_P_RANGE = (0.85, 0.98)
+GEMINI_RATE_LIMIT_MARKERS = (
+    "429",
+    "rate limit",
+    "rate-limited",
+    "resource_exhausted",
+    "too many requests",
+)
 
 def format_duration(seconds: int) -> str:
     hours, remainder = divmod(seconds, 3600)
@@ -195,6 +202,11 @@ def run_gemini(prompt: str, client: genai.Client) -> str:
     return result.text.strip()
 
 
+def is_rate_limit_error(error: Exception) -> bool:
+    message = str(error).lower()
+    return any(marker in message for marker in GEMINI_RATE_LIMIT_MARKERS)
+
+
 def build_markdown(activity_id: str, inputs: dict, gemini_client: genai.Client) -> str:
     lines = [f"# {activity_id}", ""]
     for label, path in PROMPT_FILES:
@@ -206,10 +218,17 @@ def build_markdown(activity_id: str, inputs: dict, gemini_client: genai.Client) 
         lines.append(f"## {label}")
         lines.append("### ollama")
         lines.append(ollama_output)
-        result = run_gemini(prompt, gemini_client)
-        lines.append("### gemini")
-        print(result)
-        lines.append(result)
+        try:
+            result = run_gemini(prompt, gemini_client)
+        except Exception as error:
+            if is_rate_limit_error(error):
+                result = ""
+            else:
+                raise
+        if result:
+            lines.append("### gemini")
+            print(result)
+            lines.append(result)
 
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
