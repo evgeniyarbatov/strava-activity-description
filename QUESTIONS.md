@@ -1,2 +1,0 @@
-- What to do with the results? Can this be art work? Update Strava?
-- How can I get it closer to how I want it to be - adding new dimension to my running?
