@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import random
-import runpy
 import subprocess
 from pathlib import Path
 
@@ -9,13 +8,9 @@ import polyline
 from geopy.geocoders import Nominatim
 from google import genai
 
-from scripts.utils import load_json, parse_iso
+from scripts.utils import load_env, load_json, parse_iso
 
-api_secrets = Path.home() / "gitRepo" / "api-secrets"
-env_loader = api_secrets / "scripts" / "env_loader.py"
-load_env = runpy.run_path(env_loader)["load_env"]
-
-load_env(api_secrets / "gemini.env")
+load_env(Path("api-keys/gemini.env"))
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
