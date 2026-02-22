@@ -27,6 +27,6 @@ Generate short Strava activity descriptions from run polylines, weather, traffic
 ## Dev Setup
 
 1. Create the venv and install dependencies: `make install`.
-2. Add API keys in `api-keys/`: `openweather.env`, `tomtom.env`, and `gemini.env` (each file should be a single `KEY=value` line).
+2. Add API keys in `api-keys/`: `openweather.env`, `tomtom.env`, and `gemini.env`.
 3. Configure Terraform + AWS: set AWS credentials in your shell for the target account; update the S3 backend in `terraform/terraform.tf`; set latitude/longitude for weather + traffic sampling
 4. Deploy infrastructure: `cd terraform && terraform init`, then `terraform apply`
