@@ -1,0 +1,1 @@
+- Create kaggle dataset with prompts, outputs and raw data. Plus my own ranking of each result model. Figure out which model and prompt works best
