@@ -12,6 +12,12 @@ from scripts.utils import load_env, load_json, parse_iso
 
 load_env(Path("api-keys/gemini.env"))
 
+LOCAL_OLLAMA_MODELS = {
+    "mistral-nemo",
+    "gemma3",
+    "qwen2.5",
+}
+
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
 DESCRIPTIONS_DIR = DATA_DIR / "descriptions"
@@ -177,9 +183,9 @@ def render_prompt(template_path: Path, inputs: dict) -> str:
     return f"{prompt}\n\nVARIATION\n\n{variation}"
 
 
-def run_model(prompt: str) -> str:
+def run_model(prompt: str, model: str) -> str:
     result = subprocess.run(
-        ["ollama", "run", "mistral-nemo"],
+        ["ollama", "run", model],
         input=prompt,
         text=True,
         capture_output=True,
@@ -207,23 +213,24 @@ def build_markdown(activity_id: str, inputs: dict, gemini_client: genai.Client) 
     for label, path in PROMPT_FILES:
         prompt = render_prompt(path, inputs)
         # print(prompt)
-        ollama_output = run_model(prompt)
-        print(label)
-        print(ollama_output)
-        lines.append(f"## {label}")
-        lines.append("### ollama")
-        lines.append(ollama_output)
-        try:
-            result = run_gemini(prompt, gemini_client)
-        except Exception as error:
-            if is_rate_limit_error(error):
-                result = ""
-            else:
-                raise
-        if result:
-            lines.append("### gemini")
-            print(result)
-            lines.append(result)
+        for model in LOCAL_OLLAMA_MODELS:
+            ollama_output = run_model(prompt, model)
+            print(f"{label} - {model}")
+            print(ollama_output)
+            lines.append(f"## {label}")
+            lines.append(f"### {model}")
+            lines.append(ollama_output)
+        # try:
+        #     result = run_gemini(prompt, gemini_client)
+        # except Exception as error:
+        #     if is_rate_limit_error(error):
+        #         result = ""
+        #     else:
+        #         raise
+        # if result:
+        #     lines.append("### gemini")
+        #     print(result)
+        #     lines.append(result)
 
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
