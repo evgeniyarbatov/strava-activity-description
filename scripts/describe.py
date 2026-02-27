@@ -4,7 +4,6 @@ import csv
 import os
 import random
 import subprocess
-from datetime import date
 from pathlib import Path
 
 import ollama
@@ -218,7 +217,8 @@ def build_markdown(
     activity_id: str,
     inputs: dict,
     csv_writer: csv.writer,
-    run_date: str,
+    csv_handle,
+    activity_date: str,
 ) -> str:
     lines = [f"# {activity_id}", ""]
     for label, path in PROMPT_FILES:
@@ -231,7 +231,8 @@ def build_markdown(
             print(ollama_output)
             lines.append(f"### {model}")
             lines.append(ollama_output)
-            csv_writer.writerow([run_date, activity_id, prompt, label, model, ollama_output])
+            csv_writer.writerow([activity_date, activity_id, prompt, label, model, ollama_output])
+            csv_handle.flush()
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
@@ -239,7 +240,6 @@ def build_markdown(
 def main() -> None:
     DATASET_DIR.mkdir(parents=True, exist_ok=True)
     write_header = not DATASET_PATH.exists()
-    run_date = date.today().isoformat()
     with DATASET_PATH.open("a", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
         if write_header:
@@ -250,9 +250,10 @@ def main() -> None:
             if output_path.exists():
                 continue
             payload = load_json(activity_path)
+            activity_date = parse_iso(payload["activity"]["start_date_local"]).date().isoformat()
             inputs = prompt_inputs(payload)
             output_path.write_text(
-                build_markdown(activity_id, inputs, writer, run_date),
+                build_markdown(activity_id, inputs, writer, handle, activity_date),
                 encoding="utf-8",
             )
 
