@@ -1,8 +1,10 @@
 from __future__ import annotations
 
+import csv
 import os
 import random
 import subprocess
+from datetime import date
 from pathlib import Path
 
 import ollama
@@ -25,6 +27,8 @@ OLLAMA_MODELS = [
 ]
 
 DATA_DIR = Path("data")
+DATASET_DIR = Path("dataset")
+DATASET_PATH = DATASET_DIR / "descriptions.csv"
 ACTIVITIES_DIR = DATA_DIR / "activities"
 DESCRIPTIONS_DIR = DATA_DIR / "descriptions"
 PROMPTS_DIR = Path("prompts")
@@ -178,6 +182,9 @@ def render_prompt(template_path: Path, inputs: dict) -> str:
     variation = random.choice(VARIATION_PROMPTS)
     return f"{prompt}\n\nVARIATION\n\n{variation}"
 
+def to_single_line(text: str) -> str:
+    return " ".join(text.splitlines())
+
 
 def run_ollama_local(prompt: str, model: str) -> str:
     result = subprocess.run(
@@ -207,34 +214,47 @@ def run_model(prompt: str, model: str) -> str:
     return run_ollama_local(prompt, model)
 
 
-def build_markdown(activity_id: str, inputs: dict) -> str:
+def build_markdown(
+    activity_id: str,
+    inputs: dict,
+    csv_writer: csv.writer,
+    run_date: str,
+) -> str:
     lines = [f"# {activity_id}", ""]
     for label, path in PROMPT_FILES:
-        prompt = render_prompt(path, inputs)
+        prompt = to_single_line(render_prompt(path, inputs))
         # print(prompt)
         lines.append(f"## {label}")
         for model in OLLAMA_MODELS:
-            ollama_output = run_model(prompt, model)
+            ollama_output = to_single_line(run_model(prompt, model))
             print(f"{label} - {model}")
             print(ollama_output)
             lines.append(f"### {model}")
             lines.append(ollama_output)
+            csv_writer.writerow([run_date, activity_id, prompt, label, model, ollama_output])
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
 def main() -> None:
-    for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
-        activity_id = activity_path.stem
-        output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
-        if output_path.exists():
-            continue
-        payload = load_json(activity_path)
-        inputs = prompt_inputs(payload)
-        output_path.write_text(
-            build_markdown(activity_id, inputs),
-            encoding="utf-8",
-        )
+    DATASET_DIR.mkdir(parents=True, exist_ok=True)
+    write_header = not DATASET_PATH.exists()
+    run_date = date.today().isoformat()
+    with DATASET_PATH.open("a", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        if write_header:
+            writer.writerow(["date", "activity_id", "prompt", "label", "model", "model_output"])
+        for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
+            activity_id = activity_path.stem
+            output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
+            if output_path.exists():
+                continue
+            payload = load_json(activity_path)
+            inputs = prompt_inputs(payload)
+            output_path.write_text(
+                build_markdown(activity_id, inputs, writer, run_date),
+                encoding="utf-8",
+            )
 
 
 if __name__ == "__main__":
