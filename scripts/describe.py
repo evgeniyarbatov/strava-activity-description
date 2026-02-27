@@ -213,11 +213,11 @@ def build_markdown(activity_id: str, inputs: dict, gemini_client: genai.Client) 
     for label, path in PROMPT_FILES:
         prompt = render_prompt(path, inputs)
         # print(prompt)
+        lines.append(f"## {label}")
         for model in LOCAL_OLLAMA_MODELS:
             ollama_output = run_model(prompt, model)
             print(f"{label} - {model}")
             print(ollama_output)
-            lines.append(f"## {label}")
             lines.append(f"### {model}")
             lines.append(ollama_output)
         # try:
