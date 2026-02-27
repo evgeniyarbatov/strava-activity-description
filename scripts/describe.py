@@ -174,7 +174,7 @@ def render_prompt(template_path: Path, inputs: dict) -> str:
     activity_context = activity_context_template.format(**inputs)
     prompt = prompt_template.format(**inputs, activity_context=activity_context)
     variation = random.choice(VARIATION_PROMPTS)
-    return f"{prompt}\n\nVARIATION\n{variation}"
+    return f"{prompt}\n\nVARIATION\n\n{variation}"
 
 
 def run_model(prompt: str) -> str:
