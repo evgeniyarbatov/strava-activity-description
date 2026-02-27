@@ -1,22 +1,28 @@
 from __future__ import annotations
 
+import os
 import random
 import subprocess
 from pathlib import Path
 
+import ollama
 import polyline
 from geopy.geocoders import Nominatim
-from google import genai
 
 from scripts.utils import load_env, load_json, parse_iso
 
-load_env(Path("api-keys/gemini.env"))
+load_env(Path("api-keys/ollama.env"))
 
-LOCAL_OLLAMA_MODELS = {
+OLLAMA_CLOUD_MODELS = [
+    "gemini-3-flash-preview"
+]
+OLLAMA_CLOUD_HOST = "https://api.ollama.com"
+OLLAMA_MODELS = [
+    *OLLAMA_CLOUD_MODELS,
     "mistral-nemo",
     "gemma3",
     "qwen2.5",
-}
+]
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
@@ -26,7 +32,6 @@ PROMPT_FILES = [
     (path.stem, path) for path in sorted(PROMPTS_DIR.glob("*.txt"), key=lambda path: path.name)
 ]
 ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "common" / "activity-context.txt"
-GEMINI_MODEL = "gemini-2.5-flash"
 PROMPT_INPUT_KEYS = [
     "distance_context",
     "moving_time_context",
@@ -86,15 +91,6 @@ VARIATION_PROMPTS = [
     "Let silence or absence be the defining quality.",
     "End on an image, not a feeling.",
 ]
-GEMINI_TEMPERATURE_RANGE = (0.9, 1.3)
-GEMINI_TOP_P_RANGE = (0.85, 0.98)
-GEMINI_RATE_LIMIT_MARKERS = (
-    "429",
-    "rate limit",
-    "rate-limited",
-    "resource_exhausted",
-    "too many requests",
-)
 
 def format_duration(seconds: int) -> str:
     hours, remainder = divmod(seconds, 3600)
@@ -183,7 +179,7 @@ def render_prompt(template_path: Path, inputs: dict) -> str:
     return f"{prompt}\n\nVARIATION\n\n{variation}"
 
 
-def run_model(prompt: str, model: str) -> str:
+def run_ollama_local(prompt: str, model: str) -> str:
     result = subprocess.run(
         ["ollama", "run", model],
         input=prompt,
@@ -192,6 +188,23 @@ def run_model(prompt: str, model: str) -> str:
         check=True,
     )
     return result.stdout.strip()
+
+def run_ollama_cloud(prompt: str, model: str) -> str:
+    api_key = os.getenv("OLLAMA_API_KEY") or os.getenv("API_KEY")
+    if not api_key:
+        raise ValueError("Missing Ollama API key in api-keys/ollama.env.")
+    client = ollama.Client(
+        host=OLLAMA_CLOUD_HOST,
+        headers={"Authorization": f"Bearer {api_key}"},
+    )
+    result = client.generate(model=model, prompt=prompt)
+    return result.response.strip()
+
+
+def run_model(prompt: str, model: str) -> str:
+    if model in OLLAMA_CLOUD_MODELS:
+        return run_ollama_cloud(prompt, model)
+    return run_ollama_local(prompt, model)
 
 
 def run_gemini(prompt: str, client: genai.Client) -> str:
@@ -214,7 +227,7 @@ def build_markdown(activity_id: str, inputs: dict, gemini_client: genai.Client) 
         prompt = render_prompt(path, inputs)
         # print(prompt)
         lines.append(f"## {label}")
-        for model in LOCAL_OLLAMA_MODELS:
+        for model in OLLAMA_MODELS:
             ollama_output = run_model(prompt, model)
             print(f"{label} - {model}")
             print(ollama_output)
