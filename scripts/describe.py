@@ -225,15 +225,19 @@ def build_markdown(
         prompt = to_single_line(render_prompt(path, inputs))
         # print(prompt)
         lines.append(f"## {label}")
+        outputs: dict[str, str] = {}
         for model in OLLAMA_MODELS:
             ollama_output = to_single_line(run_model(prompt, model))
             print(f"{label} - {model}")
             print(ollama_output)
+            outputs[model] = ollama_output
             lines.append(f"### {model}")
             lines.append(ollama_output)
-            csv_writer.writerow([activity_date, activity_id, prompt, label, model, ollama_output])
-            csv_handle.flush()
         lines.append("")
+        csv_writer.writerow(
+            [activity_date, activity_id, prompt, label, *[outputs[model] for model in OLLAMA_MODELS]]
+        )
+        csv_handle.flush()
     return "\n".join(lines).rstrip() + "\n"
 
 
@@ -243,7 +247,7 @@ def main() -> None:
     with DATASET_PATH.open("a", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
         if write_header:
-            writer.writerow(["date", "activity_id", "prompt", "label", "model", "model_output"])
+            writer.writerow(["date", "activity_id", "prompt", "label", *OLLAMA_MODELS])
         for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
             activity_id = activity_path.stem
             output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
