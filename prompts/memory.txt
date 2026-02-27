@@ -23,4 +23,4 @@ DO
 
 TASK
 
-Generate a memory-fragment description of this run.
+Generate a 1-2 sentence memory-fragment description of this run.
