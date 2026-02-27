@@ -207,21 +207,7 @@ def run_model(prompt: str, model: str) -> str:
     return run_ollama_local(prompt, model)
 
 
-def run_gemini(prompt: str, client: genai.Client) -> str:
-    config = genai.types.GenerateContentConfig(
-        temperature=random.uniform(*GEMINI_TEMPERATURE_RANGE),
-        top_p=random.uniform(*GEMINI_TOP_P_RANGE),
-    )
-    result = client.models.generate_content(model=GEMINI_MODEL, contents=prompt, config=config)
-    return result.text.strip()
-
-
-def is_rate_limit_error(error: Exception) -> bool:
-    message = str(error).lower()
-    return any(marker in message for marker in GEMINI_RATE_LIMIT_MARKERS)
-
-
-def build_markdown(activity_id: str, inputs: dict, gemini_client: genai.Client) -> str:
+def build_markdown(activity_id: str, inputs: dict) -> str:
     lines = [f"# {activity_id}", ""]
     for label, path in PROMPT_FILES:
         prompt = render_prompt(path, inputs)
@@ -233,24 +219,11 @@ def build_markdown(activity_id: str, inputs: dict, gemini_client: genai.Client) 
             print(ollama_output)
             lines.append(f"### {model}")
             lines.append(ollama_output)
-        # try:
-        #     result = run_gemini(prompt, gemini_client)
-        # except Exception as error:
-        #     if is_rate_limit_error(error):
-        #         result = ""
-        #     else:
-        #         raise
-        # if result:
-        #     lines.append("### gemini")
-        #     print(result)
-        #     lines.append(result)
-
         lines.append("")
     return "\n".join(lines).rstrip() + "\n"
 
 
 def main() -> None:
-    gemini_client = genai.Client()
     for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
         activity_id = activity_path.stem
         output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
@@ -259,7 +232,7 @@ def main() -> None:
         payload = load_json(activity_path)
         inputs = prompt_inputs(payload)
         output_path.write_text(
-            build_markdown(activity_id, inputs, gemini_client),
+            build_markdown(activity_id, inputs),
             encoding="utf-8",
         )
 

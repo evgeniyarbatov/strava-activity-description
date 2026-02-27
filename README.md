@@ -32,6 +32,6 @@ Generate short Strava activity descriptions from run polylines, weather, traffic
    1. `ollama pull mistral-nemo`
    2. `ollama pull qwen2.5`
    3. `ollama pull gemma3`
-3. Add API keys in `api-keys/`: `ollama.env`, `openweather.env`, `tomtom.env`, and `gemini.env`.
+3. Add API keys in `api-keys/`: `ollama.env`, `openweather.env`, and `tomtom.env`.
 4. Configure Terraform + AWS: set AWS credentials in your shell for the target account; update the S3 backend in `terraform/terraform.tf`; set latitude/longitude for weather + traffic sampling
 5. Deploy infrastructure: `cd terraform && terraform init`, then `terraform apply`
