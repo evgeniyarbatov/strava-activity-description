@@ -15,7 +15,7 @@ OSM_DIR = osm
 TERRAFORM_DIR = terraform
 
 venv:
-	@python3 -m venv $(VENV_PATH)
+	@python3.12 -m venv $(VENV_PATH)
 
 install: venv
 	@$(PIP) install --disable-pip-version-check -q --upgrade pip
