@@ -8,8 +8,38 @@
       "polyline": "{jc_CcrdeSi@S^z@Aa@wAYIaA{@YsEFwBhBCfBf@f@eBfBeCn@yAMTbAa@nAv@jA^bD}@lA~CpJtAtH{O|AmU~@h@|HIrBm@Q\\lFw@zCiJ|C_@nAuAnAM~AwBvA}ABkAj@sH]Sr@}AFpApISrDi@l@wGp@oLy@_DD{@[yCl@oQl@}Bg@_@k@iE@iHgAq@i@wN{AqBy@wGCoEvQA~Bw@nBWvDoDxMSnFyB|@Xd@YnBmY`Xq@f@eACQ~AmKzJR`@Sb@z@PGVyUoCcAhGsN_Bu@lIX~Nl@AhBbG`FvEtAcAi@yCLo@vCqAaA}@oCq@yBnA_AhBq@LsB{FBkGf@YzAX`A|@`@lDShCbC}@nD|@h@r@eBh@}D~DCZz@H_AEhAzA|@M`@k@c@wCG{Ew@g@aCx@q@aEA}BRMyAu@gA`@E~ExBfIxB|AdEaErBa@]m@gDgAiCx@UsG_A}A_BQYZGfF~@hF{Au@q@qEGoELyHr@gFpNnArA_GvUjC_Aa@`@sBfJiIVcBpAO`LmKlCeTkBy@{Dg@FeB}@qCDc@~A{@Cq@|C}AoAgFzI_Dz@KFh@Ns@rImC`JbBdBiHdFn@`]hIJi@jAj@vGGvA^tLPhAYfBX`@Y|CX`IEn@y@zBAp@aBzAaApAeCVkK_AeH`BK^]~HFvBe@mAwBYiCRgBbKEdIwB~@uCU}Fd@@e@kL|f@wC}EcTnBc@`@i@fCa@rQGAeFK[m@@Zi@[K`Aa@Dq@sBY"
     }
   },
-  "weather": [],
-  "traffic": [],
+  "weather": [
+    {
+      "description": "overcast clouds",
+      "feels_like": "serenely balanced, neither extreme"
+    },
+    {
+      "description": "overcast clouds",
+      "feels_like": "ideal for strolling the French Quarter"
+    },
+    {
+      "description": "overcast clouds",
+      "feels_like": "harmoniously pleasant atmosphere"
+    },
+    {
+      "description": "overcast clouds",
+      "feels_like": "splendidly temperate afternoon"
+    }
+  ],
+  "traffic": [
+    {
+      "description": "serenely easy navigation"
+    },
+    {
+      "description": "blissfully unimpeded flow"
+    },
+    {
+      "description": "blissfully unimpeded flow"
+    },
+    {
+      "description": "typical Hanoi hustle and bustle"
+    }
+  ],
   "uniqueness": {
     "description": "novel"
   },
