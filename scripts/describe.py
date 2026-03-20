@@ -225,13 +225,26 @@ def load_yaml_config(path: Path) -> dict[str, Any]:
     return data or {}
 
 
-def load_single_config(label: str, config: dict[str, Any]) -> tuple[str, dict[str, Any]]:
-    if len(config) != 1:
-        raise ValueError(f"Expected 1 {label} entry, found {len(config)}")
-    name, details = next(iter(config.items()))
-    if not isinstance(details, dict):
-        raise ValueError(f"Invalid {label} config for {name}")
-    return name, details
+def load_agents_config(config: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    if not config:
+        raise ValueError("Expected at least 1 agent entry.")
+    agents: dict[str, dict[str, Any]] = {}
+    for name, details in config.items():
+        if not isinstance(details, dict):
+            raise ValueError(f"Invalid agent config for {name}")
+        agents[name] = details
+    return agents
+
+
+def load_tasks_config(config: dict[str, Any]) -> list[tuple[str, dict[str, Any]]]:
+    if not config:
+        raise ValueError("Expected at least 1 task entry.")
+    tasks: list[tuple[str, dict[str, Any]]] = []
+    for name, details in config.items():
+        if not isinstance(details, dict):
+            raise ValueError(f"Invalid task config for {name}")
+        tasks.append((name, details))
+    return tasks
 
 
 def to_single_line(text: str) -> str:
@@ -286,17 +299,7 @@ def build_task(task_config: dict[str, Any], agent: Agent) -> Task:
     return Task(agent=agent, **config)
 
 
-def run_crewai(
-    agent_config: dict[str, Any],
-    task_config: dict[str, Any],
-    model: str,
-    inputs: dict[str, Any],
-) -> str:
-    llm = build_llm(model)
-    agent = build_agent(agent_config, llm)
-    task = build_task(task_config, agent)
-    crew = Crew(agents=[agent], tasks=[task])
-    result = crew.kickoff(inputs=inputs)
+def extract_result_text(result: Any) -> str:
     for attr in ("raw", "output"):
         if hasattr(result, attr):
             value = getattr(result, attr)
@@ -305,19 +308,53 @@ def run_crewai(
     return str(result).strip()
 
 
-def load_prompt_pair(
+def run_crewai_task(agent: Agent, task_config: dict[str, Any], inputs: dict[str, Any]) -> str:
+    task = build_task(task_config, agent)
+    crew = Crew(agents=[agent], tasks=[task])
+    result = crew.kickoff(inputs=inputs)
+    return extract_result_text(result)
+
+
+def run_prompt_pipeline(
+    agents_config: dict[str, dict[str, Any]],
+    tasks_config: list[tuple[str, dict[str, Any]]],
+    model: str,
+    inputs: dict[str, Any],
+) -> str:
+    llm = build_llm(model)
+    agents = {name: build_agent(config, llm) for name, config in agents_config.items()}
+    task_inputs = dict(inputs)
+    last_output = ""
+    for task_name, task_config in tasks_config:
+        agent_name = task_config.get("agent")
+        if not agent_name:
+            raise ValueError(f"Task {task_name} missing agent assignment.")
+        if agent_name not in agents:
+            raise ValueError(
+                f"Task {task_name} expects agent {agent_name}, which is missing."
+            )
+        output = run_crewai_task(agents[agent_name], task_config, task_inputs)
+        last_output = output
+        task_inputs["draft_description"] = output
+        task_inputs["previous_output"] = output
+        task_inputs[task_name] = output
+    return last_output
+
+
+def load_prompt_config(
     prompt_config: PromptConfig,
-) -> tuple[str, dict[str, Any], str, dict[str, Any]]:
+) -> tuple[dict[str, dict[str, Any]], list[tuple[str, dict[str, Any]]]]:
     agents_config = load_yaml_config(prompt_config.agents_path)
     tasks_config = load_yaml_config(prompt_config.tasks_path)
-    agent_name, agent_config = load_single_config("agent", agents_config)
-    task_name, task_config = load_single_config("task", tasks_config)
-    expected_agent = task_config.get("agent")
-    if expected_agent and expected_agent != agent_name:
-        raise ValueError(
-            f"Task {task_name} expects agent {expected_agent}, found {agent_name}."
-        )
-    return agent_name, agent_config, task_name, task_config
+    agents = load_agents_config(agents_config)
+    tasks = load_tasks_config(tasks_config)
+    for task_name, task_config in tasks:
+        agent_name = task_config.get("agent")
+        if agent_name and agent_name not in agents:
+            raise ValueError(
+                f"Task {task_name} expects agent {agent_name}, which is missing."
+            )
+    return agents, tasks
 
 
 def build_markdown(
@@ -327,7 +364,7 @@ def build_markdown(
     lines = [f"# {activity_id}", ""]
     activity_context = render_activity_context(inputs)
     for prompt_config in PROMPT_CONFIGS:
-        _, agent_config, _, task_config = load_prompt_pair(prompt_config)
+        agents_config, tasks_config = load_prompt_config(prompt_config)
 
         variation_prompt = random.choice(VARIATION_PROMPTS)
         task_inputs = {
@@ -336,7 +373,9 @@ def build_markdown(
         }
         lines.append(f"## {prompt_config.label}")
         for model in OLLAMA_MODELS:
-            crew_output = run_crewai(agent_config, task_config, model, task_inputs)
+            crew_output = run_prompt_pipeline(
+                agents_config, tasks_config, model, task_inputs
+            )
             ollama_output = to_single_line(crew_output)
             print(f"{prompt_config.label} - {model}")
             print(ollama_output)

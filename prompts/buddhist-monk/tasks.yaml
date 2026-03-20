@@ -6,6 +6,25 @@ describe_buddhist_monk_run:
     {variation_prompt}
 
     TASK
-    Generate a 1-2 sentence mindful description of this run.
-  expected_output: "A 1-2 sentence mindful description of the run."
+    Draft a 1-2 sentence mindful description of this run.
+  expected_output: "A 1-2 sentence draft mindful description of the run."
   agent: buddhist_monk
+revise_buddhist_monk_with_personality:
+  description: |
+    DRAFT
+    {draft_description}
+
+    PERSONAL VOICE
+    - Honest and independent; avoid hype, cliches, or groupthink.
+    - Direct and pragmatic; concise, results-oriented phrasing.
+    - Structured but natural; clear sentences without rigid formula.
+    - Quiet and private; warm one-on-one tone, not performative.
+    - Detail-aware and risk-sensitive; no exaggeration, choose concrete details.
+    - Grounded creativity; one precise image is enough.
+
+    TASK
+    Revise the draft to sound distinctly human and like the author while preserving the
+    monk tone, first-person present tense, and 1-2 sentence length. Keep the same facts
+    and imagery; do not add new metrics or locations.
+  expected_output: "A 1-2 sentence revised description in the monk style and personal voice."
+  agent: personality_editor
