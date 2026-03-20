@@ -5,18 +5,18 @@ from scripts.uniqueness import (
     UNIQUENESS_MIN,
     UNIQUENESS_MAX,
     UNIQUENESS_WORDS,
-    ROUTE_SAMPLE_POINTS,
+    ROUTE_MAX_POINTS,
     build_reference_runs,
     calculate_uniqueness_score,
     decode_points,
-    resample_points,
+    simplify_points,
     zscore_values,
     uniqueness_for_activity,
     uniqueness_description,
 )
 
 
-def test_decode_points_prefers_summary_polyline() -> None:
+def test_decode_points_reads_polyline() -> None:
     points = [(1.0, 2.0), (3.0, 4.0)]
     encoded = polyline.encode(points)
     activity = {"map": {"polyline": encoded}}
@@ -53,7 +53,7 @@ def test_build_reference_runs_skips_missing_polyline() -> None:
     assert len(runs) == 1
     assert runs[0]["id"] == "1"
     assert runs[0]["distance_m"] == 1000.0
-    assert len(runs[0]["vector"]) == ROUTE_SAMPLE_POINTS * 2
+    assert len(runs[0]["vector"]) == ROUTE_MAX_POINTS * 2
 
 
 def test_uniqueness_for_activity_ignores_same_id() -> None:
@@ -106,11 +106,11 @@ def test_uniqueness_for_activity_uses_fallback_id() -> None:
     assert score == UNIQUENESS_MIN
 
 
-def test_resample_points_preserves_endpoints() -> None:
+def test_simplify_points_preserves_endpoints() -> None:
     points = [(0.0, 0.0), (0.0, 2.0), (0.0, 4.0)]
-    resampled = resample_points(points, 3)
-    assert resampled[0] == points[0]
-    assert resampled[-1] == points[-1]
+    simplified = simplify_points(points, 1.0)
+    assert simplified[0] == points[0]
+    assert simplified[-1] == points[-1]
 
 
 def test_zscore_values_zero_variance() -> None:

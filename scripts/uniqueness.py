@@ -5,6 +5,7 @@ from statistics import median
 
 import numpy as np
 import polyline
+from shapely.geometry import LineString
 
 from scripts.utils import load_json, write_json
 
@@ -31,8 +32,10 @@ UNIQUENESS_WORDS = [
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
-ROUTE_SAMPLE_POINTS = 64
+COARSE_SIMPLIFY_M = 35
+ROUTE_MAX_POINTS = 48
 DISTANCE_WEIGHT = 0.35
+CENTROID_WEIGHT = 0.2
 
 
 def decode_points(activity: dict) -> list[tuple[float, float]] | None:
@@ -43,57 +46,26 @@ def decode_points(activity: dict) -> list[tuple[float, float]] | None:
     return polyline.decode(encoded)
 
 
-def resample_points(
-    points: list[tuple[float, float]], target_count: int
+def simplify_points(
+    points: list[tuple[float, float]], tolerance_m: float
 ) -> list[tuple[float, float]]:
-    if not points:
-        return []
-    if target_count <= 1:
-        return [points[0]]
-    if len(points) == 1:
-        return [points[0]] * target_count
-
-    distances = [0.0]
-    total = 0.0
-    for (lat_a, lon_a), (lat_b, lon_b) in zip(points, points[1:]):
-        segment = ((lat_b - lat_a) ** 2 + (lon_b - lon_a) ** 2) ** 0.5
-        total += segment
-        distances.append(total)
-
-    if total == 0:
-        return [points[0]] * target_count
-
-    resampled: list[tuple[float, float]] = []
-    segment_index = 1
-    for i in range(target_count):
-        target_distance = (total * i) / (target_count - 1)
-        while segment_index < len(distances) - 1 and distances[segment_index] < target_distance:
-            segment_index += 1
-        prev_distance = distances[segment_index - 1]
-        next_distance = distances[segment_index]
-        if next_distance == prev_distance:
-            ratio = 0.0
-        else:
-            ratio = (target_distance - prev_distance) / (next_distance - prev_distance)
-        (lat_a, lon_a) = points[segment_index - 1]
-        (lat_b, lon_b) = points[segment_index]
-        lat = lat_a + (lat_b - lat_a) * ratio
-        lon = lon_a + (lon_b - lon_a) * ratio
-        resampled.append((lat, lon))
-    return resampled
+    if len(points) <= 2:
+        return points
+    tolerance = tolerance_m / 111_320
+    line = LineString([(lon, lat) for lat, lon in points])
+    simplified = line.simplify(tolerance, preserve_topology=False)
+    return [(lat, lon) for lon, lat in simplified.coords]
 
 
 def build_route_vector(points: list[tuple[float, float]]) -> np.ndarray:
-    resampled = resample_points(points, ROUTE_SAMPLE_POINTS)
-    if not resampled:
+    simplified = simplify_points(points, COARSE_SIMPLIFY_M)
+    if not simplified:
         return np.array([], dtype=float)
-    lats = np.array([point[0] for point in resampled], dtype=float)
-    lons = np.array([point[1] for point in resampled], dtype=float)
+    lats = np.array([point[0] for point in simplified], dtype=float)
+    lons = np.array([point[1] for point in simplified], dtype=float)
     lats = zscore_array(lats)
     lons = zscore_array(lons)
-    vector = np.empty(lats.size + lons.size, dtype=float)
-    vector[0::2] = lats
-    vector[1::2] = lons
+    vector = pad_or_trim_vector(lats, lons, ROUTE_MAX_POINTS)
     return vector
 
 
@@ -105,6 +77,30 @@ def zscore_array(values: np.ndarray) -> np.ndarray:
     if std == 0:
         return np.zeros_like(values)
     return (values - mean) / std
+
+
+def pad_or_trim_vector(
+    lats: np.ndarray, lons: np.ndarray, target_points: int
+) -> np.ndarray:
+    if target_points <= 0:
+        return np.array([], dtype=float)
+    count = min(len(lats), len(lons))
+    lats = lats[:count]
+    lons = lons[:count]
+    if count == 0:
+        return np.array([], dtype=float)
+    if count < target_points:
+        pad_count = target_points - count
+        lats = np.pad(lats, (0, pad_count), mode="edge")
+        lons = np.pad(lons, (0, pad_count), mode="edge")
+    elif count > target_points:
+        indices = np.linspace(0, count - 1, target_points).round().astype(int)
+        lats = lats[indices]
+        lons = lons[indices]
+    vector = np.empty(target_points * 2, dtype=float)
+    vector[0::2] = lats
+    vector[1::2] = lons
+    return vector
 
 
 def zscore_values(values: list[float]) -> list[float]:
@@ -129,10 +125,12 @@ def build_run_item(payload: dict, activity_id: str | None = None) -> dict | None
     route_vector = build_route_vector(points)
     if route_vector.size == 0:
         return None
+    centroid = (float(np.mean([pt[0] for pt in points])), float(np.mean([pt[1] for pt in points])))
     distance_m = activity.get("distance")
     return {
         "id": str(activity_id),
         "vector": route_vector,
+        "centroid": centroid,
         "distance_m": float(distance_m) if distance_m is not None else None,
     }
 
@@ -185,14 +183,36 @@ def uniqueness_for_activity(
     distance_values = [run_item.get("distance_m")] + [
         reference.get("distance_m") for reference in filtered_runs
     ]
+    centroid_lats = [run_item["centroid"][0]] + [
+        reference["centroid"][0] for reference in filtered_runs
+    ]
+    centroid_lons = [run_item["centroid"][1]] + [
+        reference["centroid"][1] for reference in filtered_runs
+    ]
+    centroid_lat_z = zscore_values(centroid_lats)
+    centroid_lon_z = zscore_values(centroid_lons)
+    centroid_distances = [
+        float(
+            ((centroid_lat_z[0] - centroid_lat_z[i]) ** 2 + (centroid_lon_z[0] - centroid_lon_z[i]) ** 2)
+            ** 0.5
+        )
+        for i in range(1, len(centroid_lat_z))
+    ]
     if all(value is not None for value in distance_values):
         zscores = zscore_values([float(value) for value in distance_values])
         activity_distance = zscores[0]
         reference_distances = zscores[1:]
-        for route_distance, distance_score in zip(route_distances, reference_distances):
-            distances.append(route_distance + DISTANCE_WEIGHT * abs(activity_distance - distance_score))
+        for route_distance, distance_score, centroid_distance in zip(
+            route_distances, reference_distances, centroid_distances
+        ):
+            distances.append(
+                route_distance
+                + DISTANCE_WEIGHT * abs(activity_distance - distance_score)
+                + CENTROID_WEIGHT * centroid_distance
+            )
     else:
-        distances = route_distances
+        for route_distance, centroid_distance in zip(route_distances, centroid_distances):
+            distances.append(route_distance + CENTROID_WEIGHT * centroid_distance)
 
     return calculate_uniqueness_score(distances)
 
