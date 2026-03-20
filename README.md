@@ -38,7 +38,7 @@ Key design choices:
 
 - GPX/TCX matching uses shared timestamps rather than filenames to avoid brittle naming assumptions.
 - Polylines are simplified to reduce prompt size while keeping route shape intact.
-- Uniqueness compares z-scored raw lat/lon samples plus distance and uses per-batch normalization to map scores into descriptive words.
+- Uniqueness compares RDP-simplified lat/lon vectors, centroid offsets, and distance, then uses per-batch normalization to map scores into descriptive words.
 - POI matching uses the convex hull of the route buffered by 20 meters to approximate a corridor around the run.
 - Weather and traffic descriptions are bucketed into expressive text to avoid raw numbers in the prompts.
 - Prompt context is centralized in `prompts/activity-context.txt` so each prompt uses a consistent, shared vocabulary.
