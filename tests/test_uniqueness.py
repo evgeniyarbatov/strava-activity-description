@@ -8,7 +8,6 @@ from scripts.uniqueness import (
     build_reference_runs,
     calculate_uniqueness_score,
     decode_points,
-    point_distance,
     uniqueness_for_activity,
     uniqueness_description,
 )
@@ -17,7 +16,7 @@ from scripts.uniqueness import (
 def test_decode_points_prefers_summary_polyline() -> None:
     points = [(1.0, 2.0), (3.0, 4.0)]
     encoded = polyline.encode(points)
-    activity = {"map": {"summary_polyline": encoded}}
+    activity = {"map": {"polyline": encoded}}
     assert decode_points(activity) == points
 
 
@@ -41,33 +40,61 @@ def test_uniqueness_description_mapping() -> None:
 
 def test_build_reference_runs_skips_missing_polyline() -> None:
     encoded = polyline.encode([(1.0, 2.0), (3.0, 4.0)])
-    activities = [
-        {"activity": {"id": 1, "map": {"summary_polyline": encoded}}},
+    payloads = [
+        {"activity": {"id": 1, "map": {"polyline": encoded}}},
         {"activity": {"id": 2, "map": {}}},
     ]
 
-    runs = build_reference_runs(activities)
+    runs = build_reference_runs(payloads)
 
-    assert runs == [{"id": "1", "points": [(1.0, 2.0), (3.0, 4.0)]}]
-
-
-def test_point_distance_calculates_euclidean() -> None:
-    assert point_distance((0.0, 0.0), (3.0, 4.0)) == 5.0
-
-
-def test_uniqueness_for_activity_ignores_same_id(monkeypatch) -> None:
-    encoded = polyline.encode([(0.0, 0.0), (1.0, 1.0)])
-    activity = {"id": 1, "map": {"summary_polyline": encoded}}
-    reference_runs = [
-        {"id": "1", "points": [(0.0, 0.0), (1.0, 1.0)]},
-        {"id": "2", "points": [(0.0, 0.0), (2.0, 2.0)]},
+    assert runs == [
+        {"id": "1", "route_text": encoded},
     ]
 
-    def fake_fastdtw(*_args, **_kwargs):
-        return 10.0, []
 
-    monkeypatch.setattr("scripts.uniqueness.fastdtw", fake_fastdtw)
+def test_uniqueness_for_activity_ignores_same_id() -> None:
+    encoded = polyline.encode([(0.0, 0.0), (1.0, 1.0)])
+    activity_payload = {
+        "activity": {"id": 1, "map": {"polyline": encoded}},
+    }
+    reference_payloads = [
+        activity_payload,
+        {
+            "activity": {
+                "id": 2,
+                "map": {
+                    "polyline": polyline.encode([(0.0, 0.0), (2.0, 2.0)])
+                },
+            },
+        },
+    ]
+    reference_runs = build_reference_runs(reference_payloads)
 
-    score = uniqueness_for_activity(activity, reference_runs)
+    score = uniqueness_for_activity(activity_payload, reference_runs)
+
+    assert score == UNIQUENESS_MIN
+
+
+def test_uniqueness_for_activity_uses_fallback_id() -> None:
+    encoded = polyline.encode([(0.0, 0.0), (1.0, 1.0)])
+    activity_payload = {
+        "activity": {"map": {"polyline": encoded}},
+    }
+    reference_payloads = [
+        activity_payload,
+        {
+            "activity": {
+                "id": 2,
+                "map": {
+                    "polyline": polyline.encode([(0.0, 0.0), (2.0, 2.0)])
+                },
+            },
+        },
+    ]
+    reference_runs = build_reference_runs(reference_payloads)
+
+    score = uniqueness_for_activity(
+        activity_payload, reference_runs, activity_id="run-1"
+    )
 
     assert score == UNIQUENESS_MIN
