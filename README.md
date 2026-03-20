@@ -20,7 +20,7 @@ Generate short Strava activity descriptions from run polylines, weather, traffic
 
 ## Prompt Configs
 
-CrewAI configs live per prompt in `prompts/<prompt>/agents.yaml` and `prompts/<prompt>/tasks.yaml`, with shared context in `prompts/activity-context.txt`.
+CrewAI configs live per prompt in `prompts/<prompt>/agents.yaml` and `prompts/<prompt>/tasks.yaml`, with shared context in `prompts/activity-context.txt` and a final personal-voice revision task.
 
 ## Design
 
