@@ -8,4 +8,5 @@ google-genai
 boto3
 pyproj
 python-dotenv
-ollama
+crewai
+pyyaml
