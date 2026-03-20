@@ -4,19 +4,19 @@ Generate short Strava activity descriptions from run polylines, weather, traffic
 
 #### Artistic
 
-> In Hà Nội's gentle morning drizzle, legs slice through dew-kissed streets, breeze whispering past ears as clouds shift overhead.
+> Morning whispers through overcast skies in Hà Nội, my legs gliding past gardens and lakes as I breathe in the city's slow awakening. Trees line the path like silent sentinels, their branches cradling dappled light.
 
 #### Monk
 
-> As I begin my run under the gentle caress of the dew-kissed morning, the light rain whispers softly against my skin, reminding me of the transient nature of all things.
+> The overcast sky filters light through trees, casting a calm on the streets. Each step mirrors my breath and movement, as I wander through forest, garden, lake, and park, each moment fleeting yet clear.
 
 #### Memory
 
-> The rain had softened to a drizzle, barely kissing my cheeks as I ran. A lone bicycle bell chimed behind me, its sound swallowed by the dampened morning.
+> The reservoir is flat and gray. I carry that silence into the morning streets, keeping my breath even while the city starts its rush.
 
 #### Scientist
 
-> Initiating run at 07:04 in Hà Nội, Vietnam; conditions: light rain, overcast clouds. Duration expeditious, no significant conversation exchanged throughout the compact route.
+> At daybreak on March 15, 2026, I set out for a run through Hà Nội's overcast skies. The route took me through forests, gardens, and parks, offering a mix of nature and the city’s hustle, all while moving smoothly despite the typical morning commotion.
 
 ## Prompt Configs
 
