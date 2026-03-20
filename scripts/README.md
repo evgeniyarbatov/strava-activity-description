@@ -6,7 +6,7 @@
 
 `scripts/weather_traffic.py` enriches activity JSON by pulling weather and traffic samples from DynamoDB and writing them into each activity payload.
 
-`scripts/uniqueness.py` compares each route to other activities with DTW and stores a uniqueness description on the activity.
+`scripts/uniqueness.py` embeds each route using encoded polylines (TF-IDF + cosine similarity) and stores a uniqueness description on the activity.
 
 `scripts/context.py` derives activity context (distance/moving-time adjectives and time-of-day wording) using `goals.json`.
 
