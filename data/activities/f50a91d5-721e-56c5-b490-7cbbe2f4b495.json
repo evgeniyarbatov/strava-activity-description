@@ -1,0 +1,35 @@
+{
+  "activity": {
+    "start_date": "2026-03-14T23:23:39Z",
+    "start_date_local": "2026-03-15T06:23:39Z",
+    "distance": 23405,
+    "moving_time": 8365,
+    "map": {
+      "polyline": "{jc_CcrdeSi@S^z@Aa@wAYIaA{@YsEFwBhBCfBf@f@eBfBeCn@yAMTbAa@nAv@jA^bD}@lA~CpJtAtH{O|AmU~@h@|HIrBm@Q\\lFw@zCiJ|C_@nAuAnAM~AwBvA}ABkAj@sH]Sr@}AFpApISrDi@l@wGp@oLy@_DD{@[yCl@oQl@}Bg@_@k@iE@iHgAq@i@wN{AqBy@wGCoEvQA~Bw@nBWvDoDxMSnFyB|@Xd@YnBmY`Xq@f@eACQ~AmKzJR`@Sb@z@PGVyUoCcAhGsN_Bu@lIX~Nl@AhBbG`FvEtAcAi@yCLo@vCqAaA}@oCq@yBnA_AhBq@LsB{FBkGf@YzAX`A|@`@lDShCbC}@nD|@h@r@eBh@}D~DCZz@H_AEhAzA|@M`@k@c@wCG{Ew@g@aCx@q@aEA}BRMyAu@gA`@E~ExBfIxB|AdEaErBa@]m@gDgAiCx@UsG_A}A_BQYZGfF~@hF{Au@q@qEGoELyHr@gFpNnArA_GvUjC_Aa@`@sBfJiIVcBpAO`LmKlCeTkBy@{Dg@FeB}@qCDc@~A{@Cq@|C}AoAgFzI_Dz@KFh@Ns@rImC`JbBdBiHdFn@`]hIJi@jAj@vGGvA^tLPhAYfBX`@Y|CX`IEn@y@zBAp@aBzAaApAeCVkK_AeH`BK^]~HFvBe@mAwBYiCRgBbKEdIwB~@uCU}Fd@@e@kL|f@wC}EcTnBc@`@i@fCa@rQGAeFK[m@@Zi@[K`Aa@Dq@sBY"
+    }
+  },
+  "weather": [],
+  "traffic": [],
+  "uniqueness": {
+    "description": "novel"
+  },
+  "activity_context": {
+    "distance": "lengthy",
+    "moving_time": "protracted",
+    "time_of_day_description": "daybreak"
+  },
+  "geo": {
+    "points_of_interest": [
+      "forest",
+      "garden",
+      "lake",
+      "nature reserve",
+      "park",
+      "pond",
+      "recreation ground",
+      "reservoir",
+      "tree",
+      "water"
+    ]
+  }
+}
