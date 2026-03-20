@@ -18,6 +18,10 @@ Generate short Strava activity descriptions from run polylines, weather, traffic
 
 > Initiating run at 07:04 in Hà Nội, Vietnam; conditions: light rain, overcast clouds. Duration expeditious, no significant conversation exchanged throughout the compact route.
 
+## Prompt Configs
+
+CrewAI configs live per prompt in `prompts/<prompt>/agents.yaml` and `prompts/<prompt>/tasks.yaml`, with shared context in `prompts/activity-context.txt`.
+
 ## Run
 
 1. Update `goals.json` to set your personal distance and moving time targets.

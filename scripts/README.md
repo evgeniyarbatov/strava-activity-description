@@ -12,6 +12,6 @@
 
 `scripts/poi.py` loads OSM data from `osm/hanoi.osm` and adds nearby points-of-interest categories to the activity payload.
 
-`scripts/describe.py` renders prompt templates in `prompts/` and writes description markdown to `data/descriptions`, using Ollama and Gemini output.
+`scripts/describe.py` runs a CrewAI pipeline per prompt (config in `prompts/<prompt>/agents.yaml` and `prompts/<prompt>/tasks.yaml` with shared context in `prompts/activity-context.txt`) and writes description markdown to `data/descriptions`, using Ollama and Gemini output.
 
 `scripts/utils.py` provides shared JSON and ISO timestamp helpers used by the pipeline.

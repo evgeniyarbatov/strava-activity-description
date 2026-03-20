@@ -1,0 +1,11 @@
+describe_buddhist_monk_run:
+  description: |
+    {activity_context}
+
+    VARIATION
+    {variation_prompt}
+
+    TASK
+    Generate a 1-2 sentence mindful description of this run.
+  expected_output: "A 1-2 sentence mindful description of the run."
+  agent: buddhist_monk

@@ -1,0 +1,11 @@
+describe_memory_run:
+  description: |
+    {activity_context}
+
+    VARIATION
+    {variation_prompt}
+
+    TASK
+    Generate a 1-2 sentence memory-fragment description of this run.
+  expected_output: "A 1-2 sentence memory-fragment description of the run."
+  agent: memory_writer

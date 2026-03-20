@@ -1,0 +1,11 @@
+describe_scientist_run:
+  description: |
+    {activity_context}
+
+    VARIATION
+    {variation_prompt}
+
+    TASK
+    Generate a 1-2 sentence factual description of this run.
+  expected_output: "A 1-2 sentence factual description of the run."
+  agent: scientist

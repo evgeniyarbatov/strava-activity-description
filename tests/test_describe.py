@@ -8,7 +8,7 @@ from scripts.describe import (
     format_duration,
     format_pace,
     location_from_polyline,
-    render_prompt,
+    render_activity_context,
 )
 from scripts.utils import parse_iso
 
@@ -73,9 +73,7 @@ def test_location_from_polyline_uses_midpoint() -> None:
     assert (city, country) == ("Paris", "France")
 
 
-def test_render_prompt_includes_activity_context(tmp_path) -> None:
-    template_path = tmp_path / "template.txt"
-    template_path.write_text("Report:\n{activity_context}", encoding="utf-8")
+def test_render_activity_context_includes_header() -> None:
     inputs = {
         "distance_context": "medium",
         "moving_time_context": "solid",
@@ -90,6 +88,6 @@ def test_render_prompt_includes_activity_context(tmp_path) -> None:
         "points_of_interest": "park, river",
     }
 
-    rendered = render_prompt(template_path, inputs)
+    rendered = render_activity_context(inputs)
 
     assert "ACTIVITY CONTEXT" in rendered

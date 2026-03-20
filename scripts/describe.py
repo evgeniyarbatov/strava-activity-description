@@ -1,13 +1,15 @@
 from __future__ import annotations
 
-import csv
+import inspect
 import os
 import random
-import subprocess
+from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
-import ollama
 import polyline
+import yaml
+from crewai import Agent, Crew, LLM, Task
 from geopy.geocoders import Nominatim
 
 from scripts.utils import load_env, load_json, parse_iso
@@ -15,7 +17,7 @@ from scripts.utils import load_env, load_json, parse_iso
 load_env(Path("api-keys/ollama.env"))
 
 OLLAMA_CLOUD_MODELS = [
-    "gemini-3-flash-preview"
+    "gemini-3-flash-preview",
 ]
 OLLAMA_CLOUD_HOST = "https://api.ollama.com"
 OLLAMA_MODELS = [
@@ -26,15 +28,10 @@ OLLAMA_MODELS = [
 ]
 
 DATA_DIR = Path("data")
-DATASET_DIR = Path("dataset")
-DATASET_PATH = DATASET_DIR / "descriptions.csv"
 ACTIVITIES_DIR = DATA_DIR / "activities"
 DESCRIPTIONS_DIR = DATA_DIR / "descriptions"
 PROMPTS_DIR = Path("prompts")
-PROMPT_FILES = [
-    (path.stem, path) for path in sorted(PROMPTS_DIR.glob("*.txt"), key=lambda path: path.name)
-]
-ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "common" / "activity-context.txt"
+ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "activity-context.txt"
 PROMPT_INPUT_KEYS = [
     "distance_context",
     "moving_time_context",
@@ -94,6 +91,32 @@ VARIATION_PROMPTS = [
     "Let silence or absence be the defining quality.",
     "End on an image, not a feeling.",
 ]
+
+
+@dataclass(frozen=True)
+class PromptConfig:
+    label: str
+    agents_path: Path
+    tasks_path: Path
+
+
+def list_prompt_labels() -> list[str]:
+    labels: list[str] = []
+    for path in sorted(PROMPTS_DIR.iterdir()):
+        if path.is_dir():
+            labels.append(path.name)
+    return labels
+
+
+PROMPT_CONFIGS = [
+    PromptConfig(
+        label=label,
+        agents_path=PROMPTS_DIR / label / "agents.yaml",
+        tasks_path=PROMPTS_DIR / label / "tasks.yaml",
+    )
+    for label in list_prompt_labels()
+]
+
 
 def format_duration(seconds: int) -> str:
     hours, remainder = divmod(seconds, 3600)
@@ -173,93 +196,141 @@ def prompt_inputs(payload: dict) -> dict:
     return summary
 
 
-def render_prompt(template_path: Path, inputs: dict) -> str:
-    prompt_template = template_path.read_text(encoding="utf-8")
-    activity_context_template = ACTIVITY_CONTEXT_PATH.read_text(encoding="utf-8")
-    activity_context = activity_context_template.format(**inputs)
-    prompt = prompt_template.format(**inputs, activity_context=activity_context)
-    variation = random.choice(VARIATION_PROMPTS)
-    return f"{prompt}\n\nVARIATION\n\n{variation}"
+def render_activity_context(inputs: dict, template_path: Path | None = None) -> str:
+    path = template_path or ACTIVITY_CONTEXT_PATH
+    template = path.read_text(encoding="utf-8")
+    return template.format(**inputs)
+
+
+def load_yaml_config(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        raise FileNotFoundError(f"Missing CrewAI config: {path}")
+    content = path.read_text(encoding="utf-8")
+    data = yaml.safe_load(content)
+    return data or {}
+
+
+def load_single_config(label: str, config: dict[str, Any]) -> tuple[str, dict[str, Any]]:
+    if len(config) != 1:
+        raise ValueError(f"Expected 1 {label} entry, found {len(config)}")
+    name, details = next(iter(config.items()))
+    if not isinstance(details, dict):
+        raise ValueError(f"Invalid {label} config for {name}")
+    return name, details
+
 
 def to_single_line(text: str) -> str:
     return " ".join(text.splitlines())
 
 
-def run_ollama_local(prompt: str, model: str) -> str:
-    result = subprocess.run(
-        ["ollama", "run", model],
-        input=prompt,
-        text=True,
-        capture_output=True,
-        check=True,
-    )
-    return result.stdout.strip()
-
-def run_ollama_cloud(prompt: str, model: str) -> str:
-    api_key = os.getenv("OLLAMA_API_KEY") or os.getenv("API_KEY")
-    if not api_key:
-        raise ValueError("Missing Ollama API key in api-keys/ollama.env.")
-    client = ollama.Client(
-        host=OLLAMA_CLOUD_HOST,
-        headers={"Authorization": f"Bearer {api_key}"},
-    )
-    result = client.generate(model=model, prompt=prompt)
-    return result.response.strip()
-
-
-def run_model(prompt: str, model: str) -> str:
+def build_llm(model: str) -> LLM:
+    model_name = model if "/" in model else f"ollama/{model}"
     if model in OLLAMA_CLOUD_MODELS:
-        return run_ollama_cloud(prompt, model)
-    return run_ollama_local(prompt, model)
+        api_key = os.getenv("OLLAMA_API_KEY") or os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("Missing Ollama API key in api-keys/ollama.env.")
+        base_url = OLLAMA_CLOUD_HOST
+    else:
+        base_url = os.getenv("OLLAMA_LOCAL_HOST", "http://localhost:11434")
+        api_key = None
+
+    os.environ["OLLAMA_API_BASE"] = base_url
+    os.environ["OLLAMA_HOST"] = base_url
+    if api_key:
+        os.environ["OLLAMA_API_KEY"] = api_key
+
+    params = inspect.signature(LLM).parameters
+    kwargs: dict[str, Any] = {"model": model_name}
+    if "temperature" in params:
+        kwargs["temperature"] = 0.7
+    if "base_url" in params:
+        kwargs["base_url"] = base_url
+    elif "api_base" in params:
+        kwargs["api_base"] = base_url
+    if api_key and "api_key" in params:
+        kwargs["api_key"] = api_key
+    return LLM(**kwargs)
+
+
+def build_agent(agent_config: dict[str, Any], llm: LLM) -> Agent:
+    config = dict(agent_config)
+    config["llm"] = llm
+    return Agent(**config)
+
+
+def build_task(task_config: dict[str, Any], agent: Agent) -> Task:
+    config = dict(task_config)
+    config.pop("agent", None)
+    return Task(agent=agent, **config)
+
+
+def run_crewai(
+    agent_config: dict[str, Any],
+    task_config: dict[str, Any],
+    model: str,
+    inputs: dict[str, Any],
+) -> str:
+    llm = build_llm(model)
+    agent = build_agent(agent_config, llm)
+    task = build_task(task_config, agent)
+    crew = Crew(agents=[agent], tasks=[task])
+    result = crew.kickoff(inputs=inputs)
+    for attr in ("raw", "output"):
+        if hasattr(result, attr):
+            value = getattr(result, attr)
+            if value:
+                return str(value).strip()
+    return str(result).strip()
 
 
 def build_markdown(
     activity_id: str,
     inputs: dict,
-    csv_writer: csv.writer,
-    csv_handle,
-    activity_date: str,
 ) -> str:
     lines = [f"# {activity_id}", ""]
-    for label, path in PROMPT_FILES:
-        prompt = to_single_line(render_prompt(path, inputs))
-        # print(prompt)
-        lines.append(f"## {label}")
+    activity_context = render_activity_context(inputs)
+    for prompt_config in PROMPT_CONFIGS:
+        agents_config = load_yaml_config(prompt_config.agents_path)
+        tasks_config = load_yaml_config(prompt_config.tasks_path)
+        agent_name, agent_config = load_single_config("agent", agents_config)
+        task_name, task_config = load_single_config("task", tasks_config)
+        expected_agent = task_config.get("agent")
+        if expected_agent and expected_agent != agent_name:
+            raise ValueError(
+                f"Task {task_name} expects agent {expected_agent}, found {agent_name}."
+            )
+
+        variation_prompt = random.choice(VARIATION_PROMPTS)
+        task_inputs = {
+            "activity_context": activity_context,
+            "variation_prompt": variation_prompt,
+        }
+        lines.append(f"## {prompt_config.label}")
         outputs: dict[str, str] = {}
         for model in OLLAMA_MODELS:
-            ollama_output = to_single_line(run_model(prompt, model))
-            print(f"{label} - {model}")
+            crew_output = run_crewai(agent_config, task_config, model, task_inputs)
+            ollama_output = to_single_line(crew_output)
+            print(f"{prompt_config.label} - {model}")
             print(ollama_output)
             outputs[model] = ollama_output
             lines.append(f"### {model}")
             lines.append(ollama_output)
         lines.append("")
-        csv_writer.writerow(
-            [activity_date, activity_id, prompt, label, *[outputs[model] for model in OLLAMA_MODELS]]
-        )
-        csv_handle.flush()
     return "\n".join(lines).rstrip() + "\n"
 
 
 def main() -> None:
-    DATASET_DIR.mkdir(parents=True, exist_ok=True)
-    write_header = not DATASET_PATH.exists()
-    with DATASET_PATH.open("a", newline="", encoding="utf-8") as handle:
-        writer = csv.writer(handle)
-        if write_header:
-            writer.writerow(["date", "activity_id", "prompt", "label", *OLLAMA_MODELS])
-        for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
-            activity_id = activity_path.stem
-            output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
-            if output_path.exists():
-                continue
-            payload = load_json(activity_path)
-            activity_date = parse_iso(payload["activity"]["start_date_local"]).date().isoformat()
-            inputs = prompt_inputs(payload)
-            output_path.write_text(
-                build_markdown(activity_id, inputs, writer, handle, activity_date),
-                encoding="utf-8",
-            )
+    for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
+        activity_id = activity_path.stem
+        output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
+        if output_path.exists():
+            continue
+        payload = load_json(activity_path)
+        inputs = prompt_inputs(payload)
+        output_path.write_text(
+            build_markdown(activity_id, inputs),
+            encoding="utf-8",
+        )
 
 
 if __name__ == "__main__":
