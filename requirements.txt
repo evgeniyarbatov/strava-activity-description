@@ -9,3 +9,4 @@ pyproj
 python-dotenv
 crewai
 pyyaml
+litellm
