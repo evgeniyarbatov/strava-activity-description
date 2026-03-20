@@ -34,14 +34,14 @@ This repo is a small, linear data pipeline. Each script is intended to be run in
 6. `scripts/poi.py` adds nearby POI categories from OSM data.
 7. `scripts/describe.py` renders descriptions for each prompt/model.
 
-Key design choices:
+### Notes
 
-- GPX/TCX matching uses shared timestamps rather than filenames to avoid brittle naming assumptions.
+- GPX/TCX matching uses shared timestamps.
 - Polylines are simplified to reduce prompt size while keeping route shape intact.
 - Uniqueness compares RDP-simplified lat/lon vectors, centroid offsets, and distance, then uses per-batch normalization to map scores into descriptive words.
 - POI matching uses the convex hull of the route buffered by 20 meters to approximate a corridor around the run.
 - Weather and traffic descriptions are bucketed into expressive text to avoid raw numbers in the prompts.
-- Prompt context is centralized in `prompts/activity-context.txt` so each prompt uses a consistent, shared vocabulary.
+- Prompt context is centralized in `prompts/activity-context.txt`
 - Variation prompts introduce controlled randomness to keep generated outputs fresh.
 
 ## Run
