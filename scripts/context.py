@@ -147,46 +147,32 @@ LATE_NIGHT = [
 ]
 
 
+TIME_WINDOWS = [
+    (0, 5, DEEP_NIGHT),
+    (5, 8, DAWN),
+    (8, 12, MORNING),
+    (12, 14, MIDDAY),
+    (14, 17, AFTERNOON),
+    (17, 19, EARLY_EVENING),
+    (19, 22, EVENING),
+    (22, 24, LATE_NIGHT),
+]
+
+
 def time_of_day_description(start_time: datetime) -> str:
     """
     Returns a random creative description of the time of day.
     Each call may return a different description for the same time.
     """
     hour = start_time.hour
-
-    # 12 AM - 4 AM: Deep night
-    if 0 <= hour < 5:
-        return random.choice(DEEP_NIGHT)
-
-    # 5 AM - 7 AM: Dawn
-    if 5 <= hour < 8:
-        return random.choice(DAWN)
-
-    # 8 AM - 11 AM: Morning
-    if 8 <= hour < 12:
-        return random.choice(MORNING)
-
-    # 12 PM - 2 PM: Midday
-    if 12 <= hour < 14:
-        return random.choice(MIDDAY)
-
-    # 2 PM - 5 PM: Afternoon
-    if 14 <= hour < 17:
-        return random.choice(AFTERNOON)
-
-    # 5 PM - 7 PM: Early evening
-    if 17 <= hour < 19:
-        return random.choice(EARLY_EVENING)
-
-    # 7 PM - 10 PM: Evening
-    if 19 <= hour < 22:
-        return random.choice(EVENING)
-
-    # 10 PM - 12 AM: Late night
+    for start, end, phrases in TIME_WINDOWS:
+        if start <= hour < end:
+            return random.choice(phrases)
     return random.choice(LATE_NIGHT)
 
 
 def describe_goal(value: float, goal: float, words: list[str]) -> str:
+    """Pick a descriptor based on how close a value is to its goal."""
     ratio = value / goal
     index = min(len(words) - 1, int(ratio * (len(words) - 1)))
     return words[index]

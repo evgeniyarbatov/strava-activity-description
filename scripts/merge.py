@@ -42,6 +42,7 @@ def list_files(directory: Path, suffix: str) -> list[Path]:
 
 
 def parse_tcx(path: Path) -> dict[str, tuple[int | None, int | None]]:
+    """Map timestamp -> (heart_rate, cadence)."""
     tree = ET.parse(path)
     root = tree.getroot()
     data: dict[str, tuple[int | None, int | None]] = {}
@@ -58,25 +59,31 @@ def parse_tcx(path: Path) -> dict[str, tuple[int | None, int | None]]:
     return data
 
 
+def _parse_gpx_point(trkpt: ET.Element) -> GpxPoint | None:
+    time_el = trkpt.find("{*}time")
+    dt = parse_time(time_el.text if time_el is not None else None)
+    if not dt:
+        return None
+    tk = time_key(dt)
+    ele_el = trkpt.find("{*}ele")
+    return GpxPoint(
+        lat=trkpt.attrib.get("lat", ""),
+        lon=trkpt.attrib.get("lon", ""),
+        ele=(ele_el.text if ele_el is not None else None),
+        time=tk,
+        time_key=tk,
+    )
+
+
 def parse_gpx(path: Path) -> list[GpxPoint]:
+    """Parse GPX trackpoints into GpxPoint records."""
     tree = ET.parse(path)
     root = tree.getroot()
     points: list[GpxPoint] = []
     for trkpt in root.findall(".//{*}trkpt"):
-        time_el = trkpt.find("{*}time")
-        dt = parse_time(time_el.text if time_el is not None else None)
-        if not dt:
-            continue
-        tk = time_key(dt)
-        points.append(
-            GpxPoint(
-                lat=trkpt.attrib.get("lat", ""),
-                lon=trkpt.attrib.get("lon", ""),
-                ele=(trkpt.find("{*}ele").text if trkpt.find("{*}ele") is not None else None),
-                time=tk,
-                time_key=tk,
-            )
-        )
+        point = _parse_gpx_point(trkpt)
+        if point:
+            points.append(point)
     return points
 
 
@@ -86,6 +93,7 @@ def load_gpx(path: Path) -> tuple[list[GpxPoint], set[str]]:
 
 
 def write_gpx(points: list[GpxPoint], tcx_data: dict[str, tuple[int | None, int | None]], output: Path) -> None:
+    """Write merged GPX with cadence/HR trackpoint extensions."""
     ET.register_namespace("", GPX_NS)
     ET.register_namespace("gpxtpx", GPXTPX_NS)
 
@@ -143,6 +151,7 @@ def main() -> None:
                 gpx_cache[gpx_file] = (points, keys)
             else:
                 points, keys = gpx_cache[gpx_file]
+            # First GPX file sharing timestamps with the TCX wins.
             if tcx_keys & keys:
                 match_file = gpx_file
                 match_points = points

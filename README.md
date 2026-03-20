@@ -22,6 +22,28 @@ Generate short Strava activity descriptions from run polylines, weather, traffic
 
 CrewAI configs live per prompt in `prompts/<prompt>/agents.yaml` and `prompts/<prompt>/tasks.yaml`, with shared context in `prompts/activity-context.txt`.
 
+## Design
+
+This repo is a small, linear data pipeline. Each script is intended to be run in order, and each step enriches the activity payload without mutating earlier sources:
+
+1. `scripts/merge.py` merges GPX location tracks with TCX cadence/HR samples.
+2. `scripts/activity.py` produces activity JSON (distance, moving time, polyline).
+3. `scripts/weather_traffic.py` adds weather/traffic samples from DynamoDB.
+4. `scripts/uniqueness.py` scores routes against prior runs.
+5. `scripts/context.py` derives adjectives based on goals and time-of-day.
+6. `scripts/poi.py` adds nearby POI categories from OSM data.
+7. `scripts/describe.py` renders descriptions for each prompt/model.
+
+Key design choices:
+
+- GPX/TCX matching uses shared timestamps rather than filenames to avoid brittle naming assumptions.
+- Polylines are simplified to reduce prompt size while keeping route shape intact.
+- Uniqueness uses fastDTW distances and a per-batch normalization to map scores into descriptive words.
+- POI matching uses the convex hull of the route buffered by 20 meters to approximate a corridor around the run.
+- Weather and traffic descriptions are bucketed into expressive text to avoid raw numbers in the prompts.
+- Prompt context is centralized in `prompts/activity-context.txt` so each prompt uses a consistent, shared vocabulary.
+- Variation prompts introduce controlled randomness to keep generated outputs fresh.
+
 ## Run
 
 1. Update `goals.json` to set your personal distance and moving time targets.
