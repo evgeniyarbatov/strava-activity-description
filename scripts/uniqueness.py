@@ -69,6 +69,7 @@ def build_reference_runs(activities: list[dict] | None = None) -> list[dict]:
 
 
 def calculate_uniqueness_score(distances: list[float]) -> float | None:
+    """Calculate a raw uniqueness score from DTW distances."""
     if not distances:
         return None
     median_distance = median(distances)
@@ -96,6 +97,7 @@ def uniqueness_description(score: float | None) -> str | None:
     if score is None:
         return None
     normalized = (score - UNIQUENESS_MIN) / (UNIQUENESS_MAX - UNIQUENESS_MIN)
+    normalized = max(0.0, min(1.0, normalized))
     index = int((1 - normalized) * (len(UNIQUENESS_WORDS) - 1))
     return UNIQUENESS_WORDS[index]
 

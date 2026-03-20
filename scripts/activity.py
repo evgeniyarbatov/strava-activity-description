@@ -16,29 +16,41 @@ OUTPUT_DIR = DATA_DIR / "activities"
 SIMPLIFY_DISTANCE_M = 10
 
 
+def _optional_text(element: ET.Element, path: str) -> str | None:
+    value = element.findtext(path)
+    return value if value is not None else None
+
+
+def _parse_trkpt(trkpt: ET.Element) -> dict | None:
+    time_text = _optional_text(trkpt, "{*}time")
+    if not time_text:
+        return None
+    point = {
+        "lat": float(trkpt.attrib["lat"]),
+        "lon": float(trkpt.attrib["lon"]),
+        "time": parse_iso(time_text),
+    }
+    ele = _optional_text(trkpt, "{*}ele")
+    if ele is not None:
+        point["ele"] = ele
+    hr = _optional_text(trkpt, ".//{*}hr")
+    if hr is not None:
+        point["hr"] = hr
+    cad = _optional_text(trkpt, ".//{*}cad")
+    if cad is not None:
+        point["cad"] = cad
+    return point
+
+
 def parse_points(path: Path) -> list[dict]:
+    """Parse GPX trackpoints into a list of dicts."""
     tree = ET.parse(path)
     root = tree.getroot()
     points: list[dict] = []
     for trkpt in root.findall(".//{*}trkpt"):
-        time_text = trkpt.findtext("{*}time")
-        if not time_text:
-            continue
-        point = {
-            "lat": float(trkpt.attrib["lat"]),
-            "lon": float(trkpt.attrib["lon"]),
-            "time": parse_iso(time_text),
-        }
-        ele = trkpt.findtext("{*}ele")
-        if ele is not None:
-            point["ele"] = ele
-        hr = trkpt.findtext(".//{*}hr")
-        if hr is not None:
-            point["hr"] = hr
-        cad = trkpt.findtext(".//{*}cad")
-        if cad is not None:
-            point["cad"] = cad
-        points.append(point)
+        point = _parse_trkpt(trkpt)
+        if point:
+            points.append(point)
     return points
 
 
@@ -47,6 +59,7 @@ def to_zulu(dt) -> str:
 
 
 def to_local_zulu(dt) -> str:
+    """Encode local time using a Z suffix to keep Strava-style fields."""
     local_dt = dt.astimezone().replace(tzinfo=timezone.utc)
     return local_dt.isoformat().replace("+00:00", "Z")
 
@@ -54,6 +67,7 @@ def to_local_zulu(dt) -> str:
 def simplify_points(points: list[dict], min_distance_m: float) -> list[dict]:
     if len(points) < 2:
         return points
+    # Convert meters to degrees (approx) for shapely simplification.
     tolerance = min_distance_m / 111_320
     line = LineString([(point["lon"], point["lat"]) for point in points])
     simplified = line.simplify(tolerance, preserve_topology=False)
@@ -61,14 +75,19 @@ def simplify_points(points: list[dict], min_distance_m: float) -> list[dict]:
     return [coord_map[(lon, lat)] for lon, lat in simplified.coords]
 
 
+def total_distance_m(points: list[dict]) -> float:
+    distance_m = 0.0
+    for prev, curr in zip(points, points[1:]):
+        distance_m += geo_distance((prev["lat"], prev["lon"]), (curr["lat"], curr["lon"])).meters
+    return distance_m
+
+
 def activity_payload(points: list[dict]) -> dict:
     start_time = points[0]["time"]
     end_time = points[-1]["time"]
     moving_time = int(round((end_time - start_time).total_seconds()))
 
-    distance_m = 0.0
-    for prev, curr in zip(points, points[1:]):
-        distance_m += geo_distance((prev["lat"], prev["lon"]), (curr["lat"], curr["lon"])).meters
+    distance_m = total_distance_m(points)
 
     simplified_points = simplify_points(points, SIMPLIFY_DISTANCE_M)
     encoded = polyline.encode([(pt["lat"], pt["lon"]) for pt in simplified_points])

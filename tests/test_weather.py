@@ -22,6 +22,18 @@ def test_filter_items_by_hour_orders_and_filters() -> None:
     ]
 
 
+def test_filter_items_by_hour_applies_context() -> None:
+    items = [
+        {"hour": 9, "context": "weather", "data": {}},
+        {"hour": 9, "context": "traffic", "data": {}},
+    ]
+
+    filtered = filter_items_by_hour(items, 8, 10, context="weather")
+
+    assert len(filtered) == 1
+    assert filtered[0]["context"] == "weather"
+
+
 def test_build_weather_entries_keeps_expected_fields() -> None:
     entries = build_weather_entries(
         [

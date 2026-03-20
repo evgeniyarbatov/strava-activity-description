@@ -47,6 +47,7 @@ TRAFFIC_CRAWLING = [
 def filter_items_by_hour(
     items: list[dict], start_hour: int, end_hour: int, context: str | None = None
 ) -> list[dict]:
+    """Filter items by context and hour range (inclusive)."""
     items = [
         item
         for item in items
@@ -58,6 +59,7 @@ def filter_items_by_hour(
 
 
 def to_number(value: object) -> object:
+    """Convert DynamoDB Decimals to floats for math."""
     if isinstance(value, Decimal):
         return float(value)
     return value
@@ -340,6 +342,7 @@ def build_traffic_entries(items: list[dict]) -> list[dict]:
 
 
 def query_items(table, date: str) -> list[dict]:
+    """Scan DynamoDB for a specific date, handling pagination."""
     items = []
     response = table.scan(FilterExpression=Attr("date").eq(date))
     items.extend(response.get("Items", []))
@@ -370,17 +373,19 @@ def main() -> None:
         start_hour = start_time.hour
         end_hour = end_time.hour
 
-        if not payload.get("weather"):
+        items: list[dict] | None = None
+        if not payload.get("weather") or not payload.get("traffic"):
             items = query_items(table, date)
+
+        if not payload.get("weather"):
             weather_during_activity = filter_items_by_hour(
-                items, start_hour, end_hour, "weather"
+                items or [], start_hour, end_hour, "weather"
             )
             payload["weather"] = build_weather_entries(weather_during_activity)
 
         if not payload.get("traffic"):
-            traffic_items = query_items(table, date)
             traffic_during_activity = filter_items_by_hour(
-                traffic_items, start_hour, end_hour, "traffic"
+                items or [], start_hour, end_hour, "traffic"
             )
             payload["traffic"] = build_traffic_entries(traffic_during_activity)
 

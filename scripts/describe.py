@@ -118,6 +118,16 @@ PROMPT_CONFIGS = [
 ]
 
 
+def most_common(values: list[str]) -> str:
+    if not values:
+        return ""
+    return max(values, key=values.count)
+
+
+def unique_join(values: list[str]) -> str:
+    return ", ".join(dict.fromkeys(values))
+
+
 def format_duration(seconds: int) -> str:
     hours, remainder = divmod(seconds, 3600)
     minutes, secs = divmod(remainder, 60)
@@ -139,15 +149,13 @@ def activity_summary(
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
 
     feels_like_values = [str(entry["feels_like"]) for entry in weather_entries]
-    feels_like = ""
-    if feels_like_values:
-        feels_like = max(feels_like_values, key=feels_like_values.count)
-    weather_description = ", ".join(
-        dict.fromkeys(str(entry["description"]) for entry in weather_entries)
+    feels_like = most_common(feels_like_values)
+    weather_description = unique_join(
+        [str(entry["description"]) for entry in weather_entries]
     )
 
-    traffic_description = ", ".join(
-        dict.fromkeys(str(entry["description"]) for entry in traffic_entries)
+    traffic_description = unique_join(
+        [str(entry["description"]) for entry in traffic_entries]
     )
 
     return {
@@ -158,9 +166,15 @@ def activity_summary(
     }
 
 
-def location_from_polyline(map_polyline: str, geolocator: Nominatim) -> tuple[str | None, str | None]:
-    coordinates = polyline.decode(map_polyline)
-    median_lat, median_lng = coordinates[len(coordinates) // 2]
+def midpoint_from_polyline(encoded: str) -> tuple[float, float]:
+    coordinates = polyline.decode(encoded)
+    return coordinates[len(coordinates) // 2]
+
+
+def location_from_polyline(
+    map_polyline: str, geolocator: Nominatim
+) -> tuple[str | None, str | None]:
+    median_lat, median_lng = midpoint_from_polyline(map_polyline)
     location = geolocator.reverse(
         (median_lat, median_lng), language="en", addressdetails=True
     )
@@ -203,6 +217,7 @@ def render_activity_context(inputs: dict, template_path: Path | None = None) -> 
 
 
 def load_yaml_config(path: Path) -> dict[str, Any]:
+    """Load YAML config files for CrewAI agents/tasks."""
     if not path.exists():
         raise FileNotFoundError(f"Missing CrewAI config: {path}")
     content = path.read_text(encoding="utf-8")
@@ -223,7 +238,7 @@ def to_single_line(text: str) -> str:
     return " ".join(text.splitlines())
 
 
-def build_llm(model: str) -> LLM:
+def resolve_ollama_endpoint(model: str) -> tuple[str, str, str | None]:
     model_name = model if "/" in model else f"ollama/{model}"
     if model in OLLAMA_CLOUD_MODELS:
         api_key = os.getenv("OLLAMA_API_KEY") or os.getenv("API_KEY")
@@ -233,12 +248,13 @@ def build_llm(model: str) -> LLM:
     else:
         base_url = os.getenv("OLLAMA_LOCAL_HOST", "http://localhost:11434")
         api_key = None
+    return model_name, base_url, api_key
 
-    os.environ["OLLAMA_API_BASE"] = base_url
-    os.environ["OLLAMA_HOST"] = base_url
-    if api_key:
-        os.environ["OLLAMA_API_KEY"] = api_key
 
+def build_llm(model: str) -> LLM:
+    model_name, base_url, api_key = resolve_ollama_endpoint(model)
+
+    # CrewAI's LLM signature changes across versions; only pass supported args.
     params = inspect.signature(LLM).parameters
     kwargs: dict[str, Any] = {"model": model_name}
     if "temperature" in params:
@@ -249,6 +265,12 @@ def build_llm(model: str) -> LLM:
         kwargs["api_base"] = base_url
     if api_key and "api_key" in params:
         kwargs["api_key"] = api_key
+
+    os.environ["OLLAMA_API_BASE"] = base_url
+    os.environ["OLLAMA_HOST"] = base_url
+    if api_key:
+        os.environ["OLLAMA_API_KEY"] = api_key
+
     return LLM(**kwargs)
 
 
@@ -283,6 +305,21 @@ def run_crewai(
     return str(result).strip()
 
 
+def load_prompt_pair(
+    prompt_config: PromptConfig,
+) -> tuple[str, dict[str, Any], str, dict[str, Any]]:
+    agents_config = load_yaml_config(prompt_config.agents_path)
+    tasks_config = load_yaml_config(prompt_config.tasks_path)
+    agent_name, agent_config = load_single_config("agent", agents_config)
+    task_name, task_config = load_single_config("task", tasks_config)
+    expected_agent = task_config.get("agent")
+    if expected_agent and expected_agent != agent_name:
+        raise ValueError(
+            f"Task {task_name} expects agent {expected_agent}, found {agent_name}."
+        )
+    return agent_name, agent_config, task_name, task_config
+
+
 def build_markdown(
     activity_id: str,
     inputs: dict,
@@ -290,15 +327,7 @@ def build_markdown(
     lines = [f"# {activity_id}", ""]
     activity_context = render_activity_context(inputs)
     for prompt_config in PROMPT_CONFIGS:
-        agents_config = load_yaml_config(prompt_config.agents_path)
-        tasks_config = load_yaml_config(prompt_config.tasks_path)
-        agent_name, agent_config = load_single_config("agent", agents_config)
-        task_name, task_config = load_single_config("task", tasks_config)
-        expected_agent = task_config.get("agent")
-        if expected_agent and expected_agent != agent_name:
-            raise ValueError(
-                f"Task {task_name} expects agent {expected_agent}, found {agent_name}."
-            )
+        _, agent_config, _, task_config = load_prompt_pair(prompt_config)
 
         variation_prompt = random.choice(VARIATION_PROMPTS)
         task_inputs = {
@@ -306,13 +335,11 @@ def build_markdown(
             "variation_prompt": variation_prompt,
         }
         lines.append(f"## {prompt_config.label}")
-        outputs: dict[str, str] = {}
         for model in OLLAMA_MODELS:
             crew_output = run_crewai(agent_config, task_config, model, task_inputs)
             ollama_output = to_single_line(crew_output)
             print(f"{prompt_config.label} - {model}")
             print(ollama_output)
-            outputs[model] = ollama_output
             lines.append(f"### {model}")
             lines.append(ollama_output)
         lines.append("")
@@ -320,6 +347,7 @@ def build_markdown(
 
 
 def main() -> None:
+    DESCRIPTIONS_DIR.mkdir(parents=True, exist_ok=True)
     for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
         activity_id = activity_path.stem
         output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"

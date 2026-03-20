@@ -14,10 +14,10 @@ DATA_DIR = Path("data/activities")
 OSM_PATH = Path("osm/hanoi.osm")
 
 POI_TAGS = [
-    ("leisure", {"park", "garden", "nature_reserve"}),
-    ("natural", {"tree", "wood", "water", "wetland", "grassland"}),
     ("water", {"pond", "lake", "reservoir", "river"}),
     ("waterway", {"river", "stream", "canal"}),
+    ("natural", {"tree", "wood", "water", "wetland", "grassland"}),
+    ("leisure", {"park", "garden", "nature_reserve"}),
     ("landuse", {"park", "forest", "recreation_ground", "village_green"}),
 ]
 
@@ -33,25 +33,15 @@ def parse_tags(element: ET.Element) -> dict:
 
 
 def match_poi(tags: dict) -> str | None:
-    water_value = tags.get("water")
-    if water_value in {"pond", "lake", "reservoir", "river"}:
-        return water_value
-    waterway_value = tags.get("waterway")
-    if waterway_value in {"river", "stream", "canal"}:
-        return waterway_value
-    natural_value = tags.get("natural")
-    if natural_value in {"tree", "wood", "water", "wetland", "grassland"}:
-        return natural_value
-    leisure_value = tags.get("leisure")
-    if leisure_value in {"park", "garden", "nature_reserve"}:
-        return leisure_value
-    landuse_value = tags.get("landuse")
-    if landuse_value in {"park", "forest", "recreation_ground", "village_green"}:
-        return landuse_value
+    for key, values in POI_TAGS:
+        value = tags.get(key)
+        if value in values:
+            return value
     return None
 
 
 def load_pois(osm_path: Path) -> list[dict]:
+    """Parse OSM XML, extracting POI centroids for nodes and ways."""
     nodes: dict[str, tuple[float, float]] = {}
     pois: list[dict] = []
     context = ET.iterparse(osm_path, events=("end",))
@@ -89,6 +79,7 @@ def load_pois(osm_path: Path) -> list[dict]:
 
 
 def buffer_in_meters(geom, meters: float):
+    """Buffer a geometry in meters by projecting to a local UTM zone."""
     if geom.is_empty:
         return geom
     lon0 = geom.centroid.x
@@ -105,9 +96,19 @@ def buffer_in_meters(geom, meters: float):
 
 
 def hull_from_polyline(encoded: str):
+    """Build a convex hull around an encoded polyline."""
     points = polyline.decode(encoded)
     coords = [(lon, lat) for lat, lon in points]
     return LineString(coords).convex_hull
+
+
+def extract_polyline(activity: dict) -> str | None:
+    activity_map = None
+    if isinstance(activity.get("activity"), dict):
+        activity_map = activity["activity"].get("map")
+    if isinstance(activity_map, dict):
+        return activity_map.get("polyline")
+    return None
 
 
 def enrich_activity(path: Path, pois: list[dict]) -> None:
@@ -117,12 +118,7 @@ def enrich_activity(path: Path, pois: list[dict]) -> None:
         geo = {}
     activity["geo"] = geo
 
-    polyline_value = None
-    if isinstance(activity.get("activity"), dict):
-        activity_map = activity["activity"].get("map")
-        if isinstance(activity_map, dict):
-            polyline_value = activity_map.get("polyline")
-
+    polyline_value = extract_polyline(activity)
     if not polyline_value:
         geo["points_of_interest"] = []
         write_json(path, activity)
