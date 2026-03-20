@@ -9,5 +9,3 @@ pyproj
 python-dotenv
 crewai
 pyyaml
-scikit-learn
-scipy
