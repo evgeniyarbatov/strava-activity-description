@@ -245,6 +245,8 @@ def main() -> None:
 
     for path, raw_score in raw_scores.items():
         payload = load_json(path)
+        if "uniqueness" in payload:
+            continue
         if raw_score is None:
             payload["uniqueness"] = {"description": None}
             write_json(path, payload)
