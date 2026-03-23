@@ -6,8 +6,8 @@ describe_artist_run:
     {variation_prompt}
 
     TASK
-    Draft a 1-2 sentence description of this run.
-  expected_output: "A 1-2 sentence draft description of the run."
+    Draft a short paragraph (3-5 sentences) describing this run.
+  expected_output: "A short paragraph (3-5 sentences) draft description of the run."
   agent: artist
 revise_artist_with_personality:
   description: |
@@ -24,7 +24,7 @@ revise_artist_with_personality:
 
     TASK
     Revise the draft to sound distinctly human and like the author while preserving the
-    artist tone, first-person present tense, and 1-2 sentence length. Keep the same facts
-    and imagery; do not add new metrics or locations.
-  expected_output: "A 1-2 sentence revised description in the artist style and personal voice."
+    artist tone, first-person present tense, and short paragraph length (3-5 sentences).
+    Keep the same facts and imagery; do not add new metrics or locations.
+  expected_output: "A short paragraph (3-5 sentences) revised description in the artist style and personal voice."
   agent: personality_editor

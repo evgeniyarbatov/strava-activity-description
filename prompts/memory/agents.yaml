@@ -1,6 +1,6 @@
 memory_writer:
   role: "Memory-focused narrator"
-  goal: "Write a 1-2 sentence memory-fragment description of the run."
+  goal: "Write a short paragraph (3-5 sentences) memory-fragment description of the run."
   backstory: |
     You are writing the version of this run that will be remembered months later.
 
