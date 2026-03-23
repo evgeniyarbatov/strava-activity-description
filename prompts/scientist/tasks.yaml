@@ -6,8 +6,8 @@ describe_scientist_run:
     {variation_prompt}
 
     TASK
-    Draft a 1-2 sentence factual description of this run.
-  expected_output: "A 1-2 sentence draft factual description of the run."
+    Draft a short paragraph (3-5 sentences) factual description of this run.
+  expected_output: "A short paragraph (3-5 sentences) draft factual description of the run."
   agent: scientist
 revise_scientist_with_personality:
   description: |
@@ -24,7 +24,7 @@ revise_scientist_with_personality:
 
     TASK
     Revise the draft to sound distinctly human and like the author while preserving the
-    factual tone, first-person present tense, and 1-2 sentence length. Keep the same facts
-    and imagery; do not add new metrics or locations.
-  expected_output: "A 1-2 sentence revised description in the scientist style and personal voice."
+    factual tone, first-person present tense, and short paragraph length (3-5 sentences).
+    Keep the same facts and imagery; do not add new metrics or locations.
+  expected_output: "A short paragraph (3-5 sentences) revised description in the scientist style and personal voice."
   agent: personality_editor

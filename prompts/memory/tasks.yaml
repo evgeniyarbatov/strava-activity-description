@@ -6,8 +6,8 @@ describe_memory_run:
     {variation_prompt}
 
     TASK
-    Draft a 1-2 sentence memory-fragment description of this run.
-  expected_output: "A 1-2 sentence draft memory-fragment description of the run."
+    Draft a short paragraph (3-5 sentences) memory-fragment description of this run.
+  expected_output: "A short paragraph (3-5 sentences) draft memory-fragment description of the run."
   agent: memory_writer
 revise_memory_with_personality:
   description: |
@@ -24,7 +24,7 @@ revise_memory_with_personality:
 
     TASK
     Revise the draft to sound distinctly human and like the author while preserving the
-    memory-fragment tone, first-person present tense, and 1-2 sentence length. Keep the
-    same facts and imagery; do not add new metrics or locations.
-  expected_output: "A 1-2 sentence revised description in the memory style and personal voice."
+    memory-fragment tone, first-person present tense, and short paragraph length (3-5 sentences).
+    Keep the same facts and imagery; do not add new metrics or locations.
+  expected_output: "A short paragraph (3-5 sentences) revised description in the memory style and personal voice."
   agent: personality_editor
