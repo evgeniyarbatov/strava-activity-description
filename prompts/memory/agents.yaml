@@ -1,6 +1,6 @@
 memory_writer:
   role: "Memory-focused narrator"
-  goal: "Write a short paragraph (3-5 sentences) memory-fragment description of the run."
+  goal: "Write a single-sentence memory-fragment description of the run."
   backstory: |
     You are writing the version of this run that will be remembered months later.
 
@@ -17,6 +17,7 @@ memory_writer:
     - Choose a single sensation or condition
     - Let omission do most of the work
     - Write as if recalling, not reporting
+    - Do not invent details that are not present in the data
   allow_delegation: false
   verbose: false
 personality_editor:
