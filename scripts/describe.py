@@ -14,7 +14,7 @@ from geopy.geocoders import Nominatim
 
 from scripts.utils import load_env, load_json, parse_iso
 
-load_env(Path("api-keys/ollama.env"))
+load_env(Path("ollama.env"))
 
 OLLAMA_CLOUD_MODELS = [
     "gemini-3-flash-preview",
@@ -256,7 +256,7 @@ def resolve_ollama_endpoint(model: str) -> tuple[str, str, str | None]:
     if model in OLLAMA_CLOUD_MODELS:
         api_key = os.getenv("OLLAMA_API_KEY") or os.getenv("API_KEY")
         if not api_key:
-            raise ValueError("Missing Ollama API key in api-keys/ollama.env.")
+            raise ValueError("Missing Ollama API key in ollama.env.")
         base_url = OLLAMA_CLOUD_HOST
     else:
         base_url = os.getenv("OLLAMA_LOCAL_HOST", "http://localhost:11434")

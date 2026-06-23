@@ -2,6 +2,17 @@
 
 This directory provisions the DynamoDB table, IAM roles, Lambda function, and EventBridge schedules used to capture hourly weather and traffic context.
 
+## API Keys
+
+Copy the sample env files and add your keys before running `terraform apply`:
+
+```bash
+cp ../openweather.env.sample ../openweather.env
+cp ../tomtom.env.sample ../tomtom.env
+```
+
+The real `.env` files are gitignored; only the `.env.sample` templates are checked in.
+
 ## Lambda
 
 The Lambda handler in `lambda/lambda_function.py`:
@@ -13,4 +24,4 @@ The Lambda handler in `lambda/lambda_function.py`:
 
 ## When It Runs
 
-EventBridge invokes the Lambda on two schedules defined in `schedule.tf`, using the `morning_lambda_schedule` and `night_lambda_schedule` cron expressions from `variables.tf`. The defaults are set to run hourly during 05:00-09:00 and 22:00-00:00 Hanoi time.
+EventBridge invokes the Lambda on the morning schedule defined in `schedule.tf`, using the `morning_lambda_schedule` cron expression from `variables.tf`. The default runs hourly during 04:00-07:00 Ho Chi Minh time.
