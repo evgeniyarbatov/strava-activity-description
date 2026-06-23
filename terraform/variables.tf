@@ -20,20 +20,15 @@ variable "ttl_days" {
 
 variable "morning_lambda_schedule" {
   type    = string
-  default = "cron(0 22-23,0-2 ? * * *)" # 05:00, 06:00, 07:00, 08:00, 09:00 Hanoi time
-}
-
-variable "night_lambda_schedule" {
-  type    = string
-  default = "cron(0 15-17 ? * * *)" # 22:00, 23:00, 00:00 Hanoi time
+  default = "cron(0 21-23,0 ? * * *)" # 04:00, 05:00, 06:00, 07:00 Ho Chi Minh time
 }
 
 variable "latitude" {
   type    = number
-  default = 20.99847177468044
+  default = 10.790609897658006
 }
 
 variable "longitude" {
   type    = number
-  default = 105.86861070103114
+  default = 106.6885402030355
 }
