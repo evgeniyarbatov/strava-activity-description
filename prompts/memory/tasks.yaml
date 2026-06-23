@@ -6,9 +6,10 @@ describe_memory_run:
     {variation_prompt}
 
     TASK
-    Draft a single-sentence memory-fragment description of this run.
+    Draft a one- or two-sentence memory fragment of this run.
+    Not a summary — one detail that will linger, everything else omitted.
     Use only the provided data; do not invent details that are not present.
-  expected_output: "A single-sentence draft memory-fragment description of the run."
+  expected_output: "A one- or two-sentence draft memory fragment of the run."
   agent: memory_writer
 revise_memory_with_personality:
   description: |
@@ -17,16 +18,16 @@ revise_memory_with_personality:
 
     PERSONAL VOICE
     - Honest and independent; avoid hype, cliches, or groupthink.
-    - Direct and pragmatic; concise, results-oriented phrasing.
+    - Direct and pragmatic; concise phrasing.
     - Structured but natural; clear sentences without rigid formula.
     - Quiet and private; warm one-on-one tone, not performative.
-    - Detail-aware and risk-sensitive; no exaggeration, choose concrete details.
+    - Detail-aware; no exaggeration, choose concrete details.
     - Grounded creativity; one precise image is enough.
 
     TASK
     Revise the draft to sound distinctly human and like the author while preserving the
-    memory-fragment tone, first-person present tense, and single-sentence length.
+    memory-fragment tone and one- or two-sentence length.
     Keep the same facts and imagery; do not add new metrics or locations.
     Do not invent details that are not present in the data.
-  expected_output: "A single-sentence revised description in the memory style and personal voice."
+  expected_output: "A one- or two-sentence revised reflection in the memory style and personal voice."
   agent: personality_editor

@@ -5,8 +5,10 @@ import polyline
 from scripts.context import DAWN, EARLY_EVENING, LATE_NIGHT, MIDDAY, time_of_day_description
 from scripts.describe import (
     activity_summary,
+    build_reflection,
     format_duration,
     format_pace,
+    journal_path_from_activity,
     location_from_polyline,
     render_activity_context,
 )
@@ -91,3 +93,40 @@ def test_render_activity_context_includes_header() -> None:
     rendered = render_activity_context(inputs)
 
     assert "ACTIVITY CONTEXT" in rendered
+
+
+def test_journal_path_from_activity_uses_local_date() -> None:
+    activity = {"start_date_local": "2026-03-15T06:23:39Z"}
+    path = journal_path_from_activity(activity)
+    assert path.name == "2026-03-15.md"
+    assert path.parent.name == "journal"
+
+
+def test_build_reflection_includes_sections() -> None:
+    perspectives = {
+        "artist": "Silver light on the lake.",
+        "buddhist-monk": "Each step passes.",
+        "memory": "The reservoir stays flat.",
+        "scientist": "Overcast, lengthy, notable route.",
+        "cartographer": "A loop with a late detour.",
+        "physiologist": "Effort arrived in the second half.",
+        "archivist": "Notable against your usual shapes.",
+        "dreamer": "The lake holds what the sky will not.",
+        "contrarian": "You will call this easy.",
+    }
+    reflection = build_reflection(
+        run_date="2026-03-15",
+        perspectives=perspectives,
+        afterglow="What did the body know that morning?",
+        tensions="The archivist says notable; the monk says ordinary.",
+        residue="The lake is still there.",
+    )
+
+    assert "# 2026-03-15" in reflection
+    assert "── Afterglow" in reflection
+    assert "── Perspectives" in reflection
+    assert "── Tensions" in reflection
+    assert "── Residue" in reflection
+    assert "Monk:" in reflection
+    assert "Cartographer:" in reflection
+    assert "The lake is still there." in reflection

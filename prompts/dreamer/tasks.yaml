@@ -1,4 +1,4 @@
-describe_artist_run:
+describe_dreamer_run:
   description: |
     {activity_context}
 
@@ -6,12 +6,12 @@ describe_artist_run:
     {variation_prompt}
 
     TASK
-    Draft a one- or two-sentence reflection fragment of this run.
-    Not a summary — one scene, one image. Deliberately incomplete.
-    Use only the provided data; do not invent details that are not present.
-  expected_output: "A one- or two-sentence draft reflection fragment of the run."
-  agent: artist
-revise_artist_with_personality:
+    Draft a one- or two-sentence associative reflection of this run.
+    Not a summary — free association from POI and weather, true to mood not fact.
+    Ground in the provided data, but let images drift.
+  expected_output: "A one- or two-sentence draft associative reflection of the run."
+  agent: dreamer
+revise_dreamer_with_personality:
   description: |
     DRAFT
     {draft_description}
@@ -26,8 +26,7 @@ revise_artist_with_personality:
 
     TASK
     Revise the draft to sound distinctly human and like the author while preserving the
-    artist tone and one- or two-sentence length.
-    Keep the same facts and imagery; do not add new metrics or locations.
-    Do not invent details that are not present in the data.
-  expected_output: "A one- or two-sentence revised reflection in the artist style and personal voice."
+    dreamer tone and one- or two-sentence length.
+    Keep the associative quality; do not flatten into reportage.
+  expected_output: "A one- or two-sentence revised reflection in the dreamer style and personal voice."
   agent: personality_editor

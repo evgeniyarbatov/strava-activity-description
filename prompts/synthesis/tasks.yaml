@@ -1,0 +1,38 @@
+generate_afterglow:
+  description: |
+    {activity_context}
+
+    PERSPECTIVES
+    {perspectives_block}
+
+    TASK
+    Write 2–3 sentences for an opening called Afterglow.
+    Not a summary of the run. An opening image or question that pulls at the subconscious.
+    Do not list perspectives. Do not resolve tensions.
+  expected_output: "2–3 sentences: an opening image or question, not a summary."
+  agent: synthesizer
+generate_tensions:
+  description: |
+    PERSPECTIVES
+    {perspectives_block}
+
+    TASK
+    Write 2–4 sentences naming where the perspectives disagree.
+    Only friction — not agreement. Example: "The data says routine; the monk says new."
+    Do not resolve the tensions. Do not summarize the run.
+  expected_output: "2–4 sentences naming disagreements between perspectives."
+  agent: synthesizer
+generate_residue:
+  description: |
+    PERSPECTIVES
+    {perspectives_block}
+
+    TENSIONS
+    {tensions}
+
+    TASK
+    Write exactly one line to carry — no attribution, no explanation.
+    Something that could have come from any lens or from none.
+    Designed to be misremembered. Designed to pull.
+  expected_output: "One line with no attribution."
+  agent: synthesizer

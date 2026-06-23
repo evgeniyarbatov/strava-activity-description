@@ -38,8 +38,10 @@ analyze:
 	@$(PYTHON) -m scripts.context
 	@$(PYTHON) -m scripts.poi
 
-describe:
+reflect:
 	@$(PYTHON) -m scripts.describe
+
+describe: reflect
 
 test:
 	@$(PYTHON) -m pytest

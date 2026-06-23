@@ -1,26 +1,22 @@
-# Strava Activity Description
+# Run Reflection
 
-Generate short Strava activity descriptions from run polylines, weather, traffic, and prior history.
+Enrich the experience of running — surface dimensions of a run that consciousness misses, forgets, or smooths over.
 
-#### Artistic
+Each run becomes a private reflection: multiple perspectives that disagree, tensions between them, and one line to carry.
 
-> Morning whispers through overcast skies in Hà Nội, my legs gliding past gardens and lakes as I breathe in the city's slow awakening. Trees line the path like silent sentinels, their branches cradling dappled light.
+#### Sample Perspectives
 
-#### Monk
+> **Monk:** The overcast sky filters light through trees, casting a calm on the streets. Each step mirrors breath and movement, each moment fleeting yet clear.
 
-> The overcast sky filters light through trees, casting a calm on the streets. Each step mirrors my breath and movement, as I wander through forest, garden, lake, and park, each moment fleeting yet clear.
+> **Memory:** The reservoir is flat and gray. I carry that silence into the morning streets, keeping my breath even while the city starts its rush.
 
-#### Memory
-
-> The reservoir is flat and gray. I carry that silence into the morning streets, keeping my breath even while the city starts its rush.
-
-#### Scientist
-
-> At daybreak on March 15, 2026, I set out for a run through Hà Nội's overcast skies. The route took me through forests, gardens, and parks, offering a mix of nature and the city’s hustle, all while moving smoothly despite the typical morning commotion.
+> **Contrarian:** You will call this an easy morning; the duration says otherwise.
 
 ## Prompt Configs
 
-CrewAI configs live per prompt in `prompts/<prompt>/agents.yaml` and `prompts/<prompt>/tasks.yaml`, with shared context in `prompts/activity-context.txt` and a final personal-voice revision task.
+CrewAI configs live per lens in `prompts/<lens>/agents.yaml` and `prompts/<lens>/tasks.yaml`, with shared context in `prompts/activity-context.txt`, a personal-voice revision task, and a synthesis pass in `prompts/synthesis/`.
+
+**Lenses:** Artist, Monk, Memory, Scientist, Cartographer, Physiologist, Archivist, Dreamer, Contrarian.
 
 ## Design
 
@@ -32,7 +28,27 @@ This repo is a small, linear data pipeline. Each script is intended to be run in
 4. `scripts/uniqueness.py` scores routes against prior runs.
 5. `scripts/context.py` derives adjectives based on goals and time-of-day.
 6. `scripts/poi.py` adds nearby POI categories from OSM data.
-7. `scripts/describe.py` renders descriptions for each prompt/model.
+7. `scripts/describe.py` generates a run reflection into `journal/`.
+
+### Output Format
+
+Each reflection is structured for slow reading:
+
+```
+── Afterglow ──────────────────────────
+[2–3 sentences. An opening image or question.]
+
+── Perspectives ─────────────────────
+Monk:      ...
+Memory:    ...
+[Each lens, 1–2 sentences. Deliberately incomplete.]
+
+── Tensions ─────────────────────────
+[Where perspectives disagree.]
+
+── Residue ──────────────────────────
+[One line to carry. No attribution.]
+```
 
 ### Notes
 
@@ -49,7 +65,9 @@ This repo is a small, linear data pipeline. Each script is intended to be run in
 1. Update `goals.json` to set your personal distance and moving time targets.
 2. Add GPX/TCX to `data/raw`.
 3. Run `make analyze` to merge GPX/TCX and enrich activities with weather/traffic context.
-4. Run `make describe` to generate descriptions in `data/descriptions`.
+4. Run `make reflect` to generate reflections in `journal/YYYY-MM-DD.md`.
+
+Set `REFLECTION_MODEL` in `ollama.env` to choose which model generates reflections (defaults to `gemini-3-flash-preview`).
 
 ## Dev Setup
 

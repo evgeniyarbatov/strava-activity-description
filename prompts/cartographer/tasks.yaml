@@ -1,4 +1,4 @@
-describe_artist_run:
+describe_cartographer_run:
   description: |
     {activity_context}
 
@@ -6,12 +6,12 @@ describe_artist_run:
     {variation_prompt}
 
     TASK
-    Draft a one- or two-sentence reflection fragment of this run.
-    Not a summary — one scene, one image. Deliberately incomplete.
+    Draft a one- or two-sentence reflection on the route's geometry.
+    Not a summary — the shape of the path, a detour, a place you almost turned back.
     Use only the provided data; do not invent details that are not present.
-  expected_output: "A one- or two-sentence draft reflection fragment of the run."
-  agent: artist
-revise_artist_with_personality:
+  expected_output: "A one- or two-sentence draft reflection on route geometry."
+  agent: cartographer
+revise_cartographer_with_personality:
   description: |
     DRAFT
     {draft_description}
@@ -26,8 +26,8 @@ revise_artist_with_personality:
 
     TASK
     Revise the draft to sound distinctly human and like the author while preserving the
-    artist tone and one- or two-sentence length.
-    Keep the same facts and imagery; do not add new metrics or locations.
+    cartographer tone and one- or two-sentence length.
+    Keep the same spatial observations; do not add new locations.
     Do not invent details that are not present in the data.
-  expected_output: "A one- or two-sentence revised reflection in the artist style and personal voice."
+  expected_output: "A one- or two-sentence revised reflection in the cartographer style and personal voice."
   agent: personality_editor

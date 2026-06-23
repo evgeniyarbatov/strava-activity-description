@@ -29,9 +29,33 @@ OLLAMA_MODELS = [
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
-DESCRIPTIONS_DIR = DATA_DIR / "descriptions"
+JOURNAL_DIR = Path("journal")
 PROMPTS_DIR = Path("prompts")
 ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "activity-context.txt"
+SYNTHESIS_LABEL = "synthesis"
+PERSONA_LABELS = [
+    "artist",
+    "buddhist-monk",
+    "memory",
+    "scientist",
+    "cartographer",
+    "physiologist",
+    "archivist",
+    "dreamer",
+    "contrarian",
+]
+PERSONA_DISPLAY_NAMES = {
+    "artist": "Artist",
+    "buddhist-monk": "Monk",
+    "memory": "Memory",
+    "scientist": "Scientist",
+    "cartographer": "Cartographer",
+    "physiologist": "Physiologist",
+    "archivist": "Archivist",
+    "dreamer": "Dreamer",
+    "contrarian": "Contrarian",
+}
+PERSPECTIVE_LABEL_WIDTH = max(len(name) + 1 for name in PERSONA_DISPLAY_NAMES.values()) + 1
 PROMPT_INPUT_KEYS = [
     "distance_context",
     "moving_time_context",
@@ -100,22 +124,20 @@ class PromptConfig:
     tasks_path: Path
 
 
-def list_prompt_labels() -> list[str]:
-    labels: list[str] = []
-    for path in sorted(PROMPTS_DIR.iterdir()):
-        if path.is_dir():
-            labels.append(path.name)
-    return labels
-
-
 PROMPT_CONFIGS = [
     PromptConfig(
         label=label,
         agents_path=PROMPTS_DIR / label / "agents.yaml",
         tasks_path=PROMPTS_DIR / label / "tasks.yaml",
     )
-    for label in list_prompt_labels()
+    for label in PERSONA_LABELS
 ]
+
+SYNTHESIS_CONFIG = PromptConfig(
+    label=SYNTHESIS_LABEL,
+    agents_path=PROMPTS_DIR / SYNTHESIS_LABEL / "agents.yaml",
+    tasks_path=PROMPTS_DIR / SYNTHESIS_LABEL / "tasks.yaml",
+)
 
 
 def most_common(values: list[str]) -> str:
@@ -190,8 +212,7 @@ def prompt_inputs(payload: dict) -> dict:
     activity_context = payload["activity_context"]
     points_of_interest = ", ".join(payload["geo"]["points_of_interest"])
 
-    # Reverse geocode the midpoint of the route for location context.
-    geolocator = Nominatim(user_agent="strava-activity-description")
+    geolocator = Nominatim(user_agent="run-reflection")
     city, country = location_from_polyline(activity["map"]["polyline"], geolocator)
 
     uniqueness_description = payload["uniqueness"]["description"]
@@ -214,6 +235,15 @@ def render_activity_context(inputs: dict, template_path: Path | None = None) -> 
     path = template_path or ACTIVITY_CONTEXT_PATH
     template = path.read_text(encoding="utf-8")
     return template.format(**inputs)
+
+
+def journal_path_from_activity(activity: dict) -> Path:
+    start_time_local = parse_iso(activity["start_date_local"])
+    return JOURNAL_DIR / f"{start_time_local.strftime('%Y-%m-%d')}.md"
+
+
+def reflection_model() -> str:
+    return os.getenv("REFLECTION_MODEL", OLLAMA_CLOUD_MODELS[0])
 
 
 def load_yaml_config(path: Path) -> dict[str, Any]:
@@ -267,7 +297,6 @@ def resolve_ollama_endpoint(model: str) -> tuple[str, str, str | None]:
 def build_llm(model: str) -> LLM:
     model_name, base_url, api_key = resolve_ollama_endpoint(model)
 
-    # CrewAI's LLM signature changes across versions; only pass supported args.
     params = inspect.signature(LLM).parameters
     kwargs: dict[str, Any] = {"model": model_name}
     if "temperature" in params:
@@ -357,45 +386,130 @@ def load_prompt_config(
     return agents, tasks
 
 
-def build_markdown(
-    activity_id: str,
-    inputs: dict,
-) -> str:
-    lines = [f"# {activity_id}", ""]
-    activity_context = render_activity_context(inputs)
+def format_perspectives_block(perspectives: dict[str, str]) -> str:
+    lines = []
+    for label in PERSONA_LABELS:
+        display_name = PERSONA_DISPLAY_NAMES[label]
+        text = perspectives[label]
+        lines.append(f"{display_name}: {text}")
+    return "\n".join(lines)
+
+
+def format_perspective_line(label: str, text: str) -> str:
+    display_name = f"{PERSONA_DISPLAY_NAMES[label]}:"
+    return f"{display_name.ljust(PERSPECTIVE_LABEL_WIDTH)} {text}"
+
+
+def run_perspectives(
+    model: str,
+    activity_context: str,
+) -> dict[str, str]:
+    perspectives: dict[str, str] = {}
     for prompt_config in PROMPT_CONFIGS:
         agents_config, tasks_config = load_prompt_config(prompt_config)
-
         variation_prompt = random.choice(VARIATION_PROMPTS)
         task_inputs = {
             "activity_context": activity_context,
             "variation_prompt": variation_prompt,
         }
-        lines.append(f"## {prompt_config.label}")
-        for model in OLLAMA_MODELS:
-            crew_output = run_prompt_pipeline(
-                agents_config, tasks_config, model, task_inputs
-            )
-            ollama_output = to_single_line(crew_output)
-            print(f"{prompt_config.label} - {model}")
-            print(ollama_output)
-            lines.append(f"### {model}")
-            lines.append(ollama_output)
-        lines.append("")
-    return "\n".join(lines).rstrip() + "\n"
+        crew_output = run_prompt_pipeline(
+            agents_config, tasks_config, model, task_inputs
+        )
+        perspective = to_single_line(crew_output)
+        perspectives[prompt_config.label] = perspective
+        print(f"{prompt_config.label}: {perspective}")
+    return perspectives
+
+
+def run_synthesis(
+    model: str,
+    activity_context: str,
+    perspectives: dict[str, str],
+) -> dict[str, str]:
+    agents_config, tasks_config = load_prompt_config(SYNTHESIS_CONFIG)
+    perspectives_block = format_perspectives_block(perspectives)
+    task_inputs: dict[str, Any] = {
+        "activity_context": activity_context,
+        "perspectives_block": perspectives_block,
+    }
+
+    outputs: dict[str, str] = {}
+    for task_name, task_config in tasks_config:
+        agent_name = task_config.get("agent")
+        if not agent_name:
+            raise ValueError(f"Task {task_name} missing agent assignment.")
+        llm = build_llm(model)
+        agent = build_agent(agents_config[agent_name], llm)
+        output = run_crewai_task(agent, task_config, task_inputs)
+        outputs[task_name] = output
+        task_inputs[task_name] = output
+        if task_name == "generate_tensions":
+            task_inputs["tensions"] = output
+        print(f"{task_name}: {output}")
+    return outputs
+
+
+def section_header(title: str, width: int = 38) -> str:
+    fill = max(1, width - len(title) - 3)
+    return f"── {title} " + "─" * fill
+
+
+def build_reflection(
+    run_date: str,
+    perspectives: dict[str, str],
+    afterglow: str,
+    tensions: str,
+    residue: str,
+) -> str:
+    lines = [f"# {run_date}", ""]
+    lines.append(section_header("Afterglow"))
+    lines.append(afterglow.strip())
+    lines.append("")
+    lines.append(section_header("Perspectives"))
+    for label in PERSONA_LABELS:
+        lines.append(format_perspective_line(label, perspectives[label]))
+    lines.append("")
+    lines.append(section_header("Tensions"))
+    lines.append(tensions.strip())
+    lines.append("")
+    lines.append(section_header("Residue"))
+    lines.append(residue.strip())
+    lines.append("")
+    return "\n".join(lines)
+
+
+def build_run_reflection(
+    activity: dict,
+    inputs: dict,
+    model: str | None = None,
+) -> str:
+    selected_model = model or reflection_model()
+    activity_context = render_activity_context(inputs)
+    run_date = parse_iso(activity["start_date_local"]).strftime("%Y-%m-%d")
+
+    perspectives = run_perspectives(selected_model, activity_context)
+    synthesis = run_synthesis(selected_model, activity_context, perspectives)
+
+    return build_reflection(
+        run_date=run_date,
+        perspectives=perspectives,
+        afterglow=synthesis["generate_afterglow"],
+        tensions=synthesis["generate_tensions"],
+        residue=synthesis["generate_residue"],
+    )
 
 
 def main() -> None:
-    DESCRIPTIONS_DIR.mkdir(parents=True, exist_ok=True)
+    JOURNAL_DIR.mkdir(parents=True, exist_ok=True)
     for activity_path in sorted(ACTIVITIES_DIR.glob("*.json")):
-        activity_id = activity_path.stem
-        output_path = DESCRIPTIONS_DIR / f"{activity_id}.md"
+        payload = load_json(activity_path)
+        activity = payload["activity"]
+        output_path = journal_path_from_activity(activity)
         if output_path.exists():
             continue
-        payload = load_json(activity_path)
         inputs = prompt_inputs(payload)
         output_path.write_text(
-            build_markdown(activity_id, inputs),
+            build_run_reflection(activity, inputs),
             encoding="utf-8",
         )
 

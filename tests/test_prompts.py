@@ -2,8 +2,10 @@ from string import Formatter
 
 from scripts.describe import (
     ACTIVITY_CONTEXT_PATH,
+    PERSONA_LABELS,
     PROMPT_CONFIGS,
     PROMPT_INPUT_KEYS,
+    SYNTHESIS_CONFIG,
     load_yaml_config,
 )
 
@@ -24,10 +26,30 @@ def test_activity_context_template_includes_all_inputs() -> None:
     assert not missing, f"{ACTIVITY_CONTEXT_PATH} missing: {sorted(missing)}"
 
 
+def test_persona_labels_include_new_perspectives() -> None:
+    expected = {
+        "artist",
+        "buddhist-monk",
+        "memory",
+        "scientist",
+        "cartographer",
+        "physiologist",
+        "archivist",
+        "dreamer",
+        "contrarian",
+    }
+    assert set(PERSONA_LABELS) == expected
+
+
 def test_prompt_configs_exist() -> None:
     for prompt_config in PROMPT_CONFIGS:
         assert prompt_config.agents_path.exists(), f"Missing {prompt_config.agents_path}"
         assert prompt_config.tasks_path.exists(), f"Missing {prompt_config.tasks_path}"
+
+
+def test_synthesis_config_exists() -> None:
+    assert SYNTHESIS_CONFIG.agents_path.exists()
+    assert SYNTHESIS_CONFIG.tasks_path.exists()
 
 
 def test_task_templates_use_common_inputs() -> None:
@@ -48,3 +70,21 @@ def test_prompt_agents_include_personality_editor() -> None:
     for prompt_config in PROMPT_CONFIGS:
         agents = load_yaml_config(prompt_config.agents_path)
         assert "personality_editor" in agents
+
+
+def test_persona_agents_exclude_strava_framing() -> None:
+    for prompt_config in PROMPT_CONFIGS:
+        agents = load_yaml_config(prompt_config.agents_path)
+        for agent_config in agents.values():
+            text = "\n".join(
+                str(agent_config.get(key, ""))
+                for key in ("role", "goal", "backstory")
+            ).lower()
+            assert "strava" not in text
+
+
+def test_synthesis_tasks_use_perspectives_block() -> None:
+    tasks = load_yaml_config(SYNTHESIS_CONFIG.tasks_path)
+    for task_config in tasks.values():
+        fields = template_fields(task_config["description"])
+        assert "perspectives_block" in fields
