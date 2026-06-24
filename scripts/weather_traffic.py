@@ -17,13 +17,13 @@ ACTIVITIES_DIR = DATA_DIR / "activities"
 DYNAMODB_TABLE = "run-reflection-context"
 
 FEELS_LIKE_FREEZING = [
-    "bone-chilling, rare Hanoi frost",
-    "shockingly frigid for Vietnam",
+    "bone-chilling, rare frost for the city",
+    "shockingly frigid for the season",
     "once-in-a-decade freezing",
-    "arctic winds invading the tropics",
-    "glacial morning paralyzing the city",
+    "arctic winds cutting through unexpectedly",
+    "glacial morning paralyzing the streets",
     "perishingly cold, unprecedented chill",
-    "numbing frost gripping the capital",
+    "numbing frost gripping every corner",
     "mercilessly frozen, almost Siberian",
     "devastatingly icy, historic low",
 ]
@@ -70,9 +70,9 @@ def feels_like_description(feels_like_c: float) -> str:
         return random.choice(FEELS_LIKE_FREEZING)
     if feels_like_c < 10:
         return random.choice([
-            "icy northern winds sweeping through",
+            "icy winds sweeping through",
             "teeth-chattering winter morning",
-            "frosty like the highlands descended",
+            "frosty air settled on the streets",
             "biting cold gripping the streets",
             "piercing chill cutting through layers",
             "razor-sharp winds slicing the air",
@@ -82,11 +82,11 @@ def feels_like_description(feels_like_c: float) -> str:
         ])
     if feels_like_c < 14:
         return random.choice([
-            "proper Hanoi winter chill",
+            "proper winter chill in the air",
             "thick fog and bitter cold",
-            "time for phở and winter coats",
-            "brisk winds off the Red River",
-            "crisp northern snap in the air",
+            "time for hot broth and winter coats",
+            "brisk winds off the waterfront",
+            "crisp snap in the air",
             "penetrating dampness seeping everywhere",
             "raw, unrelenting winter bite",
             "dank coldness clinging stubbornly",
@@ -96,10 +96,10 @@ def feels_like_description(feels_like_c: float) -> str:
         ])
     if feels_like_c < 18:
         return random.choice([
-            "crisp Old Quarter morning",
-            "motorbike riders bundled up",
-            "cool mist over Hoàn Kiếm Lake",
-            "nippy breeze through the alleyways",
+            "crisp downtown morning",
+            "commuters bundled up against the cold",
+            "cool mist over the park lake",
+            "nippy breeze through the side streets",
             "fresh winter air invigorating",
             "bracing coolness awakening the senses",
             "zippy chill energizing the morning",
@@ -109,9 +109,9 @@ def feels_like_description(feels_like_c: float) -> str:
         ])
     if feels_like_c < 20:
         return random.choice([
-            "refreshing dry season breeze",
-            "light jacket weather around West Lake",
-            "perfectly cool for a cà phê sữa đá",
+            "refreshing seasonal breeze",
+            "light jacket weather by the water",
+            "perfectly cool for an outdoor coffee",
             "agreeably mild morning commute",
             "comfortable chill tickling your skin",
             "snappy coolness, delightfully tolerable",
@@ -122,8 +122,8 @@ def feels_like_description(feels_like_c: float) -> str:
         ])
     if feels_like_c < 23:
         return random.choice([
-            "delightfully comfortable Hanoi day",
-            "ideal for strolling the French Quarter",
+            "delightfully comfortable day",
+            "ideal for strolling the historic quarter",
             "gentle sunshine, pleasant breeze",
             "splendidly temperate afternoon",
             "gloriously balanced climate",
@@ -138,13 +138,13 @@ def feels_like_description(feels_like_c: float) -> str:
     if feels_like_c < 26:
         return random.choice([
             "warm but lovely with the fan on",
-            "perfect bánh mì on the sidewalk weather",
+            "perfect sidewalk lunch weather",
             "golden afternoon glow over the city",
             "summery warmth beginning to radiate",
             "toasty sunshine bathing the boulevards",
             "agreeably heated, bordering on balmy",
             "sun-kissed streets buzzing with life",
-            "gently warming, approaching tropical",
+            "gently warming, summer gathering strength",
             "pleasantly heated, comfortably sunny",
             "mellowly warm, invitingly bright",
             "benignly hot, still quite bearable"
@@ -153,7 +153,7 @@ def feels_like_description(feels_like_c: float) -> str:
         return random.choice([
             "warming up, seek the shade",
             "balmy streets calling for iced tea",
-            "typical tropical Hanoi heat building",
+            "typical summer heat building",
             "sultry air wrapping around you",
             "steamy atmosphere thickening",
             "languid heat settling in",
@@ -169,7 +169,7 @@ def feels_like_description(feels_like_c: float) -> str:
             "sidewalk vendors' parasols essential",
             "sweating through the afternoon heat",
             "blistering sun beating down relentlessly",
-            "fierce tropical heat radiating upward",
+            "fierce midday heat radiating upward",
             "searing warmth testing your endurance",
             "baking pavement shimmering with heat",
             "roasting temperatures cooking the streets",
@@ -193,15 +193,15 @@ def feels_like_description(feels_like_c: float) -> str:
             "strangling moisture overwhelming senses"
         ])
     return random.choice([
-        "scorching monsoon intensity",
-        "blazing tropical furnace",
+        "scorching humid intensity",
+        "blazing summer furnace",
         "absolutely sweltering, stay hydrated!",
         "infernal heat radiating mercilessly",
         "punishing sauna-like conditions",
         "broiling temperatures roasting everything",
         "withering heat wave crushing the city",
         "apocalyptic temperatures melting resolve",
-        "volcanic heat overwhelming the capital",
+        "volcanic heat overwhelming the streets",
         "tyrannical sun dominating without mercy",
         "excruciating furnace-like atmosphere",
         "incinerating conditions, survival mode",
@@ -212,7 +212,7 @@ def feels_like_description(feels_like_c: float) -> str:
 def traffic_description(speed_ratio: float) -> str:
     if speed_ratio <= 0.25:
         return random.choice([
-            "complete road standstill, motorbikes frozen",
+            "complete road standstill, traffic frozen",
             "absolute road gridlock paralysis",
             "total road traffic apocalypse",
             "utterly immobilized chaos",
@@ -237,7 +237,7 @@ def traffic_description(speed_ratio: float) -> str:
             "stifling wall-to-wall congestion",
             "crushingly heavy gridlock",
             "exasperatingly clogged arteries",
-            "suffocating mass of motorbikes",
+            "suffocating mass of vehicles",
             "relentlessly packed streets"
         ])
     if speed_ratio <= 0.55:
@@ -259,7 +259,7 @@ def traffic_description(speed_ratio: float) -> str:
     if speed_ratio <= 0.85:
         return random.choice([
             "busy but moving steadily",
-            "typical Hanoi hustle and bustle",
+            "typical city hustle and bustle",
             "active flow with minor delays",
             "moderately crowded streets",
             "brisk traffic with occasional slowdowns",
@@ -305,13 +305,13 @@ def traffic_description(speed_ratio: float) -> str:
         "completely clear, speed freely",
         "gloriously empty streets",
         "astonishingly open highways",
-        "miraculously clear Hanoi roads",
+        "miraculously clear city roads",
         "unbelievably vacant, enjoy it!",
         "extraordinarily empty, perfect conditions",
         "stunningly clear, once-in-a-lifetime",
         "magically deserted streets",
         "phenomenally open, no obstacles",
-        "impossibly clear for Hanoi",
+        "impossibly clear for the hour",
         "spectacularly vacant roadways",
         "breathtakingly empty, savor this!"
     ])
