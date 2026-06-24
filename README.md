@@ -62,20 +62,56 @@ Memory:    ...
 
 ## Run
 
-1. Update `goals.json` to set your personal distance and moving time targets.
-2. Add GPX/TCX to `data/raw`.
-3. Run `make analyze` to merge GPX/TCX and enrich activities with weather/traffic context.
-4. Run `make reflect` to generate reflections in `journal/YYYY-MM-DD.md`.
+### First-time setup
 
-Set `REFLECTION_MODEL` in `ollama.env` to choose which model generates reflections (defaults to `gemini-3-flash-preview`).
+1. Install Python dependencies:
+   ```bash
+   make install
+   ```
+2. Create API key files from the samples and fill in your keys:
+   ```bash
+   cp ollama.env.sample ollama.env
+   cp openweather.env.sample openweather.env
+   cp tomtom.env.sample tomtom.env
+   ```
+   Set `REFLECTION_MODEL` in `ollama.env` to choose which model generates reflections (defaults to `gemini-3-flash-preview`).
+3. Install Ollama and pull local models used by the reflection pipeline:
+   ```bash
+   ollama pull mistral-nemo
+   ollama pull qwen2.5
+   ollama pull gemma3
+   ```
+4. Deploy weather/traffic sampling to AWS so `scripts/weather_traffic.py` can read context from DynamoDB:
+   1. Set AWS credentials in your shell for the target account.
+   2. Update the S3 backend in `terraform/terraform.tf`.
+   3. Set `latitude` and `longitude` in `terraform/variables.tf` for your running location.
+   4. Deploy:
+      ```bash
+      cd terraform && terraform init && terraform apply
+      ```
+5. Build city OSM data for POI enrichment. Install `wget`, `osmconvert`, and `osmium`, then point `BOUNDARY_POLY` in the `Makefile` at your city's boundary polygon in `osm/`:
+   ```bash
+   make country
+   make city
+   ```
+   This downloads the country extract and writes `osm/city.osm.pbf` and `osm/city.osm`.
 
-## Dev Setup
+### Each run
 
-1. Create the venv and install dependencies: `make install`.
-2. Install Ollama and pull models:
-   1. `ollama pull mistral-nemo`
-   2. `ollama pull qwen2.5`
-   3. `ollama pull gemma3`
-3. Add API keys: create `ollama.env`, `openweather.env`, and `tomtom.env` from the `.env.sample` templates and fill in your keys.
-4. Configure Terraform + AWS: set AWS credentials in your shell for the target account; update the S3 backend in `terraform/terraform.tf`; set latitude/longitude for weather + traffic sampling
-5. Deploy infrastructure: `cd terraform && terraform init`, then `terraform apply`
+1. Update `goals.json` with your personal distance and moving-time targets.
+2. Drop matching GPX and TCX files into `data/raw`.
+3. Run the enrichment pipeline:
+   ```bash
+   make analyze
+   ```
+   This merges GPX/TCX into `data/gpx`, builds activity JSON in `data/activities`, and enriches each activity with weather, traffic, route uniqueness, context, and POIs.
+4. Generate the reflection:
+   ```bash
+   make reflect
+   ```
+   Output is written to `journal/YYYY-MM-DD.md` (one file per run date; existing entries are skipped).
+
+### Optional
+
+- Run tests before deploy: `make test`
+- Deploy infrastructure from the repo root: `make deploy`

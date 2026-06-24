@@ -7,7 +7,7 @@ DATA_DIR = data
 WEATHER_DATA = $(DATA_DIR)/weather.json
 DESCRIPTIONS = $(DATA_DIR)/descriptions.txt
 
-BOUNDARY_POLY = osm/hanoi.poly
+BOUNDARY_POLY = osm/ho-chi-minh-city.poly
 OSM_URL = https://download.geofabrik.de/asia/vietnam-latest.osm.pbf
 COUNTRY_OSM_FILE = $$(basename $(OSM_URL))
 
@@ -27,8 +27,8 @@ country:
 	fi
 
 city:
-	@osmconvert $(OSM_DIR)/$(COUNTRY_OSM_FILE) -B=$(BOUNDARY_POLY) -o=$(OSM_DIR)/hanoi.osm.pbf
-	@osmium cat --overwrite $(OSM_DIR)/hanoi.osm.pbf -o $(OSM_DIR)/hanoi.osm
+	@osmconvert $(OSM_DIR)/$(COUNTRY_OSM_FILE) -B=$(BOUNDARY_POLY) -o=$(OSM_DIR)/city.osm.pbf
+	@osmium cat --overwrite $(OSM_DIR)/city.osm.pbf -o $(OSM_DIR)/city.osm
 
 analyze:
 	@$(PYTHON) -m scripts.merge

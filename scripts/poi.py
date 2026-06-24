@@ -11,7 +11,7 @@ from shapely.ops import transform
 from scripts.utils import load_json, write_json
 
 DATA_DIR = Path("data/activities")
-OSM_PATH = Path("osm/hanoi.osm")
+OSM_PATH = Path("osm/city.osm")
 
 POI_TAGS = [
     ("water", {"pond", "lake", "reservoir", "river"}),

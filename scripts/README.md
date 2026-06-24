@@ -10,7 +10,7 @@
 
 `scripts/context.py` derives activity context (distance/moving-time adjectives and time-of-day wording) using `goals.json`.
 
-`scripts/poi.py` loads OSM data from `osm/hanoi.osm` and adds nearby points-of-interest categories to the activity payload.
+`scripts/poi.py` loads OSM data from `osm/city.osm` and adds nearby points-of-interest categories to the activity payload.
 
 `scripts/describe.py` runs a CrewAI pipeline per prompt (config in `prompts/<prompt>/agents.yaml` and `prompts/<prompt>/tasks.yaml` with shared context in `prompts/activity-context.txt`) to draft and then revise descriptions with a personal-voice pass, writing markdown to `data/descriptions`, using Ollama and Gemini output.
 
