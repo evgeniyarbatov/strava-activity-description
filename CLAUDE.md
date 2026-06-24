@@ -12,7 +12,7 @@ Enrich the experience of running — not Strava captions. A linear pipeline turn
 - **City OSM artifacts**: generic `city` names (`osm/city.osm.pbf`, `osm/city.osm`). Built with `make country` then `make city`.
 - **Scripts run from repo root** as modules: `make <target>` or `.venv/bin/python -m scripts.<module>`.
 - **Activity payload**: each run is a JSON file in `data/activities/` enriched in place by later steps. Earlier sources (`data/raw`) are not mutated.
-- **Journal output**: `scripts/describe.py` writes `journal/YYYY-MM-DD.md` (one file per run date; skips existing entries). Legacy `data/descriptions/` is not the current deliverable.
+- **Journal output**: `scripts/describe.py` writes `journal/YYYY-MM-DD.md` (one file per run date; skips existing entries).
 - **Anti-quantization**: weather, traffic, distance, and duration are bucketed into words before reaching prompts. Avoid introducing raw numbers into prompt context unless explicitly required.
 - **DynamoDB table**: `run-reflection-context` (Terraform default and `scripts/weather_traffic.py` constant must stay aligned).
 

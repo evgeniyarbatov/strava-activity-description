@@ -5,7 +5,6 @@ REQUIREMENTS := requirements.txt
 
 DATA_DIR = data
 WEATHER_DATA = $(DATA_DIR)/weather.json
-DESCRIPTIONS = $(DATA_DIR)/descriptions.txt
 
 BOUNDARY_POLY = osm/ho-chi-minh-city.poly
 OSM_URL = https://download.geofabrik.de/asia/vietnam-latest.osm.pbf
