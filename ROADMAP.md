@@ -12,7 +12,7 @@ The output should not quantize the run into metrics and labels. It should **pull
 
 ## What Exists Today
 
-The current pipeline already gestures toward this vision, even if the framing still says "Strava description."
+The current pipeline already gestures toward this vision, even if the old repo name still said "Strava description."
 
 **What works:**
 

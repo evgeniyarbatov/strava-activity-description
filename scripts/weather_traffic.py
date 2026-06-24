@@ -14,7 +14,7 @@ from scripts.utils import load_json, parse_iso, write_json
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
-DYNAMODB_TABLE = "strava-activity-context-v2"
+DYNAMODB_TABLE = "run-reflection-context-v2"
 
 FEELS_LIKE_FREEZING = [
     "bone-chilling, rare Hanoi frost",

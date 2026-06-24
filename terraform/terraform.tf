@@ -10,7 +10,7 @@ terraform {
     encrypt      = true
     bucket       = "arbatov-terraform-state"
     use_lockfile = true
-    key          = "strava-activity-description.tfstate"
+    key          = "run-reflection.tfstate"
     region       = "ap-southeast-1"
   }
 }

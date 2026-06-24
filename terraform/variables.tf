@@ -5,12 +5,12 @@ variable "aws_region" {
 
 variable "lambda_name" {
   type    = string
-  default = "strava-activity-context"
+  default = "run-reflection-context"
 }
 
 variable "dynamodb_table_name" {
   type    = string
-  default = "strava-activity-context-v2"
+  default = "run-reflection-context-v2"
 }
 
 variable "ttl_days" {
