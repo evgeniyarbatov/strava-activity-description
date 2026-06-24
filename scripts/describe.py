@@ -16,12 +16,7 @@ from scripts.utils import load_env, load_json, parse_iso
 
 load_env(Path("ollama.env"))
 
-OLLAMA_CLOUD_MODELS = [
-    "gemini-3-flash-preview",
-]
-OLLAMA_CLOUD_HOST = "https://api.ollama.com"
 OLLAMA_MODELS = [
-    *OLLAMA_CLOUD_MODELS,
     "mistral-nemo",
     "gemma3",
     "qwen2.5",
@@ -243,7 +238,7 @@ def journal_path_from_activity(activity: dict) -> Path:
 
 
 def reflection_model() -> str:
-    return os.getenv("REFLECTION_MODEL", OLLAMA_CLOUD_MODELS[0])
+    return os.getenv("REFLECTION_MODEL", OLLAMA_MODELS[0])
 
 
 def load_yaml_config(path: Path) -> dict[str, Any]:
@@ -281,21 +276,14 @@ def to_single_line(text: str) -> str:
     return " ".join(text.splitlines())
 
 
-def resolve_ollama_endpoint(model: str) -> tuple[str, str, str | None]:
+def resolve_ollama_endpoint(model: str) -> tuple[str, str]:
     model_name = model if "/" in model else f"ollama/{model}"
-    if model in OLLAMA_CLOUD_MODELS:
-        api_key = os.getenv("OLLAMA_API_KEY") or os.getenv("API_KEY")
-        if not api_key:
-            raise ValueError("Missing Ollama API key in ollama.env.")
-        base_url = OLLAMA_CLOUD_HOST
-    else:
-        base_url = os.getenv("OLLAMA_LOCAL_HOST", "http://localhost:11434")
-        api_key = None
-    return model_name, base_url, api_key
+    base_url = os.getenv("OLLAMA_HOST", "http://localhost:11434")
+    return model_name, base_url
 
 
 def build_llm(model: str) -> LLM:
-    model_name, base_url, api_key = resolve_ollama_endpoint(model)
+    model_name, base_url = resolve_ollama_endpoint(model)
 
     params = inspect.signature(LLM).parameters
     kwargs: dict[str, Any] = {"model": model_name}
@@ -305,13 +293,9 @@ def build_llm(model: str) -> LLM:
         kwargs["base_url"] = base_url
     elif "api_base" in params:
         kwargs["api_base"] = base_url
-    if api_key and "api_key" in params:
-        kwargs["api_key"] = api_key
 
     os.environ["OLLAMA_API_BASE"] = base_url
     os.environ["OLLAMA_HOST"] = base_url
-    if api_key:
-        os.environ["OLLAMA_API_KEY"] = api_key
 
     return LLM(**kwargs)
 

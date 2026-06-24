@@ -18,7 +18,7 @@ cp tomtom.env.sample tomtom.env
 
 | File | Used by |
 |------|---------|
-| `ollama.env` | `scripts/describe.py` — `API_KEY` for Ollama Cloud; optional `REFLECTION_MODEL` (default `gemini-3-flash-preview`) |
+| `ollama.env` | `scripts/describe.py` — optional `REFLECTION_MODEL` (default `mistral-nemo`) and `OLLAMA_HOST` |
 | `openweather.env` | Terraform Lambda — `OPENWEATHER_API_KEY` |
 | `tomtom.env` | Terraform Lambda — `TOMTOM_API_KEY` |
 
@@ -26,7 +26,7 @@ Real `.env` files are gitignored.
 
 ## Ollama
 
-Pull local models used as fallbacks or alternatives to cloud models:
+Pull the supported local models:
 
 ```bash
 ollama pull mistral-nemo
@@ -34,7 +34,7 @@ ollama pull qwen2.5
 ollama pull gemma3
 ```
 
-Local models connect to `http://localhost:11434` by default. Cloud models use `https://api.ollama.com`.
+Ollama connects to `http://localhost:11434` by default. Override with `OLLAMA_HOST` in `ollama.env`.
 
 ## Weather and traffic (AWS)
 

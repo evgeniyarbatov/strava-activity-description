@@ -122,7 +122,7 @@ Memory:    ...
 
 ### Model selection
 
-`REFLECTION_MODEL` in `ollama.env` selects the LLM. Default is `gemini-3-flash-preview` via Ollama Cloud. Local Ollama models (`mistral-nemo`, `qwen2.5`, `gemma3`) are also supported.
+`REFLECTION_MODEL` in `ollama.env` selects the local Ollama model. Default is `mistral-nemo`. Supported models: `mistral-nemo`, `qwen2.5`, `gemma3`.
 
 ## Infrastructure
 

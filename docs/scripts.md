@@ -154,7 +154,7 @@ Requires `make city` to produce `osm/city.osm` first. Activities without a polyl
 4. **`run_synthesis()`** — pass perspectives block to synthesis agents for Afterglow, Tensions, Residue.
 5. **`build_reflection()`** — assemble formatted markdown.
 
-Skips activities whose journal file already exists. Model from `REFLECTION_MODEL` env var or default cloud model. Cloud models require `API_KEY` in `ollama.env`.
+Skips activities whose journal file already exists. Model from `REFLECTION_MODEL` env var or default local model (`mistral-nemo`).
 
 ### Prompt configs
 
