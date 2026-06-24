@@ -10,7 +10,7 @@ variable "lambda_name" {
 
 variable "dynamodb_table_name" {
   type    = string
-  default = "run-reflection-context-v2"
+  default = "run-reflection-context"
 }
 
 variable "ttl_days" {
