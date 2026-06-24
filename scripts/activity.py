@@ -11,7 +11,7 @@ from geopy.distance import distance as geo_distance
 from scripts.utils import parse_iso, write_json
 
 DATA_DIR = Path("data")
-GPX_DIR = DATA_DIR / "gpx"
+RAW_DIR = DATA_DIR / "raw"
 OUTPUT_DIR = DATA_DIR / "activities"
 SIMPLIFY_DISTANCE_M = 10
 
@@ -33,12 +33,6 @@ def _parse_trkpt(trkpt: ET.Element) -> dict | None:
     ele = _optional_text(trkpt, "{*}ele")
     if ele is not None:
         point["ele"] = ele
-    hr = _optional_text(trkpt, ".//{*}hr")
-    if hr is not None:
-        point["hr"] = hr
-    cad = _optional_text(trkpt, ".//{*}cad")
-    if cad is not None:
-        point["cad"] = cad
     return point
 
 
@@ -109,7 +103,7 @@ def write_payload(path: Path, payload: dict) -> None:
 
 def main() -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    for gpx_path in sorted(GPX_DIR.glob("*.gpx")):
+    for gpx_path in sorted(RAW_DIR.glob("*.gpx")):
         output_path = OUTPUT_DIR / f"{gpx_path.stem}.json"
         if output_path.exists():
             continue

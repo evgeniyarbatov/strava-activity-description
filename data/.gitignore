@@ -2,8 +2,6 @@
 !.gitignore
 !activities/
 !activities/**
-!gpx/
-!gpx/**
 !raw/
 !raw/**
 !descriptions/

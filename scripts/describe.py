@@ -212,7 +212,7 @@ def prompt_inputs(payload: dict) -> dict:
     geolocator = Nominatim(user_agent="run-reflection")
     city, country = location_from_polyline(activity["map"]["polyline"], geolocator)
 
-    uniqueness_description = payload["uniqueness"]["description"]
+    uniqueness_description = (payload.get("uniqueness") or {}).get("description") or "uncomparable"
     time_of_day = activity_context["time_of_day_description"]
     summary.update(
         {

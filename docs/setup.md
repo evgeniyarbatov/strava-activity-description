@@ -73,6 +73,6 @@ Edit `goals.json` with your personal distance (meters) and moving-time (seconds)
 ## Per run
 
 1. Update `goals.json` if needed.
-2. Drop matching GPX and TCX files into `data/raw`.
-3. `make analyze` — merges, enriches, and writes `data/activities/*.json`.
+2. Drop GPX files into `data/raw`.
+3. `make analyze` — parses, enriches, and writes `data/activities/*.json`.
 4. `make reflect` — writes `journal/YYYY-MM-DD.md` (skips dates that already have a file).

@@ -31,7 +31,6 @@ city:
 	@osmium cat --overwrite $(OSM_DIR)/city.osm.pbf -o $(OSM_DIR)/city.osm
 
 analyze:
-	@$(PYTHON) -m scripts.merge
 	@$(PYTHON) -m scripts.activity
 	@$(PYTHON) -m scripts.weather_traffic
 	@$(PYTHON) -m scripts.uniqueness

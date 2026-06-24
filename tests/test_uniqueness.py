@@ -40,3 +40,26 @@ def test_main_skips_existing_uniqueness(tmp_path, monkeypatch) -> None:
     updated_new = json.loads(new_path.read_text(encoding="utf-8"))
     assert "uniqueness" in updated_new
     assert "description" in updated_new["uniqueness"]
+
+
+def test_main_writes_uniqueness_for_single_activity(tmp_path, monkeypatch) -> None:
+    activities_dir = tmp_path / "activities"
+    activities_dir.mkdir()
+
+    payload = {
+        "activity": {
+            "map": {
+                "polyline": polyline.encode([(0.0, 0.0), (0.0, 0.01), (0.01, 0.01)]),
+            },
+            "distance": 1000,
+        }
+    }
+    activity_path = activities_dir / "solo.json"
+    activity_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    monkeypatch.setattr(uniqueness, "ACTIVITIES_DIR", activities_dir)
+
+    uniqueness.main()
+
+    updated = json.loads(activity_path.read_text(encoding="utf-8"))
+    assert updated["uniqueness"] == {"description": None}

@@ -2,12 +2,10 @@
 
 ## Overview
 
-Run Reflection is a linear data pipeline. Raw GPX/TCX exports enter at one end; a dated journal markdown file comes out the other. Each intermediate step enriches a per-activity JSON payload in `data/activities/` without mutating earlier sources (`data/raw`, `data/gpx`).
+Run Reflection is a linear data pipeline. Raw GPX exports enter at one end; a dated journal markdown file comes out the other. Each intermediate step enriches a per-activity JSON payload in `data/activities/` without mutating earlier sources (`data/raw`).
 
 ```
-data/raw (GPX + TCX)
-    │
-    ▼ merge.py ──────────────────────────► data/gpx/
+data/raw (GPX)
     │
     ▼ activity.py ───────────────────────► data/activities/*.json
     │
@@ -34,8 +32,7 @@ See `ROADMAP.md` for the longer-term vision.
 
 | Path | Role | Committed |
 |------|------|-----------|
-| `data/raw/` | Input GPX and TCX exports | Sample files only; rest gitignored |
-| `data/gpx/` | Merged GPX with HR/cadence extensions | Gitignored |
+| `data/raw/` | Input GPX exports | Sample files only; rest gitignored |
 | `data/activities/` | Enriched activity JSON (working state) | Gitignored |
 | `journal/` | Final reflections | Gitignored |
 | `osm/` | Country PBF, city clip, boundary polygons | Polygons only; extracts gitignored |
@@ -79,7 +76,6 @@ Numeric fields (`distance`, `moving_time`) stay in JSON for computation but are 
 
 Scripts skip work when output already exists:
 
-- `merge.py` — skips if merged GPX already written
 - `activity.py` — skips if activity JSON exists
 - `weather_traffic.py` — skips fields already present on the payload
 - `uniqueness.py` — skips if `uniqueness` key exists
@@ -138,7 +134,6 @@ DynamoDB table name must match in `terraform/variables.tf` and `scripts/weather_
 
 ## Key implementation choices
 
-- **GPX/TCX matching** — timestamps aligned to the second; first GPX sharing keys with a TCX file wins.
 - **Polyline simplification** — Shapely simplify at 10 m tolerance before encoding, keeping prompt size down.
 - **Route uniqueness** — RDP-simplified lat/lon vectors (48 points), z-scored, compared via L2 distance plus weighted centroid and distance offsets; scores normalized per batch into words like `notable` or `routine`.
 - **POI matching** — convex hull of the route buffered 20 m in local UTM; OSM nodes/ways tagged as water, park, forest, etc.

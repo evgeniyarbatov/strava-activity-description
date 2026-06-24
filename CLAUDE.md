@@ -4,14 +4,14 @@ Guidance for AI assistants working in this repository.
 
 ## Project purpose
 
-Enrich the experience of running — not Strava captions. A linear pipeline turns GPX/TCX exports into a private journal reflection: multiple lenses that disagree, tensions between them, and one line to carry. See `ROADMAP.md` for north star and evolution plan.
+Enrich the experience of running — not Strava captions. A linear pipeline turns GPX exports into a private journal reflection: multiple lenses that disagree, tensions between them, and one line to carry. See `ROADMAP.md` for north star and evolution plan.
 
 ## Key conventions
 
 - **City boundary**: controlled by `BOUNDARY_POLY` in the Makefile (default `osm/ho-chi-minh-city.poly`). Switch cities via the polygon file, not by renaming pipeline outputs.
 - **City OSM artifacts**: generic `city` names (`osm/city.osm.pbf`, `osm/city.osm`). Built with `make country` then `make city`.
 - **Scripts run from repo root** as modules: `make <target>` or `.venv/bin/python -m scripts.<module>`.
-- **Activity payload**: each run is a JSON file in `data/activities/` enriched in place by later steps. Earlier sources (`data/raw`, `data/gpx`) are not mutated.
+- **Activity payload**: each run is a JSON file in `data/activities/` enriched in place by later steps. Earlier sources (`data/raw`) are not mutated.
 - **Journal output**: `scripts/describe.py` writes `journal/YYYY-MM-DD.md` (one file per run date; skips existing entries). Legacy `data/descriptions/` is not the current deliverable.
 - **Anti-quantization**: weather, traffic, distance, and duration are bucketed into words before reaching prompts. Avoid introducing raw numbers into prompt context unless explicitly required.
 - **DynamoDB table**: `run-reflection-context` (Terraform default and `scripts/weather_traffic.py` constant must stay aligned).
@@ -29,7 +29,7 @@ Detailed docs live in `docs/`:
 ```bash
 make install
 make country && make city   # one-time OSM setup
-make analyze                # merge → activity → weather/traffic → uniqueness → context → poi
+make analyze                # activity → weather/traffic → uniqueness → context → poi
 make reflect                # CrewAI multi-lens reflection → journal/
 ```
 

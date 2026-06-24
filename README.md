@@ -17,7 +17,7 @@ make analyze                      # enrich activities from data/raw
 make reflect                      # write journal/YYYY-MM-DD.md
 ```
 
-Drop matching GPX and TCX files into `data/raw` before `make analyze`. First-time setup also requires Ollama models, AWS/Terraform for weather/traffic context, and API keys — see [docs/setup.md](docs/setup.md).
+Drop GPX files into `data/raw` before `make analyze`. First-time setup also requires Ollama models, AWS/Terraform for weather/traffic context, and API keys — see [docs/setup.md](docs/setup.md).
 
 ## Documentation
 

@@ -10,38 +10,17 @@ Or via `make analyze` / `make reflect`. Shared helpers are in `scripts/utils.py`
 
 ---
 
-## merge.py
-
-**Purpose:** Combine TCX heart-rate and cadence samples with GPX location tracks.
-
-**Input:** `data/raw/*.gpx`, `data/raw/*.tcx`
-
-**Output:** `data/gpx/<uuid>.gpx` — one merged file per matched TCX
-
-**How it works:**
-
-1. Parse each TCX into a timestamp → `(heart_rate, cadence)` map.
-2. For each TCX, find the first GPX file that shares any timestamp keys.
-3. Filter GPX points to those present in the TCX map.
-4. Write a new GPX with `gpxtpx:TrackPointExtension` elements carrying `hr` and `cad` on matching trackpoints.
-
-Output filenames are deterministic UUIDs derived from the TCX filename (`uuid.uuid5`). Each GPX file is consumed by at most one TCX match. Skips output if the target file already exists.
-
-GPX files without a matching TCX are ignored. TCX files without a matching GPX are skipped silently.
-
----
-
 ## activity.py
 
-**Purpose:** Parse merged GPX tracks into Strava-shaped activity JSON.
+**Purpose:** Parse GPX tracks into Strava-shaped activity JSON.
 
-**Input:** `data/gpx/*.gpx`
+**Input:** `data/raw/*.gpx`
 
 **Output:** `data/activities/<stem>.json`
 
 **How it works:**
 
-1. Parse trackpoints (lat, lon, time, optional ele/hr/cad).
+1. Parse trackpoints (lat, lon, time, optional ele).
 2. Compute total distance via geopy haversine between consecutive points.
 3. Set `moving_time` as seconds from first to last timestamp.
 4. Simplify the track with Shapely (`SIMPLIFY_DISTANCE_M = 10`) and encode as a Google polyline.

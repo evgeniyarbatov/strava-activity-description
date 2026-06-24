@@ -238,6 +238,12 @@ def main() -> None:
 
     valid_scores = [score for score in raw_scores.values() if score is not None]
     if not valid_scores:
+        for path in raw_scores:
+            payload = load_json(path)
+            if "uniqueness" in payload:
+                continue
+            payload["uniqueness"] = {"description": None}
+            write_json(path, payload)
         return
 
     min_score = min(valid_scores)
