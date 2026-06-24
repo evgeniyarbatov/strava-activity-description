@@ -183,6 +183,6 @@ Each lens directory has `agents.yaml` and `tasks.yaml`. Tasks typically draft th
 |----------|------|
 | `parse_iso()` | Parse ISO 8601 timestamps; accepts trailing `Z` |
 | `load_json()` / `write_json()` | UTF-8 JSON I/O with stable indentation |
-| `load_env()` | Load dotenv file (used by `describe.py` for `ollama.env`) |
+| `load_env()` | Load optional dotenv file (used by `describe.py` for `ollama.env` overrides) |
 
 No `main()` — import only.

@@ -12,7 +12,6 @@ Each run becomes a private reflection: multiple perspectives that disagree, tens
 
 ```bash
 make install
-cp ollama.env.sample ollama.env   # optional REFLECTION_MODEL override
 make country && make city         # one-time OSM setup
 make analyze                      # enrich activities from data/raw
 make reflect                      # write journal/YYYY-MM-DD.md

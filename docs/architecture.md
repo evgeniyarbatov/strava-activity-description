@@ -122,7 +122,7 @@ Memory:    ...
 
 ### Model selection
 
-`REFLECTION_MODEL` in `ollama.env` selects the local Ollama model. Default is `mistral-nemo`. Supported models: `mistral-nemo`, `qwen2.5`, `gemma3`.
+`REFLECTION_MODEL` selects the local Ollama model. Default is `mistral-nemo`. Supported models: `mistral-nemo`, `qwen2.5`, `gemma3`.
 
 ## Infrastructure
 

@@ -10,11 +10,13 @@ from typing import Any
 import polyline
 import yaml
 from crewai import Agent, Crew, LLM, Task
+from crewai.events.listeners.tracing.utils import set_suppress_tracing_messages
 from geopy.geocoders import Nominatim
 
 from scripts.utils import load_env, load_json, parse_iso
 
 load_env(Path("ollama.env"))
+set_suppress_tracing_messages(True)
 
 OLLAMA_MODELS = [
     "mistral-nemo",
@@ -323,7 +325,7 @@ def extract_result_text(result: Any) -> str:
 
 def run_crewai_task(agent: Agent, task_config: dict[str, Any], inputs: dict[str, Any]) -> str:
     task = build_task(task_config, agent)
-    crew = Crew(agents=[agent], tasks=[task])
+    crew = Crew(agents=[agent], tasks=[task], tracing=False)
     result = crew.kickoff(inputs=inputs)
     return extract_result_text(result)
 

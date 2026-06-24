@@ -11,14 +11,12 @@ Creates `.venv/` and installs `requirements.txt`. Scripts run from the repo root
 ## API keys
 
 ```bash
-cp ollama.env.sample ollama.env
 cp openweather.env.sample openweather.env
 cp tomtom.env.sample tomtom.env
 ```
 
 | File | Used by |
 |------|---------|
-| `ollama.env` | `scripts/describe.py` — optional `REFLECTION_MODEL` (default `mistral-nemo`) and `OLLAMA_HOST` |
 | `openweather.env` | Terraform Lambda — `OPENWEATHER_API_KEY` |
 | `tomtom.env` | Terraform Lambda — `TOMTOM_API_KEY` |
 
@@ -34,7 +32,7 @@ ollama pull qwen2.5
 ollama pull gemma3
 ```
 
-Ollama connects to `http://localhost:11434` by default. Override with `OLLAMA_HOST` in `ollama.env`.
+Ollama connects to `http://localhost:11434` by default. Optional env vars: `REFLECTION_MODEL` (default `mistral-nemo`) and `OLLAMA_HOST`.
 
 ## Weather and traffic (AWS)
 
