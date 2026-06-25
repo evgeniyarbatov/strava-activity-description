@@ -102,7 +102,7 @@ def test_journal_path_from_activity_uses_local_date() -> None:
     assert path.parent.name == "journal"
 
 
-def test_build_reflection_includes_sections() -> None:
+def test_build_reflection_includes_perspective_headers() -> None:
     perspectives = {
         "artist": "Silver light on the lake.",
         "buddhist-monk": "Each step passes.",
@@ -117,16 +117,12 @@ def test_build_reflection_includes_sections() -> None:
     reflection = build_reflection(
         run_date="2026-03-15",
         perspectives=perspectives,
-        afterglow="What did the body know that morning?",
-        tensions="The archivist says notable; the monk says ordinary.",
-        residue="The lake is still there.",
     )
 
-    assert "# 2026-03-15" in reflection
-    assert "── Afterglow" in reflection
-    assert "── Perspectives" in reflection
-    assert "── Tensions" in reflection
-    assert "── Residue" in reflection
-    assert "Monk:" in reflection
-    assert "Cartographer:" in reflection
-    assert "The lake is still there." in reflection
+    assert reflection.startswith("# 2026-03-15\n\n")
+    assert "## Artist\n\nSilver light on the lake." in reflection
+    assert "## Monk\n\nEach step passes." in reflection
+    assert "## Cartographer\n\nA loop with a late detour." in reflection
+    assert "── Afterglow" not in reflection
+    assert "── Tensions" not in reflection
+    assert "── Residue" not in reflection

@@ -5,7 +5,6 @@ from scripts.describe import (
     PERSONA_LABELS,
     PROMPT_CONFIGS,
     PROMPT_INPUT_KEYS,
-    SYNTHESIS_CONFIG,
     load_yaml_config,
 )
 
@@ -47,11 +46,6 @@ def test_prompt_configs_exist() -> None:
         assert prompt_config.tasks_path.exists(), f"Missing {prompt_config.tasks_path}"
 
 
-def test_synthesis_config_exists() -> None:
-    assert SYNTHESIS_CONFIG.agents_path.exists()
-    assert SYNTHESIS_CONFIG.tasks_path.exists()
-
-
 def test_task_templates_use_common_inputs() -> None:
     for prompt_config in PROMPT_CONFIGS:
         tasks = load_yaml_config(prompt_config.tasks_path)
@@ -83,8 +77,3 @@ def test_persona_agents_exclude_strava_framing() -> None:
             assert "strava" not in text
 
 
-def test_synthesis_tasks_use_perspectives_block() -> None:
-    tasks = load_yaml_config(SYNTHESIS_CONFIG.tasks_path)
-    for task_config in tasks.values():
-        fields = template_fields(task_config["description"])
-        assert "perspectives_block" in fields

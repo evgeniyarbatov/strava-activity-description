@@ -29,7 +29,6 @@ ACTIVITIES_DIR = DATA_DIR / "activities"
 JOURNAL_DIR = Path("journal")
 PROMPTS_DIR = Path("prompts")
 ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "activity-context.txt"
-SYNTHESIS_LABEL = "synthesis"
 PERSONA_LABELS = [
     "artist",
     "buddhist-monk",
@@ -52,7 +51,6 @@ PERSONA_DISPLAY_NAMES = {
     "dreamer": "Dreamer",
     "contrarian": "Contrarian",
 }
-PERSPECTIVE_LABEL_WIDTH = max(len(name) + 1 for name in PERSONA_DISPLAY_NAMES.values()) + 1
 PROMPT_INPUT_KEYS = [
     "distance_context",
     "moving_time_context",
@@ -129,13 +127,6 @@ PROMPT_CONFIGS = [
     )
     for label in PERSONA_LABELS
 ]
-
-SYNTHESIS_CONFIG = PromptConfig(
-    label=SYNTHESIS_LABEL,
-    agents_path=PROMPTS_DIR / SYNTHESIS_LABEL / "agents.yaml",
-    tasks_path=PROMPTS_DIR / SYNTHESIS_LABEL / "tasks.yaml",
-)
-
 
 def most_common(values: list[str]) -> str:
     if not values:
@@ -372,20 +363,6 @@ def load_prompt_config(
     return agents, tasks
 
 
-def format_perspectives_block(perspectives: dict[str, str]) -> str:
-    lines = []
-    for label in PERSONA_LABELS:
-        display_name = PERSONA_DISPLAY_NAMES[label]
-        text = perspectives[label]
-        lines.append(f"{display_name}: {text}")
-    return "\n".join(lines)
-
-
-def format_perspective_line(label: str, text: str) -> str:
-    display_name = f"{PERSONA_DISPLAY_NAMES[label]}:"
-    return f"{display_name.ljust(PERSPECTIVE_LABEL_WIDTH)} {text}"
-
-
 def run_perspectives(
     model: str,
     activity_context: str,
@@ -407,60 +384,17 @@ def run_perspectives(
     return perspectives
 
 
-def run_synthesis(
-    model: str,
-    activity_context: str,
-    perspectives: dict[str, str],
-) -> dict[str, str]:
-    agents_config, tasks_config = load_prompt_config(SYNTHESIS_CONFIG)
-    perspectives_block = format_perspectives_block(perspectives)
-    task_inputs: dict[str, Any] = {
-        "activity_context": activity_context,
-        "perspectives_block": perspectives_block,
-    }
-
-    outputs: dict[str, str] = {}
-    for task_name, task_config in tasks_config:
-        agent_name = task_config.get("agent")
-        if not agent_name:
-            raise ValueError(f"Task {task_name} missing agent assignment.")
-        llm = build_llm(model)
-        agent = build_agent(agents_config[agent_name], llm)
-        output = run_crewai_task(agent, task_config, task_inputs)
-        outputs[task_name] = output
-        task_inputs[task_name] = output
-        if task_name == "generate_tensions":
-            task_inputs["tensions"] = output
-        print(f"{task_name}: {output}")
-    return outputs
-
-
-def section_header(title: str, width: int = 38) -> str:
-    fill = max(1, width - len(title) - 3)
-    return f"── {title} " + "─" * fill
-
-
 def build_reflection(
     run_date: str,
     perspectives: dict[str, str],
-    afterglow: str,
-    tensions: str,
-    residue: str,
 ) -> str:
     lines = [f"# {run_date}", ""]
-    lines.append(section_header("Afterglow"))
-    lines.append(afterglow.strip())
-    lines.append("")
-    lines.append(section_header("Perspectives"))
     for label in PERSONA_LABELS:
-        lines.append(format_perspective_line(label, perspectives[label]))
-    lines.append("")
-    lines.append(section_header("Tensions"))
-    lines.append(tensions.strip())
-    lines.append("")
-    lines.append(section_header("Residue"))
-    lines.append(residue.strip())
-    lines.append("")
+        display_name = PERSONA_DISPLAY_NAMES[label]
+        lines.append(f"## {display_name}")
+        lines.append("")
+        lines.append(perspectives[label].strip())
+        lines.append("")
     return "\n".join(lines)
 
 
@@ -474,14 +408,10 @@ def build_run_reflection(
     run_date = parse_iso(activity["start_date_local"]).strftime("%Y-%m-%d")
 
     perspectives = run_perspectives(selected_model, activity_context)
-    synthesis = run_synthesis(selected_model, activity_context, perspectives)
 
     return build_reflection(
         run_date=run_date,
         perspectives=perspectives,
-        afterglow=synthesis["generate_afterglow"],
-        tensions=synthesis["generate_tensions"],
-        residue=synthesis["generate_residue"],
     )
 
 
