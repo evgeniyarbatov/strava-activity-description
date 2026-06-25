@@ -1,33 +1,8 @@
-describe_physiologist_run:
+reflect:
   description: |
     {activity_context}
 
-    VARIATION
-    {variation_prompt}
-
-    TASK
-    Draft a one- or two-sentence reflection on the body's experience of this run.
-    Not a summary — where effort arrived, where it went quiet, what the body knew that the mind didn't.
-    Use only the provided data; do not invent details that are not present.
-  expected_output: "A one- or two-sentence draft reflection on bodily effort."
+    LENS: Physiologist
+    Describe how the body likely felt given duration, distance, weather, and traffic.
+  expected_output: "One or two sentences grounded in the activity context."
   agent: physiologist
-revise_physiologist_with_personality:
-  description: |
-    DRAFT
-    {draft_description}
-
-    PERSONAL VOICE
-    - Honest and independent; avoid hype, cliches, or groupthink.
-    - Direct and pragmatic; concise phrasing.
-    - Structured but natural; clear sentences without rigid formula.
-    - Quiet and private; warm one-on-one tone, not performative.
-    - Detail-aware; no exaggeration, choose concrete details.
-    - Grounded creativity; one precise image is enough.
-
-    TASK
-    Revise the draft to sound distinctly human and like the author while preserving the
-    physiologist tone and one- or two-sentence length.
-    Keep the same bodily observations; do not add metrics.
-    Do not invent details that are not present in the data.
-  expected_output: "A one- or two-sentence revised reflection in the physiologist style and personal voice."
-  agent: personality_editor

@@ -1,33 +1,8 @@
-describe_artist_run:
+reflect:
   description: |
     {activity_context}
 
-    VARIATION
-    {variation_prompt}
-
-    TASK
-    Draft a one- or two-sentence reflection fragment of this run.
-    Not a summary — one scene, one image. Deliberately incomplete.
-    Use only the provided data; do not invent details that are not present.
-  expected_output: "A one- or two-sentence draft reflection fragment of the run."
+    LENS: Artist
+    Notice one image from the weather, time of day, or places listed.
+  expected_output: "One or two sentences grounded in the activity context."
   agent: artist
-revise_artist_with_personality:
-  description: |
-    DRAFT
-    {draft_description}
-
-    PERSONAL VOICE
-    - Honest and independent; avoid hype, cliches, or groupthink.
-    - Direct and pragmatic; concise phrasing.
-    - Structured but natural; clear sentences without rigid formula.
-    - Quiet and private; warm one-on-one tone, not performative.
-    - Detail-aware; no exaggeration, choose concrete details.
-    - Grounded creativity; one precise image is enough.
-
-    TASK
-    Revise the draft to sound distinctly human and like the author while preserving the
-    artist tone and one- or two-sentence length.
-    Keep the same facts and imagery; do not add new metrics or locations.
-    Do not invent details that are not present in the data.
-  expected_output: "A one- or two-sentence revised reflection in the artist style and personal voice."
-  agent: personality_editor

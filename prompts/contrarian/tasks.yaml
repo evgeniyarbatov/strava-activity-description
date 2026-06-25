@@ -1,33 +1,8 @@
-describe_contrarian_run:
+reflect:
   description: |
     {activity_context}
 
-    VARIATION
-    {variation_prompt}
-
-    TASK
-    Draft a one- or two-sentence reflection that argues against the likely self-narrative.
-    Not a summary — find the contradiction, the misremembering, the story that won't hold.
-    Use only the provided data; do not invent details that are not present.
-  expected_output: "A one- or two-sentence draft contrarian reflection of the run."
+    LENS: Contrarian
+    Find one tension between the facts above. Do not resolve it.
+  expected_output: "One or two sentences grounded in the activity context."
   agent: contrarian
-revise_contrarian_with_personality:
-  description: |
-    DRAFT
-    {draft_description}
-
-    PERSONAL VOICE
-    - Honest and independent; avoid hype, cliches, or groupthink.
-    - Direct and pragmatic; concise phrasing.
-    - Structured but natural; clear sentences without rigid formula.
-    - Quiet and private; warm one-on-one tone, not performative.
-    - Detail-aware; no exaggeration, choose concrete details.
-    - Grounded creativity; one precise image is enough.
-
-    TASK
-    Revise the draft to sound distinctly human and like the author while preserving the
-    contrarian tone and one- or two-sentence length.
-    Keep the friction; do not resolve the contradiction.
-    Do not invent details that are not present in the data.
-  expected_output: "A one- or two-sentence revised reflection in the contrarian style and personal voice."
-  agent: personality_editor

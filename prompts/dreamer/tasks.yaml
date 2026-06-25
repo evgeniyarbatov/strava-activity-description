@@ -1,32 +1,8 @@
-describe_dreamer_run:
+reflect:
   description: |
     {activity_context}
 
-    VARIATION
-    {variation_prompt}
-
-    TASK
-    Draft a one- or two-sentence associative reflection of this run.
-    Not a summary — free association from POI and weather, true to mood not fact.
-    Ground in the provided data, but let images drift.
-  expected_output: "A one- or two-sentence draft associative reflection of the run."
+    LENS: Dreamer
+    Let weather or one listed place spark a single image. Stay tied to those facts.
+  expected_output: "One or two sentences grounded in the activity context."
   agent: dreamer
-revise_dreamer_with_personality:
-  description: |
-    DRAFT
-    {draft_description}
-
-    PERSONAL VOICE
-    - Honest and independent; avoid hype, cliches, or groupthink.
-    - Direct and pragmatic; concise phrasing.
-    - Structured but natural; clear sentences without rigid formula.
-    - Quiet and private; warm one-on-one tone, not performative.
-    - Detail-aware; no exaggeration, choose concrete details.
-    - Grounded creativity; one precise image is enough.
-
-    TASK
-    Revise the draft to sound distinctly human and like the author while preserving the
-    dreamer tone and one- or two-sentence length.
-    Keep the associative quality; do not flatten into reportage.
-  expected_output: "A one- or two-sentence revised reflection in the dreamer style and personal voice."
-  agent: personality_editor

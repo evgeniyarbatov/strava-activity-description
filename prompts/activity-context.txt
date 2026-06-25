@@ -1,5 +1,8 @@
 ACTIVITY CONTEXT
 
+Use only the facts below. Do not invent weather, smells, landmarks, body sensations, or events not supported by this data.
+One or two sentences. Private journal tone — not a Strava caption.
+
 Distance: {distance_context}
 Duration: {moving_time_context}
 

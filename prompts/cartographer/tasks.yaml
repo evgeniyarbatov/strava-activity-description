@@ -1,33 +1,8 @@
-describe_cartographer_run:
+reflect:
   description: |
     {activity_context}
 
-    VARIATION
-    {variation_prompt}
-
-    TASK
-    Draft a one- or two-sentence reflection on the route's geometry.
-    Not a summary — the shape of the path, a detour, a place you almost turned back.
-    Use only the provided data; do not invent details that are not present.
-  expected_output: "A one- or two-sentence draft reflection on route geometry."
+    LENS: Cartographer
+    Describe the route using uniqueness and the places listed. Do not invent turns or detours.
+  expected_output: "One or two sentences grounded in the activity context."
   agent: cartographer
-revise_cartographer_with_personality:
-  description: |
-    DRAFT
-    {draft_description}
-
-    PERSONAL VOICE
-    - Honest and independent; avoid hype, cliches, or groupthink.
-    - Direct and pragmatic; concise phrasing.
-    - Structured but natural; clear sentences without rigid formula.
-    - Quiet and private; warm one-on-one tone, not performative.
-    - Detail-aware; no exaggeration, choose concrete details.
-    - Grounded creativity; one precise image is enough.
-
-    TASK
-    Revise the draft to sound distinctly human and like the author while preserving the
-    cartographer tone and one- or two-sentence length.
-    Keep the same spatial observations; do not add new locations.
-    Do not invent details that are not present in the data.
-  expected_output: "A one- or two-sentence revised reflection in the cartographer style and personal voice."
-  agent: personality_editor
