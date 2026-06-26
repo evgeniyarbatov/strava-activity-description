@@ -8,7 +8,7 @@ WEATHER_DATA = $(DATA_DIR)/weather.json
 
 BOUNDARY_POLY = osm/ho-chi-minh-city.poly
 OSM_URL = https://download.geofabrik.de/asia/vietnam-latest.osm.pbf
-COUNTRY_OSM_FILE = $$(basename $(OSM_URL))
+include $(HOME)/gitRepo/dotfiles/make/osm-country.mk
 
 OSM_DIR = osm
 TERRAFORM_DIR = terraform
@@ -20,10 +20,6 @@ install: venv
 	@$(PIP) install --disable-pip-version-check -q --upgrade pip
 	@$(PIP) install --disable-pip-version-check -q -r $(REQUIREMENTS)
 
-country:
-	if [ ! -f $(OSM_DIR)/$(COUNTRY_OSM_FILE) ]; then \
-		wget $(OSM_URL) -P $(OSM_DIR); \
-	fi
 
 city:
 	@osmconvert $(OSM_DIR)/$(COUNTRY_OSM_FILE) -B=$(BOUNDARY_POLY) -o=$(OSM_DIR)/city.osm.pbf
