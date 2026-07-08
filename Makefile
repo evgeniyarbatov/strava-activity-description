@@ -24,21 +24,18 @@ city:
 	@osmconvert $(OSM_DIR)/$(COUNTRY_OSM_FILE) -B=$(BOUNDARY_POLY) -o=$(OSM_DIR)/city.osm.pbf
 	@osmium cat --overwrite $(OSM_DIR)/city.osm.pbf -o $(OSM_DIR)/city.osm
 
-analyze:
+analyze: install
 	@$(PYTHON) -m scripts.activity
 	@$(PYTHON) -m scripts.weather_traffic
 	@$(PYTHON) -m scripts.uniqueness
 	@$(PYTHON) -m scripts.context
 	@$(PYTHON) -m scripts.poi
-
-reflect:
+reflect: install
 	@$(PYTHON) -m scripts.describe
-
 describe: reflect
 
-test:
+test: install
 	@$(PYTHON) -m pytest
-
 deploy: test
 	@cd $(TERRAFORM_DIR) && terraform apply -auto-approve
 
