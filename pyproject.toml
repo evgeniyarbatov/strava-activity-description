@@ -1,0 +1,25 @@
+[project]
+name = "run-reflection"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3",
+    "crewai",
+    "geopy",
+    "google-genai",
+    "litellm",
+    "numpy",
+    "polyline",
+    "pyproj",
+    "python-dotenv",
+    "pyyaml",
+    "shapely",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+]
+
+[tool.uv]
+package = false

@@ -1,8 +1,4 @@
-VENV_PATH := .venv
-PYTHON := $(VENV_PATH)/bin/python
-PIP := $(VENV_PATH)/bin/pip
-REQUIREMENTS := requirements.txt
-
+# Uses uv (https://docs.astral.sh/uv) for dependency management — uv sync creates/updates .venv; run commands via uv run, no manual activation.
 DATA_DIR = data
 WEATHER_DATA = $(DATA_DIR)/weather.json
 
@@ -13,30 +9,46 @@ include $(HOME)/gitRepo/dotfiles/make/osm-country.mk
 OSM_DIR = osm
 TERRAFORM_DIR = terraform
 
-venv:
-	@python3.12 -m venv $(VENV_PATH)
-
-install: venv
-	@uv pip install -q -r $(REQUIREMENTS)
-
+install:
+	@uv sync --dev
 
 city:
 	@osmconvert $(OSM_DIR)/$(COUNTRY_OSM_FILE) -B=$(BOUNDARY_POLY) -o=$(OSM_DIR)/city.osm.pbf
 	@osmium cat --overwrite $(OSM_DIR)/city.osm.pbf -o $(OSM_DIR)/city.osm
 
 analyze: install
-	@$(PYTHON) -m scripts.activity
-	@$(PYTHON) -m scripts.weather_traffic
-	@$(PYTHON) -m scripts.uniqueness
-	@$(PYTHON) -m scripts.context
-	@$(PYTHON) -m scripts.poi
+	@uv run python -m scripts.activity
+	@uv run python -m scripts.weather_traffic
+	@uv run python -m scripts.uniqueness
+	@uv run python -m scripts.context
+	@uv run python -m scripts.poi
+
 reflect: install
-	@$(PYTHON) -m scripts.describe
+	@uv run python -m scripts.describe
+
 describe: reflect
 
 test: install
-	@$(PYTHON) -m pytest
+	@uv run python -m pytest
+
 deploy: test
 	@cd $(TERRAFORM_DIR) && terraform apply -auto-approve
 
-.PHONY: data test
+lock:
+	@uv lock
+
+clean:
+	rm -rf .venv
+
+help:
+	@echo "install - uv sync --dev"
+	@echo "city    - build city OSM extract from country extract"
+	@echo "analyze - run activity/weather/uniqueness/context/poi pipeline"
+	@echo "reflect - run CrewAI multi-lens reflection"
+	@echo "describe - alias for reflect"
+	@echo "test    - run pytest"
+	@echo "deploy  - test + terraform apply"
+	@echo "lock    - refresh uv.lock"
+	@echo "clean   - remove .venv"
+
+.PHONY: data test install city analyze reflect describe deploy lock clean help
