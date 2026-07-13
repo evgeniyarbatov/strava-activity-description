@@ -79,9 +79,7 @@ def zscore_array(values: np.ndarray) -> np.ndarray:
     return (values - mean) / std
 
 
-def pad_or_trim_vector(
-    lats: np.ndarray, lons: np.ndarray, target_points: int
-) -> np.ndarray:
+def pad_or_trim_vector(lats: np.ndarray, lons: np.ndarray, target_points: int) -> np.ndarray:
     if target_points <= 0:
         return np.array([], dtype=float)
     count = min(len(lats), len(lons))
@@ -193,7 +191,10 @@ def uniqueness_for_activity(
     centroid_lon_z = zscore_values(centroid_lons)
     centroid_distances = [
         float(
-            ((centroid_lat_z[0] - centroid_lat_z[i]) ** 2 + (centroid_lon_z[0] - centroid_lon_z[i]) ** 2)
+            (
+                (centroid_lat_z[0] - centroid_lat_z[i]) ** 2
+                + (centroid_lon_z[0] - centroid_lon_z[i]) ** 2
+            )
             ** 0.5
         )
         for i in range(1, len(centroid_lat_z))
@@ -203,7 +204,7 @@ def uniqueness_for_activity(
         activity_distance = zscores[0]
         reference_distances = zscores[1:]
         for route_distance, distance_score, centroid_distance in zip(
-            route_distances, reference_distances, centroid_distances
+            route_distances, reference_distances, centroid_distances, strict=False
         ):
             distances.append(
                 route_distance
@@ -211,7 +212,9 @@ def uniqueness_for_activity(
                 + CENTROID_WEIGHT * centroid_distance
             )
     else:
-        for route_distance, centroid_distance in zip(route_distances, centroid_distances):
+        for route_distance, centroid_distance in zip(
+            route_distances, centroid_distances, strict=False
+        ):
             distances.append(route_distance + CENTROID_WEIGHT * centroid_distance)
 
     return calculate_uniqueness_score(distances)
@@ -232,9 +235,7 @@ def main() -> None:
     raw_scores: dict[Path, float | None] = {}
     for path in ACTIVITIES_DIR.glob("*.json"):
         payload = load_json(path)
-        raw_scores[path] = uniqueness_for_activity(
-            payload, reference_runs, activity_id=path.stem
-        )
+        raw_scores[path] = uniqueness_for_activity(payload, reference_runs, activity_id=path.stem)
 
     valid_scores = [score for score in raw_scores.values() if score is not None]
     if not valid_scores:

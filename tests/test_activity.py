@@ -1,5 +1,4 @@
-from datetime import datetime, timedelta, timezone
-
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from scripts.activity import activity_payload, parse_points, simplify_points
@@ -15,7 +14,7 @@ def make_point(lat: float, lon: float, ele: str, time: datetime) -> dict:
 
 
 def test_activity_payload() -> None:
-    start = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2026, 1, 1, 0, 0, 0, tzinfo=UTC)
     points = [
         make_point(0.0, 0.0, "0", start),
         make_point(0.0, 0.00001, "10", start + timedelta(seconds=1)),
@@ -52,13 +51,13 @@ def test_parse_points_reads_track_data(tmp_path: Path) -> None:
             "lat": 1.0,
             "lon": 2.0,
             "ele": "3",
-            "time": datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc),
+            "time": datetime(2026, 1, 1, 0, 0, 0, tzinfo=UTC),
         }
     ]
 
 
 def test_simplify_points_with_zero_distance() -> None:
-    start = datetime(2026, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
+    start = datetime(2026, 1, 1, 0, 0, 0, tzinfo=UTC)
     points = [
         make_point(1.0, 2.0, "0", start),
         make_point(1.0, 2.00001, "0", start + timedelta(seconds=1)),

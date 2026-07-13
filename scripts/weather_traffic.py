@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import os
+import random
 from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
-import random
 
 import boto3
 from boto3.dynamodb.conditions import Attr
 
 from scripts.utils import load_json, parse_iso, write_json
-
 
 DATA_DIR = Path("data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
@@ -69,261 +67,293 @@ def feels_like_description(feels_like_c: float) -> str:
     if feels_like_c < 5:
         return random.choice(FEELS_LIKE_FREEZING)
     if feels_like_c < 10:
-        return random.choice([
-            "icy winds sweeping through",
-            "teeth-chattering winter morning",
-            "frosty air settled on the streets",
-            "biting cold gripping the streets",
-            "piercing chill cutting through layers",
-            "razor-sharp winds slicing the air",
-            "brutally frigid, exceptionally harsh",
-            "savagely cold morning commute",
-            "wickedly icy, unforgiving winter"
-        ])
+        return random.choice(
+            [
+                "icy winds sweeping through",
+                "teeth-chattering winter morning",
+                "frosty air settled on the streets",
+                "biting cold gripping the streets",
+                "piercing chill cutting through layers",
+                "razor-sharp winds slicing the air",
+                "brutally frigid, exceptionally harsh",
+                "savagely cold morning commute",
+                "wickedly icy, unforgiving winter",
+            ]
+        )
     if feels_like_c < 14:
-        return random.choice([
-            "proper winter chill in the air",
-            "thick fog and bitter cold",
-            "time for hot broth and winter coats",
-            "brisk winds off the waterfront",
-            "crisp snap in the air",
-            "penetrating dampness seeping everywhere",
-            "raw, unrelenting winter bite",
-            "dank coldness clinging stubbornly",
-            "unforgivingly chilly, layers required",
-            "blustery gusts whipping through",
-            "austere winter conditions prevailing"
-        ])
+        return random.choice(
+            [
+                "proper winter chill in the air",
+                "thick fog and bitter cold",
+                "time for hot broth and winter coats",
+                "brisk winds off the waterfront",
+                "crisp snap in the air",
+                "penetrating dampness seeping everywhere",
+                "raw, unrelenting winter bite",
+                "dank coldness clinging stubbornly",
+                "unforgivingly chilly, layers required",
+                "blustery gusts whipping through",
+                "austere winter conditions prevailing",
+            ]
+        )
     if feels_like_c < 18:
-        return random.choice([
-            "crisp downtown morning",
-            "commuters bundled up against the cold",
-            "cool mist over the park lake",
-            "nippy breeze through the side streets",
-            "fresh winter air invigorating",
-            "bracing coolness awakening the senses",
-            "zippy chill energizing the morning",
-            "tangy coolness nipping at exposed skin",
-            "keen air sharpening your focus",
-            "perky coldness requiring a scarf"
-        ])
+        return random.choice(
+            [
+                "crisp downtown morning",
+                "commuters bundled up against the cold",
+                "cool mist over the park lake",
+                "nippy breeze through the side streets",
+                "fresh winter air invigorating",
+                "bracing coolness awakening the senses",
+                "zippy chill energizing the morning",
+                "tangy coolness nipping at exposed skin",
+                "keen air sharpening your focus",
+                "perky coldness requiring a scarf",
+            ]
+        )
     if feels_like_c < 20:
-        return random.choice([
-            "refreshing seasonal breeze",
-            "light jacket weather by the water",
-            "perfectly cool for an outdoor coffee",
-            "agreeably mild morning commute",
-            "comfortable chill tickling your skin",
-            "snappy coolness, delightfully tolerable",
-            "pleasingly crisp, neither hot nor cold",
-            "mellowly cool, just right for exploring",
-            "moderately fresh, ideal strolling weather",
-            "gently brisk, satisfyingly temperate"
-        ])
+        return random.choice(
+            [
+                "refreshing seasonal breeze",
+                "light jacket weather by the water",
+                "perfectly cool for an outdoor coffee",
+                "agreeably mild morning commute",
+                "comfortable chill tickling your skin",
+                "snappy coolness, delightfully tolerable",
+                "pleasingly crisp, neither hot nor cold",
+                "mellowly cool, just right for exploring",
+                "moderately fresh, ideal strolling weather",
+                "gently brisk, satisfyingly temperate",
+            ]
+        )
     if feels_like_c < 23:
-        return random.choice([
-            "delightfully comfortable day",
-            "ideal for strolling the historic quarter",
-            "gentle sunshine, pleasant breeze",
-            "splendidly temperate afternoon",
-            "gloriously balanced climate",
-            "wonderfully moderate and inviting",
-            "blissfully agreeable conditions",
-            "exquisitely mild, picture-perfect",
-            "harmoniously pleasant atmosphere",
-            "superbly comfortable, goldilocks zone",
-            "serenely balanced, neither extreme",
-            "divinely temperate, absolutely ideal"
-        ])
+        return random.choice(
+            [
+                "delightfully comfortable day",
+                "ideal for strolling the historic quarter",
+                "gentle sunshine, pleasant breeze",
+                "splendidly temperate afternoon",
+                "gloriously balanced climate",
+                "wonderfully moderate and inviting",
+                "blissfully agreeable conditions",
+                "exquisitely mild, picture-perfect",
+                "harmoniously pleasant atmosphere",
+                "superbly comfortable, goldilocks zone",
+                "serenely balanced, neither extreme",
+                "divinely temperate, absolutely ideal",
+            ]
+        )
     if feels_like_c < 26:
-        return random.choice([
-            "warm but lovely with the fan on",
-            "perfect sidewalk lunch weather",
-            "golden afternoon glow over the city",
-            "summery warmth beginning to radiate",
-            "toasty sunshine bathing the boulevards",
-            "agreeably heated, bordering on balmy",
-            "sun-kissed streets buzzing with life",
-            "gently warming, summer gathering strength",
-            "pleasantly heated, comfortably sunny",
-            "mellowly warm, invitingly bright",
-            "benignly hot, still quite bearable"
-        ])
+        return random.choice(
+            [
+                "warm but lovely with the fan on",
+                "perfect sidewalk lunch weather",
+                "golden afternoon glow over the city",
+                "summery warmth beginning to radiate",
+                "toasty sunshine bathing the boulevards",
+                "agreeably heated, bordering on balmy",
+                "sun-kissed streets buzzing with life",
+                "gently warming, summer gathering strength",
+                "pleasantly heated, comfortably sunny",
+                "mellowly warm, invitingly bright",
+                "benignly hot, still quite bearable",
+            ]
+        )
     if feels_like_c < 29:
-        return random.choice([
-            "warming up, seek the shade",
-            "balmy streets calling for iced tea",
-            "typical summer heat building",
-            "sultry air wrapping around you",
-            "steamy atmosphere thickening",
-            "languid heat settling in",
-            "torrid conditions intensifying gradually",
-            "increasingly heated, sweat appearing",
-            "mounting warmth becoming noticeable",
-            "escalating heat demanding attention",
-            "progressively muggy, fans spinning"
-        ])
+        return random.choice(
+            [
+                "warming up, seek the shade",
+                "balmy streets calling for iced tea",
+                "typical summer heat building",
+                "sultry air wrapping around you",
+                "steamy atmosphere thickening",
+                "languid heat settling in",
+                "torrid conditions intensifying gradually",
+                "increasingly heated, sweat appearing",
+                "mounting warmth becoming noticeable",
+                "escalating heat demanding attention",
+                "progressively muggy, fans spinning",
+            ]
+        )
     if feels_like_c < 32:
-        return random.choice([
-            "seriously hot, summer has arrived",
-            "sidewalk vendors' parasols essential",
-            "sweating through the afternoon heat",
-            "blistering sun beating down relentlessly",
-            "fierce midday heat radiating upward",
-            "searing warmth testing your endurance",
-            "baking pavement shimmering with heat",
-            "roasting temperatures cooking the streets",
-            "flaming hot, shade desperately needed",
-            "grilling sunshine pounding mercilessly",
-            "incandescent heat waves rising visibly",
-            "red-hot conditions draining energy"
-        ])
+        return random.choice(
+            [
+                "seriously hot, summer has arrived",
+                "sidewalk vendors' parasols essential",
+                "sweating through the afternoon heat",
+                "blistering sun beating down relentlessly",
+                "fierce midday heat radiating upward",
+                "searing warmth testing your endurance",
+                "baking pavement shimmering with heat",
+                "roasting temperatures cooking the streets",
+                "flaming hot, shade desperately needed",
+                "grilling sunshine pounding mercilessly",
+                "incandescent heat waves rising visibly",
+                "red-hot conditions draining energy",
+            ]
+        )
     if feels_like_c < 35:
-        return random.choice([
-            "oppressively humid, clothes sticking",
-            "thick summer air you can almost drink",
-            "everyone seeking air conditioning",
-            "suffocating moisture saturating everything",
-            "stifling humidity smothering the city",
-            "cloying wetness hanging heavy",
-            "drenching mugginess enveloping all",
-            "claustrophobic heat wrapping tightly",
-            "asphyxiating humidity choking the air",
-            "viscous atmosphere clinging relentlessly",
-            "strangling moisture overwhelming senses"
-        ])
-    return random.choice([
-        "scorching humid intensity",
-        "blazing summer furnace",
-        "absolutely sweltering, stay hydrated!",
-        "infernal heat radiating mercilessly",
-        "punishing sauna-like conditions",
-        "broiling temperatures roasting everything",
-        "withering heat wave crushing the city",
-        "apocalyptic temperatures melting resolve",
-        "volcanic heat overwhelming the streets",
-        "tyrannical sun dominating without mercy",
-        "excruciating furnace-like atmosphere",
-        "incinerating conditions, survival mode",
-        "molten air, dangerously extreme heat"
-    ])
+        return random.choice(
+            [
+                "oppressively humid, clothes sticking",
+                "thick summer air you can almost drink",
+                "everyone seeking air conditioning",
+                "suffocating moisture saturating everything",
+                "stifling humidity smothering the city",
+                "cloying wetness hanging heavy",
+                "drenching mugginess enveloping all",
+                "claustrophobic heat wrapping tightly",
+                "asphyxiating humidity choking the air",
+                "viscous atmosphere clinging relentlessly",
+                "strangling moisture overwhelming senses",
+            ]
+        )
+    return random.choice(
+        [
+            "scorching humid intensity",
+            "blazing summer furnace",
+            "absolutely sweltering, stay hydrated!",
+            "infernal heat radiating mercilessly",
+            "punishing sauna-like conditions",
+            "broiling temperatures roasting everything",
+            "withering heat wave crushing the city",
+            "apocalyptic temperatures melting resolve",
+            "volcanic heat overwhelming the streets",
+            "tyrannical sun dominating without mercy",
+            "excruciating furnace-like atmosphere",
+            "incinerating conditions, survival mode",
+            "molten air, dangerously extreme heat",
+        ]
+    )
 
 
 def traffic_description(speed_ratio: float) -> str:
     if speed_ratio <= 0.25:
-        return random.choice([
-            "complete road standstill, traffic frozen",
-            "absolute road gridlock paralysis",
-            "total road traffic apocalypse",
-            "utterly immobilized chaos",
-            "hopelessly jammed roads, zero movement",
-            "catastrophically stuck on every street",
-            "nightmarish road parking lot situation",
-            "exhaustingly stationary madness",
-            "frustratingly cemented in place",
-            "monumentally congested hell",
-            "suffocatingly trapped, going nowhere",
-            "desperately stagnant gridlock"
-        ])
+        return random.choice(
+            [
+                "complete road standstill, traffic frozen",
+                "absolute road gridlock paralysis",
+                "total road traffic apocalypse",
+                "utterly immobilized chaos",
+                "hopelessly jammed roads, zero movement",
+                "catastrophically stuck on every street",
+                "nightmarish road parking lot situation",
+                "exhaustingly stationary madness",
+                "frustratingly cemented in place",
+                "monumentally congested hell",
+                "suffocatingly trapped, going nowhere",
+                "desperately stagnant gridlock",
+            ]
+        )
     if speed_ratio <= 0.4:
-        return random.choice([
-            "severe road gridlock choking the streets",
-            "brutal road congestion everywhere",
-            "mercilessly jammed roads citywide",
-            "agonizingly slow gridlock",
-            "punishingly dense traffic",
-            "oppressively packed roads",
-            "claustrophobic sea of vehicles",
-            "stifling wall-to-wall congestion",
-            "crushingly heavy gridlock",
-            "exasperatingly clogged arteries",
-            "suffocating mass of vehicles",
-            "relentlessly packed streets"
-        ])
+        return random.choice(
+            [
+                "severe road gridlock choking the streets",
+                "brutal road congestion everywhere",
+                "mercilessly jammed roads citywide",
+                "agonizingly slow gridlock",
+                "punishingly dense traffic",
+                "oppressively packed roads",
+                "claustrophobic sea of vehicles",
+                "stifling wall-to-wall congestion",
+                "crushingly heavy gridlock",
+                "exasperatingly clogged arteries",
+                "suffocating mass of vehicles",
+                "relentlessly packed streets",
+            ]
+        )
     if speed_ratio <= 0.55:
         return random.choice(TRAFFIC_CRAWLING)
     if speed_ratio <= 0.7:
-        return random.choice([
-            "slow but steady movement",
-            "heavily congested, stop-and-go",
-            "frustratingly sluggish pace",
-            "annoyingly slow progress",
-            "moderately jammed, patience needed",
-            "tiringly slow downtown crawl",
-            "wearisome stop-start rhythm",
-            "dragging along reluctantly",
-            "laboriously progressing forward",
-            "vexingly slow city navigation",
-            "unhurried but congested flow"
-        ])
+        return random.choice(
+            [
+                "slow but steady movement",
+                "heavily congested, stop-and-go",
+                "frustratingly sluggish pace",
+                "annoyingly slow progress",
+                "moderately jammed, patience needed",
+                "tiringly slow downtown crawl",
+                "wearisome stop-start rhythm",
+                "dragging along reluctantly",
+                "laboriously progressing forward",
+                "vexingly slow city navigation",
+                "unhurried but congested flow",
+            ]
+        )
     if speed_ratio <= 0.85:
-        return random.choice([
-            "busy but moving steadily",
-            "typical city hustle and bustle",
-            "active flow with minor delays",
-            "moderately crowded streets",
-            "brisk traffic with occasional slowdowns",
-            "energetically bustling roads",
-            "dynamically flowing chaos",
-            "vibrantly packed but progressing",
-            "lively stream of vehicles",
-            "spiritedly moving crowds",
-            "animated traffic dance",
-            "pulsating urban flow"
-        ])
+        return random.choice(
+            [
+                "busy but moving steadily",
+                "typical city hustle and bustle",
+                "active flow with minor delays",
+                "moderately crowded streets",
+                "brisk traffic with occasional slowdowns",
+                "energetically bustling roads",
+                "dynamically flowing chaos",
+                "vibrantly packed but progressing",
+                "lively stream of vehicles",
+                "spiritedly moving crowds",
+                "animated traffic dance",
+                "pulsating urban flow",
+            ]
+        )
     if speed_ratio <= 0.95:
-        return random.choice([
-            "steady predictable flow",
-            "consistent comfortable pace",
-            "reliable smooth movement",
-            "dependably even traffic",
-            "rhythmically flowing well",
-            "harmoniously balanced flow",
-            "pleasantly uninterrupted progress",
-            "satisfyingly regular pace",
-            "agreeably smooth navigation",
-            "calmly flowing traffic",
-            "reassuringly steady movement"
-        ])
+        return random.choice(
+            [
+                "steady predictable flow",
+                "consistent comfortable pace",
+                "reliable smooth movement",
+                "dependably even traffic",
+                "rhythmically flowing well",
+                "harmoniously balanced flow",
+                "pleasantly uninterrupted progress",
+                "satisfyingly regular pace",
+                "agreeably smooth navigation",
+                "calmly flowing traffic",
+                "reassuringly steady movement",
+            ]
+        )
     if speed_ratio <= 1.05:
-        return random.choice([
-            "smooth sailing through streets",
-            "effortlessly flowing traffic",
-            "gloriously clear roads",
-            "delightfully open conditions",
-            "wonderfully smooth cruising",
-            "blissfully unimpeded flow",
-            "serenely easy navigation",
-            "peacefully flowing streets",
-            "tranquilly smooth movement",
-            "gracefully gliding through",
-            "splendidly clear passage",
-            "beautifully fluid traffic"
-        ])
-    return random.choice([
-        "wide open roads, rare sight!",
-        "completely clear, speed freely",
-        "gloriously empty streets",
-        "astonishingly open highways",
-        "miraculously clear city roads",
-        "unbelievably vacant, enjoy it!",
-        "extraordinarily empty, perfect conditions",
-        "stunningly clear, once-in-a-lifetime",
-        "magically deserted streets",
-        "phenomenally open, no obstacles",
-        "impossibly clear for the hour",
-        "spectacularly vacant roadways",
-        "breathtakingly empty, savor this!"
-    ])
+        return random.choice(
+            [
+                "smooth sailing through streets",
+                "effortlessly flowing traffic",
+                "gloriously clear roads",
+                "delightfully open conditions",
+                "wonderfully smooth cruising",
+                "blissfully unimpeded flow",
+                "serenely easy navigation",
+                "peacefully flowing streets",
+                "tranquilly smooth movement",
+                "gracefully gliding through",
+                "splendidly clear passage",
+                "beautifully fluid traffic",
+            ]
+        )
+    return random.choice(
+        [
+            "wide open roads, rare sight!",
+            "completely clear, speed freely",
+            "gloriously empty streets",
+            "astonishingly open highways",
+            "miraculously clear city roads",
+            "unbelievably vacant, enjoy it!",
+            "extraordinarily empty, perfect conditions",
+            "stunningly clear, once-in-a-lifetime",
+            "magically deserted streets",
+            "phenomenally open, no obstacles",
+            "impossibly clear for the hour",
+            "spectacularly vacant roadways",
+            "breathtakingly empty, savor this!",
+        ]
+    )
 
 
 def build_weather_entries(items: list[dict]) -> list[dict]:
     return [
         {
             "description": item["data"]["weather_description"],
-            "feels_like": feels_like_description(
-                float(to_number(item["data"]["feels_like"]))
-            ),
+            "feels_like": feels_like_description(float(to_number(item["data"]["feels_like"]))),
         }
         for item in items
     ]
@@ -364,11 +394,7 @@ def main() -> None:
             continue
         activity = payload["activity"]
         start_time = parse_iso(activity["start_date_local"])
-        end_time = (
-            start_time
-            + timedelta(seconds=activity["moving_time"])
-            + timedelta(hours=1)
-        )
+        end_time = start_time + timedelta(seconds=activity["moving_time"]) + timedelta(hours=1)
         date = start_time.date().isoformat()
         start_hour = start_time.hour
         end_hour = end_time.hour

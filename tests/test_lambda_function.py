@@ -31,10 +31,7 @@ def load_lambda_module(monkeypatch, dynamo):
     monkeypatch.setattr("boto3.resource", lambda *_args, **_kwargs: dynamo)
 
     module_path = (
-        Path(__file__).resolve().parents[1]
-        / "terraform"
-        / "lambda"
-        / "lambda_function.py"
+        Path(__file__).resolve().parents[1] / "terraform" / "lambda" / "lambda_function.py"
     )
     spec = importlib.util.spec_from_file_location("lambda_function_under_test", module_path)
     module = importlib.util.module_from_spec(spec)
@@ -75,7 +72,7 @@ def test_call_traffic_api_encodes_point(monkeypatch) -> None:
                 (),
                 {
                     "status": 200,
-                    "data": b"{\"flowSegmentData\": {\"currentSpeed\": 5}}",
+                    "data": b'{"flowSegmentData": {"currentSpeed": 5}}',
                 },
             )()
 

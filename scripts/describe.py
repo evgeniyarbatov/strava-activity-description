@@ -8,7 +8,7 @@ from typing import Any
 
 import polyline
 import yaml
-from crewai import Agent, Crew, LLM, Task
+from crewai import LLM, Agent, Crew, Task
 from crewai.events.listeners.tracing.utils import set_suppress_tracing_messages
 from geopy.geocoders import Nominatim
 
@@ -63,6 +63,8 @@ PROMPT_INPUT_KEYS = [
     "traffic_description",
     "points_of_interest",
 ]
+
+
 @dataclass(frozen=True)
 class PromptConfig:
     label: str
@@ -78,6 +80,7 @@ PROMPT_CONFIGS = [
     )
     for label in PERSONA_LABELS
 ]
+
 
 def most_common(values: list[str]) -> str:
     if not values:
@@ -111,13 +114,9 @@ def activity_summary(
 
     feels_like_values = [str(entry["feels_like"]) for entry in weather_entries]
     feels_like = most_common(feels_like_values)
-    weather_description = unique_join(
-        [str(entry["description"]) for entry in weather_entries]
-    )
+    weather_description = unique_join([str(entry["description"]) for entry in weather_entries])
 
-    traffic_description = unique_join(
-        [str(entry["description"]) for entry in traffic_entries]
-    )
+    traffic_description = unique_join([str(entry["description"]) for entry in traffic_entries])
 
     return {
         "start_time_local": start_time_local_str,
@@ -136,9 +135,7 @@ def location_from_polyline(
     map_polyline: str, geolocator: Nominatim
 ) -> tuple[str | None, str | None]:
     median_lat, median_lng = midpoint_from_polyline(map_polyline)
-    location = geolocator.reverse(
-        (median_lat, median_lng), language="en", addressdetails=True
-    )
+    location = geolocator.reverse((median_lat, median_lng), language="en", addressdetails=True)
     address = location.raw.get("address", {}) if location else {}
     return address.get("city"), address.get("country")
 
@@ -287,9 +284,7 @@ def run_prompt_pipeline(
         if not agent_name:
             raise ValueError(f"Task {task_name} missing agent assignment.")
         if agent_name not in agents:
-            raise ValueError(
-                f"Task {task_name} expects agent {agent_name}, which is missing."
-            )
+            raise ValueError(f"Task {task_name} expects agent {agent_name}, which is missing.")
         output = run_crewai_task(agents[agent_name], task_config, task_inputs)
         last_output = output
         task_inputs["draft_description"] = output
@@ -308,9 +303,7 @@ def load_prompt_config(
     for task_name, task_config in tasks:
         agent_name = task_config.get("agent")
         if agent_name and agent_name not in agents:
-            raise ValueError(
-                f"Task {task_name} expects agent {agent_name}, which is missing."
-            )
+            raise ValueError(f"Task {task_name} expects agent {agent_name}, which is missing.")
     return agents, tasks
 
 
@@ -324,9 +317,7 @@ def run_perspectives(
         task_inputs = {
             "activity_context": activity_context,
         }
-        crew_output = run_prompt_pipeline(
-            agents_config, tasks_config, model, task_inputs
-        )
+        crew_output = run_prompt_pipeline(agents_config, tasks_config, model, task_inputs)
         perspective = to_single_line(crew_output)
         perspectives[prompt_config.label] = perspective
         print(f"{prompt_config.label}: {perspective}")

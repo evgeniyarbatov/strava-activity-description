@@ -69,9 +69,6 @@ def test_persona_agents_exclude_strava_framing() -> None:
         agents = load_yaml_config(prompt_config.agents_path)
         for agent_config in agents.values():
             text = "\n".join(
-                str(agent_config.get(key, ""))
-                for key in ("role", "goal", "backstory")
+                str(agent_config.get(key, "")) for key in ("role", "goal", "backstory")
             ).lower()
             assert "strava" not in text
-
-

@@ -1,12 +1,12 @@
 from __future__ import annotations
 
 import xml.etree.ElementTree as ET
-from datetime import timezone
+from datetime import UTC
 from pathlib import Path
 
 import polyline
-from shapely.geometry import LineString
 from geopy.distance import distance as geo_distance
+from shapely.geometry import LineString
 
 from scripts.utils import parse_iso, write_json
 
@@ -49,12 +49,12 @@ def parse_points(path: Path) -> list[dict]:
 
 
 def to_zulu(dt) -> str:
-    return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+    return dt.astimezone(UTC).isoformat().replace("+00:00", "Z")
 
 
 def to_local_zulu(dt) -> str:
     """Encode local time using a Z suffix to keep Strava-style fields."""
-    local_dt = dt.astimezone().replace(tzinfo=timezone.utc)
+    local_dt = dt.astimezone().replace(tzinfo=UTC)
     return local_dt.isoformat().replace("+00:00", "Z")
 
 
@@ -71,7 +71,7 @@ def simplify_points(points: list[dict], min_distance_m: float) -> list[dict]:
 
 def total_distance_m(points: list[dict]) -> float:
     distance_m = 0.0
-    for prev, curr in zip(points, points[1:]):
+    for prev, curr in zip(points, points[1:], strict=False):
         distance_m += geo_distance((prev["lat"], prev["lon"]), (curr["lat"], curr["lon"])).meters
     return distance_m
 

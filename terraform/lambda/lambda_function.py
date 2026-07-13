@@ -20,6 +20,7 @@ TOMTOM_API_KEY = os.environ["TOMTOM_API_KEY"]
 
 dynamodb = boto3.resource("dynamodb")
 
+
 def call_weather_api(lat, lon):
     http = urllib3.PoolManager()
 
@@ -55,6 +56,7 @@ def call_traffic_api(point):
 
     return json.loads(response.data.decode("utf-8"))
 
+
 def query_traffic(point):
     result = call_traffic_api(point)
     if result is None or "flowSegmentData" not in result:
@@ -66,6 +68,7 @@ def query_traffic(point):
         "currentSpeed": flow_data.get("currentSpeed", None),
         "freeFlowSpeed": flow_data.get("freeFlowSpeed", None),
     }
+
 
 def lambda_handler(event, context):
     table = dynamodb.Table(DYNAMODB_TABLE)
@@ -97,7 +100,7 @@ def lambda_handler(event, context):
             "data": {
                 "feels_like": feels_like,
                 "weather_description": weather_description,
-            }
+            },
         }
         table.put_item(Item=weather_item)
 
@@ -114,7 +117,7 @@ def lambda_handler(event, context):
             "data": {
                 "currentSpeed": Decimal(str(traffic["currentSpeed"])),
                 "freeFlowSpeed": Decimal(str(traffic["freeFlowSpeed"])),
-            }
+            },
         }
         table.put_item(Item=traffic_item)
 

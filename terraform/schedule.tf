@@ -17,5 +17,3 @@ resource "aws_lambda_permission" "morning" {
   principal     = "events.amazonaws.com"
   source_arn    = aws_cloudwatch_event_rule.morning.arn
 }
-
-
