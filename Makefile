@@ -1,6 +1,5 @@
 # Uses uv (https://docs.astral.sh/uv) for dependency management — uv sync creates/updates .venv; run commands via uv run, no manual activation.
 DATA_DIR = data
-WEATHER_DATA = $(DATA_DIR)/weather.json
 
 BOUNDARY_POLY = osm/ho-chi-minh-city.poly
 OSM_URL = https://download.geofabrik.de/asia/vietnam-latest.osm.pbf
@@ -9,6 +8,8 @@ include $(HOME)/gitRepo/dotfiles/make/osm-country.mk
 OSM_DIR = osm
 TERRAFORM_DIR = terraform
 
+.DEFAULT_GOAL := all
+
 install:
 	@uv sync --dev
 
@@ -16,6 +17,7 @@ city:
 	@osmconvert $(OSM_DIR)/$(COUNTRY_OSM_FILE) -B=$(BOUNDARY_POLY) -o=$(OSM_DIR)/city.osm.pbf
 	@osmium cat --overwrite $(OSM_DIR)/city.osm.pbf -o $(OSM_DIR)/city.osm
 
+# Enrichment only (GPX → data/activities). Idempotent; scripts skip existing fields.
 analyze: install
 	@uv run python -m scripts.activity
 	@uv run python -m scripts.weather_traffic
@@ -23,10 +25,11 @@ analyze: install
 	@uv run python -m scripts.context
 	@uv run python -m scripts.poi
 
-reflect: install
+# Full daily path: drop GPX in data/raw, then `make`.
+reflect: analyze
 	@uv run python -m scripts.describe
 
-describe: reflect
+all: reflect
 
 test: install
 	@uv run python -m pytest
@@ -37,18 +40,26 @@ deploy: test
 lock:
 	@uv lock
 
+# Drop generated .gpx/.json/.md not tracked by git; keep committed samples and docs.
 clean:
+	@find . -type f \( -name '*.gpx' -o -name '*.json' -o -name '*.md' \) \
+		! -path './.git/*' ! -path './.venv/*' \
+		! -path './.mypy_cache/*' ! -path './.pytest_cache/*' ! -path './.ruff_cache/*' \
+		| sed 's|^\./||' \
+		| while IFS= read -r f; do \
+			git ls-files --error-unmatch "$$f" >/dev/null 2>&1 || rm -f "$$f"; \
+		done
 	rm -rf .venv
 
 help:
-	@echo "install - uv sync --dev"
-	@echo "city    - build city OSM extract from country extract"
-	@echo "analyze - run activity/weather/uniqueness/context/poi pipeline"
-	@echo "reflect - run CrewAI multi-lens reflection"
-	@echo "describe - alias for reflect"
-	@echo "test    - run pytest"
-	@echo "deploy  - test + terraform apply"
-	@echo "lock    - refresh uv.lock"
-	@echo "clean   - remove .venv"
+	@echo "make         - drop GPX in data/raw, then this (analyze + reflect → journal/)"
+	@echo "analyze      - enrichment pipeline only"
+	@echo "reflect      - analyze + journal reflection"
+	@echo "install      - uv sync --dev"
+	@echo "city         - build city OSM extract from country extract"
+	@echo "test         - run pytest"
+	@echo "deploy       - test + terraform apply"
+	@echo "lock         - refresh uv.lock"
+	@echo "clean        - remove untracked .gpx/.json/.md and .venv"
 
-.PHONY: data test install city analyze reflect describe deploy lock clean help
+.PHONY: all install city analyze reflect test deploy lock clean help

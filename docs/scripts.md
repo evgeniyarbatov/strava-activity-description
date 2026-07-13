@@ -6,7 +6,7 @@ All modules live under `scripts/` and run from the repo root:
 .venv/bin/python -m scripts.<module>
 ```
 
-Or via `make analyze` / `make reflect`. Shared helpers are in `scripts/utils.py`.
+Or via bare `make` (full pipeline). Shared helpers are in `scripts/utils.py`.
 
 ---
 
@@ -130,8 +130,7 @@ Requires `make city` to produce `osm/city.osm` first. Activities without a polyl
 1. **`prompt_inputs()`** — aggregate weather (most common feels_like, unique condition strings), traffic, context adjectives, POI list, uniqueness word; reverse-geocode route midpoint for `city_name` and `country`.
 2. **`render_activity_context()`** — fill `prompts/activity-context.txt` template.
 3. **`run_perspectives()`** — for each of nine lenses, load YAML configs, inject a random variation prompt, run agent task chain, collect one-line perspective.
-4. **`run_synthesis()`** — pass perspectives block to synthesis agents for Afterglow, Tensions, Residue.
-5. **`build_reflection()`** — assemble formatted markdown.
+4. **`build_reflection()`** — assemble markdown with one section per lens.
 
 Skips activities whose journal file already exists. Model from `REFLECTION_MODEL` env var or default local model (`mistral-nemo`).
 
@@ -148,9 +147,8 @@ Skips activities whose journal file already exists. Model from `REFLECTION_MODEL
 | Archivist | `prompts/archivist/` |
 | Dreamer | `prompts/dreamer/` |
 | Contrarian | `prompts/contrarian/` |
-| Synthesis | `prompts/synthesis/` |
 
-Each lens directory has `agents.yaml` and `tasks.yaml`. Tasks typically draft then revise; synthesis tasks read the full perspectives block.
+Each lens directory has `agents.yaml` and `tasks.yaml`. Tasks typically draft then revise.
 
 ---
 

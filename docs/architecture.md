@@ -17,7 +17,7 @@ data/raw (GPX)
     ▼ describe.py (CrewAI) ──────────────► journal/YYYY-MM-DD.md
 ```
 
-Orchestration lives in the `Makefile`. `make analyze` runs the enrichment chain; `make reflect` runs generation.
+Orchestration lives in the `Makefile`. Bare `make` runs the full chain (enrichment then reflection). `make analyze` is enrichment only; `make reflect` depends on `analyze`.
 
 ## Design principles
 
@@ -90,8 +90,7 @@ Re-running is safe; delete specific artifacts to force regeneration.
 
 1. **Context assembly** — merges activity payload fields into `prompts/activity-context.txt`. City and country come from reverse-geocoding the route midpoint via Nominatim.
 2. **Perspectives** — nine lenses run sequentially, each with its own `prompts/<lens>/agents.yaml` and `tasks.yaml`. A random `VARIATION_PROMPT` constrains style per lens.
-3. **Synthesis** — `prompts/synthesis/` produces Afterglow, Tensions, and Residue from the perspective block.
-4. **Output** — structured markdown written to `journal/`.
+3. **Output** — one section per lens in `journal/YYYY-MM-DD.md`.
 
 ### Lenses
 
@@ -102,18 +101,13 @@ Artist, Monk (`buddhist-monk`), Memory, Scientist, Cartographer, Physiologist, A
 ```markdown
 # 2026-03-15
 
-── Afterglow ──────────────────────────
-[2–3 sentences]
+## Monk
 
-── Perspectives ─────────────────────
-Monk:      ...
-Memory:    ...
+...
 
-── Tensions ─────────────────────────
-[Where perspectives disagree]
+## Memory
 
-── Residue ──────────────────────────
-[One line to carry]
+...
 ```
 
 ### Model selection

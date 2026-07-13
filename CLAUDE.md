@@ -24,21 +24,22 @@ Detailed docs live in `docs/`:
 - [docs/scripts.md](docs/scripts.md) — per-module behavior
 - [docs/setup.md](docs/setup.md) — first-time configuration
 
-## Pipeline (run in order)
+## Pipeline
+
+Daily path — drop GPX into `data/raw`, then:
 
 ```bash
-make install
-make country && make city   # one-time OSM setup
-make analyze                # activity → weather/traffic → uniqueness → context → poi
-make reflect                # CrewAI multi-lens reflection → journal/
+make   # analyze + reflect → journal/YYYY-MM-DD.md
 ```
 
-Override city: `make city BOUNDARY_POLY=osm/your-city.poly`
+One-time OSM setup: `make country && make city`. Override city: `make city BOUNDARY_POLY=osm/your-city.poly`.
+
+`make analyze` is enrichment only; `make reflect` depends on `analyze`. Prefer bare `make`.
 
 ## Python environment
 
-- Python 3.12, virtual env at `.venv/`
-- Dependencies in `requirements.txt` (crewai, boto3, shapely, polyline, geopy, pyyaml, etc.)
+- Python 3.12, virtual env at `.venv/` via `uv` (`make install` / `uv sync --dev`)
+- Dependencies in `pyproject.toml` / `uv.lock`
 - Tests: `make test` (pytest in `tests/`)
 
 ## Design principles (when editing prompts or pipeline logic)
@@ -55,7 +56,7 @@ From `ROADMAP.md`:
 
 - Keep polygon paths configurable via Makefile / constants at top of scripts, not hardcoded city names in pipeline outputs.
 - When changing DynamoDB table name, update both `terraform/variables.tf` and `scripts/weather_traffic.py`.
-- When changing run steps or Makefile targets, keep `README.md`, `docs/`, and this file in sync.
+- When changing run steps or Makefile targets, keep bare `make` as the full daily path; keep `README.md`, `docs/`, and this file in sync.
 - Preserve idempotent/skipping behavior: `weather_traffic.py` skips already-enriched fields; `describe.py` skips existing journal entries.
 - Do not commit generated data, OSM extracts, API keys, or journal entries (see `.gitignore` files under `data/`, `osm/`, `journal/`).
 - Match existing style: minimal comments, focused diffs, no drive-by refactors.

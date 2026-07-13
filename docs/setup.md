@@ -6,7 +6,7 @@
 make install
 ```
 
-Creates `.venv/` and installs `requirements.txt`. Scripts run from the repo root as `python -m scripts.<module>`.
+Creates `.venv/` via `uv sync --dev`. Scripts run from the repo root as `uv run python -m scripts.<module>` (or via `make`).
 
 ## API keys
 
@@ -74,5 +74,6 @@ Edit `goals.json` with your personal distance (meters) and moving-time (seconds)
 
 1. Update `goals.json` if needed.
 2. Drop GPX files into `data/raw`.
-3. `make analyze` — parses, enriches, and writes `data/activities/*.json`.
-4. `make reflect` — writes `journal/YYYY-MM-DD.md` (skips dates that already have a file).
+3. `make` — parses, enriches, and writes `journal/YYYY-MM-DD.md` (skips dates that already have a file).
+
+Use `make analyze` only when you want enrichment without reflection.

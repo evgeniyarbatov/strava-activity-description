@@ -12,23 +12,22 @@ The output should not quantize the run into metrics and labels. It should **pull
 
 ## What Exists Today
 
-The current pipeline already gestures toward this vision, even if the old repo name still said "Strava description."
-
 **What works:**
 
-- **Multiple lenses.** Artist, monk, memory, scientist — each persona reads the same activity through a different ethic. The monk notices impermanence; the memory-writer selects one detail and lets omission do the work; the scientist states what happened without metaphor. These viewpoints genuinely disagree about what matters.
+- **Nine lenses, private journal tone.** Artist, monk, memory, scientist, cartographer, physiologist, archivist, dreamer, contrarian — each reads the same activity through a different ethic. Goals are reframed as readers of the run, not Strava caption writers.
 - **Anti-quantization in the data layer.** Weather, traffic, distance, and duration are translated into words (`"protracted"`, `"blissfully unimpeded flow"`, `"notable"`) before they reach the model. Raw numbers are deliberately kept out of most prompts.
 - **Route memory.** Uniqueness scoring compares today's path against your history — a perspective you cannot hold in your head across hundreds of runs.
 - **Environmental context.** POI categories, time-of-day phrases, and sampled weather/traffic add layers you may not have consciously registered.
-- **Controlled variation.** `VARIATION_PROMPTS` introduce structural constraints (single sensory detail, no adjectives, juxtaposition) that prevent the outputs from converging on the same generic running prose.
+- **Controlled variation.** Variation prompts introduce structural constraints that keep outputs from converging on the same generic running prose.
+- **Journal output.** Dated files in `journal/YYYY-MM-DD.md` (one section per lens).
+- **One command.** Drop GPX into `data/raw`, run `make` — enrichment then reflection.
 
-**What still anchors the wrong goal:**
+**Gaps:**
 
-- Agent goals and the personality editor are explicitly tuned for "Strava activity descriptions."
-- The deliverable is a markdown grid of model × persona one-liners — useful for comparison, but shaped like copy-paste candidates.
-- HR, cadence, elevation, and pace dynamics are captured in GPX/TCX but **stripped out** before enrichment. The body-data perspective is missing entirely.
-- There is no synthesis step — the perspectives sit side by side but do not argue, resonate, or surprise each other.
-- No temporal arc: each run is treated in isolation, not as part of a longer story your body and routes are telling.
+- Output is still a stack of perspective sections — no Afterglow / Tensions / Residue synthesis.
+- HR, cadence, elevation, and pace are in GPX but stripped before enrichment; the physiologist lens infers from duration/weather only.
+- No temporal arc beyond uniqueness: each run is mostly isolated from longer story.
+- No private ranking of what lingered (model, lens, or phrase).
 
 ---
 
@@ -42,51 +41,15 @@ The current pipeline already gestures toward this vision, even if the old repo n
 
 ---
 
-## Phase 1: Reframe the Output
+## Done: Reframe the Output
 
 *Shift from "pick a description" to "receive a constellation of perspectives."*
 
-### 1.1 Rename and re-aim the personas
+- Personas re-aimed as private-journal readers (not Strava writers).
+- Lenses added: cartographer, physiologist, archivist, dreamer, contrarian.
+- Post-run deliverable: `journal/YYYY-MM-DD.md` via bare `make`.
 
-Keep the existing lenses but rewrite their goals. They are **readers of your run**, not writers for Strava. The personality editor should preserve your voice without polishing for public performance.
-
-Candidate additions — each one a different direction to pull:
-
-| Lens | What it sees that you don't |
-|------|----------------------------|
-| **Cartographer** | The route as geometry — loops, detours, places where you almost turned back |
-| **Physiologist** | The body as instrument — where effort spiked, where it went quiet, mismatches between felt ease and measured load |
-| **Archivist** | This run against your history — "you have passed this lake 14 times; today you went the long way" |
-| **Dreamer** | Free association from POI and weather — not factual, but true to mood |
-| **Contrarian** | Argues against your likely self-narrative ("you will call this easy; the second half says otherwise") |
-
-### 1.2 Change the deliverable format
-
-Instead of a flat list of one-liners, produce a **run reflection** structured for slow reading:
-
-```
-── Afterglow ──────────────────────────
-[2–3 sentences. Not a summary. An opening image or question.]
-
-── Perspectives ─────────────────────
-Monk:      ...
-Memory:    ...
-Scientist: ...
-[Each 1–2 sentences. Deliberately incomplete.]
-
-── Tensions ─────────────────────────
-[Where perspectives disagree. "The data says routine; the monk says new."
- This section is the most valuable one.]
-
-── Residue ──────────────────────────
-[One line to carry. No attribution. Yours to misremember.]
-```
-
-The `Residue` line is the only thing that might ever go anywhere public — and only if you want it to.
-
-### 1.3 Post-run, not pre-post
-
-The reflection should be read **after** the run, ideally hours later or the next morning. Consider a simple `make reflect` that generates output into a dated journal directory (`journal/2026-03-15.md`) rather than alongside activity IDs.
+Still open from this phase: Afterglow / Tensions / Residue format (see Synthesis below).
 
 ---
 
@@ -96,7 +59,7 @@ The reflection should be read **after** the run, ideally hours later or the next
 
 ### 2.1 Extract physiological episodes
 
-From the merged GPX/TCX, derive **episodes** rather than aggregates:
+From GPX (and TCX if added), derive **episodes** rather than aggregates:
 
 - Where heart rate rose fastest (effort you may not have registered)
 - Where cadence steadied or broke (rhythm as meditation or struggle)
@@ -113,7 +76,7 @@ The most interesting material lives in **disagreement between body-data and cont
 - New route, but pace identical to your Tuesday loop
 - Monk-calm weather, physiologist-spiky heart rate
 
-Add a dedicated enrichment step (`scripts/physiology.py`) and a `physiologist` or `contrarian` lens that specializes in these gaps.
+Add a dedicated enrichment step (`scripts/physiology.py`) so the physiologist and contrarian lenses can specialize in these gaps.
 
 ### 2.3 Rhythm as texture
 
@@ -147,21 +110,39 @@ Detect runs that are unremarkable by numbers but remarkable by position in histo
 
 *Let the perspectives talk to each other.*
 
-### 4.1 Tension extraction
+### 4.1 Structured reflection format
 
-After all personas generate, run a synthesis step that:
+```
+── Afterglow ──────────────────────────
+[2–3 sentences. Not a summary. An opening image or question.]
+
+── Perspectives ─────────────────────
+Monk:      ...
+Memory:    ...
+[Each 1–2 sentences. Deliberately incomplete.]
+
+── Tensions ─────────────────────────
+[Where perspectives disagree. This section is the most valuable one.]
+
+── Residue ──────────────────────────
+[One line to carry. No attribution. Yours to misremember.]
+```
+
+### 4.2 Tension extraction
+
+After all personas generate, a synthesis pass that:
 
 1. Identifies where outputs agree (often boring — the obvious reading)
 2. Identifies where they disagree (the interesting reading)
 3. Produces the `Tensions` section from disagreements only
 
-This can be a lightweight second-pass agent whose sole job is to find friction, not resolve it.
+Lightweight second-pass agent whose sole job is to find friction, not resolve it.
 
-### 4.2 Residue generation
+### 4.3 Residue generation
 
 A final pass that reads all perspectives and the tensions, then outputs **one line with no attribution** — something that could have come from any of the lenses or from none of them. Designed to be misremembered. Designed to pull.
 
-### 4.3 Controlled surprise
+### 4.4 Controlled surprise
 
 Introduce occasional **wild cards** — a prompt that must use a random POI, a weather phrase, or a physiological episode as the *only* subject of the reflection. Not every run. Enough to break habit.
 
@@ -191,11 +172,13 @@ Optional enrichment from calendar and location — Tet preparations, monsoon app
 
 ### 6.1 Private ranking
 
-Extend the TODO idea: after reading a reflection, mark what lingered. Not "best model" but "what stayed with me." Over time, this trains which lenses, variation prompts, and data dimensions deserve more weight — without turning the project into an optimization loop.
+After reading a reflection, mark what lingered — not "best model" but "what stayed with me." Over time, this trains which lenses, variation prompts, and data dimensions deserve more weight — without turning the project into an optimization loop.
+
+Optional offline eval set: prompts, outputs, raw activity data, and your rankings, so you can compare models and prompt shapes deliberately (exportable as a private dataset if useful).
 
 ### 6.2 Prompt evolution from your reactions
 
-Periodically review your rankings and adjust persona backstories, variation weights, and which data fields each lens receives. The system should drift toward **your** subconscious, not generic good prose.
+Periodically review rankings and adjust persona backstories, variation weights, and which data fields each lens receives. The system should drift toward **your** subconscious, not generic good prose.
 
 ### 6.3 Anti-goals
 
@@ -222,13 +205,10 @@ It is a **second pass** on your own experience — one that uses data as a set o
 
 Ordered by impact and proximity to existing code:
 
-1. **Rewrite persona goals** — remove Strava framing; aim each lens at a distinct perceptual blind spot.
-2. **Add `scripts/physiology.py`** — extract HR/cadence/pace episodes from merged GPX; bucket into language.
-3. **Restructure output** — Afterglow / Perspectives / Tensions / Residue format in `describe.py`.
-4. **Add synthesis pass** — tension extraction and residue generation as final CrewAI tasks.
-5. **Journal output** — dated files in `journal/` instead of (or in addition to) activity-ID markdown.
-6. **Archivist lens** — leverage uniqueness and run history for temporal narrative.
-7. **Private ranking** — simple JSON or markdown annotation for what lingered.
+1. **Synthesis pass** — Afterglow / Tensions / Residue in `describe.py` from the nine perspectives.
+2. **`scripts/physiology.py`** — extract HR/cadence/pace episodes from GPX; bucket into language; feed physiologist/contrarian.
+3. **Archivist depth** — leverage uniqueness and run history for temporal narrative beyond a single uniqueness word.
+4. **Private ranking** — simple annotation for what lingered (JSON or markdown beside the journal).
 
 ---
 

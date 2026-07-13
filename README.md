@@ -11,13 +11,19 @@ Each run becomes a private reflection: multiple perspectives that disagree, tens
 ## Quick start
 
 ```bash
+# one-time (see docs/setup.md)
 make install
-make country && make city         # one-time OSM setup
-make analyze                      # enrich activities from data/raw
-make reflect                      # write journal/YYYY-MM-DD.md
+make country && make city
+
+# every run
+# 1. drop GPX into data/raw
+make
+# → journal/YYYY-MM-DD.md
 ```
 
-Drop GPX files into `data/raw` before `make analyze`. First-time setup also requires Ollama models, AWS/Terraform for weather/traffic context, and API keys — see [docs/setup.md](docs/setup.md).
+`make` runs the full pipeline: parse GPX, enrich (weather, traffic, uniqueness, context, POI), then write the journal reflection. Steps are idempotent — re-running is safe.
+
+First-time setup also needs Ollama models, AWS/Terraform for weather/traffic context, and API keys — see [docs/setup.md](docs/setup.md).
 
 ## Documentation
 
@@ -29,10 +35,10 @@ Drop GPX files into `data/raw` before `make analyze`. First-time setup also requ
 
 | Command | Purpose |
 |---------|---------|
+| `make` | Full pipeline: GPX → journal |
+| `make analyze` | Enrichment only (`data/activities/`) |
+| `make reflect` | Analyze + journal reflection |
 | `make install` | Create venv and install dependencies |
-| `make country` | Download country OSM extract |
-| `make city` | Clip extract to city boundary → `osm/city.osm` |
-| `make analyze` | Run enrichment pipeline |
-| `make reflect` | Generate journal reflection |
+| `make country` / `make city` | One-time OSM setup |
 | `make test` | Run pytest |
 | `make deploy` | Run tests, then `terraform apply` |
