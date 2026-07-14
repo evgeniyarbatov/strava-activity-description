@@ -60,9 +60,11 @@ def test_location_from_polyline_uses_midpoint() -> None:
 
     class StubGeolocator:
         def __init__(self) -> None:
-            self.seen = None
+            self.seen: tuple[float, float] | None = None
 
-        def reverse(self, coords, language, addressdetails):
+        def reverse(
+            self, coords: tuple[float, float], language: str, addressdetails: bool
+        ) -> StubLocation:
             self.seen = coords
             return StubLocation()
 

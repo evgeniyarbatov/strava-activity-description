@@ -1,14 +1,18 @@
 from __future__ import annotations
 
 import xml.etree.ElementTree as ET
-from datetime import UTC
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any
 
+import defusedxml.ElementTree as DefusedET
 import polyline
 from geopy.distance import distance as geo_distance
 from shapely.geometry import LineString
 
 from scripts.utils import parse_iso, write_json
+
+Point = dict[str, Any]
 
 DATA_DIR = Path("data")
 RAW_DIR = DATA_DIR / "raw"
@@ -21,11 +25,11 @@ def _optional_text(element: ET.Element, path: str) -> str | None:
     return value if value is not None else None
 
 
-def _parse_trkpt(trkpt: ET.Element) -> dict | None:
+def _parse_trkpt(trkpt: ET.Element) -> Point | None:
     time_text = _optional_text(trkpt, "{*}time")
     if not time_text:
         return None
-    point = {
+    point: Point = {
         "lat": float(trkpt.attrib["lat"]),
         "lon": float(trkpt.attrib["lon"]),
         "time": parse_iso(time_text),
@@ -36,11 +40,13 @@ def _parse_trkpt(trkpt: ET.Element) -> dict | None:
     return point
 
 
-def parse_points(path: Path) -> list[dict]:
+def parse_points(path: Path) -> list[Point]:
     """Parse GPX trackpoints into a list of dicts."""
-    tree = ET.parse(path)
+    tree = DefusedET.parse(path)
     root = tree.getroot()
-    points: list[dict] = []
+    if root is None:
+        return []
+    points: list[Point] = []
     for trkpt in root.findall(".//{*}trkpt"):
         point = _parse_trkpt(trkpt)
         if point:
@@ -48,17 +54,17 @@ def parse_points(path: Path) -> list[dict]:
     return points
 
 
-def to_zulu(dt) -> str:
+def to_zulu(dt: datetime) -> str:
     return dt.astimezone(UTC).isoformat().replace("+00:00", "Z")
 
 
-def to_local_zulu(dt) -> str:
+def to_local_zulu(dt: datetime) -> str:
     """Encode local time using a Z suffix to keep Strava-style fields."""
     local_dt = dt.astimezone().replace(tzinfo=UTC)
     return local_dt.isoformat().replace("+00:00", "Z")
 
 
-def simplify_points(points: list[dict], min_distance_m: float) -> list[dict]:
+def simplify_points(points: list[Point], min_distance_m: float) -> list[Point]:
     if len(points) < 2:
         return points
     # Convert meters to degrees (approx) for shapely simplification.
@@ -69,14 +75,14 @@ def simplify_points(points: list[dict], min_distance_m: float) -> list[dict]:
     return [coord_map[(lon, lat)] for lon, lat in simplified.coords]
 
 
-def total_distance_m(points: list[dict]) -> float:
+def total_distance_m(points: list[Point]) -> float:
     distance_m = 0.0
     for prev, curr in zip(points, points[1:], strict=False):
         distance_m += geo_distance((prev["lat"], prev["lon"]), (curr["lat"], curr["lon"])).meters
     return distance_m
 
 
-def activity_payload(points: list[dict]) -> dict:
+def activity_payload(points: list[Point]) -> dict[str, Any]:
     start_time = points[0]["time"]
     end_time = points[-1]["time"]
     moving_time = int(round((end_time - start_time).total_seconds()))
@@ -97,7 +103,7 @@ def activity_payload(points: list[dict]) -> dict:
     }
 
 
-def write_payload(path: Path, payload: dict) -> None:
+def write_payload(path: Path, payload: dict[str, Any]) -> None:
     write_json(path, payload)
 
 

@@ -105,10 +105,10 @@ def format_pace(seconds_per_km: float) -> str:
 
 
 def activity_summary(
-    activity: dict,
-    weather_entries: list[dict],
-    traffic_entries: list[dict],
-) -> dict:
+    activity: dict[str, Any],
+    weather_entries: list[dict[str, Any]],
+    traffic_entries: list[dict[str, Any]],
+) -> dict[str, Any]:
     start_time_local = parse_iso(activity["start_date_local"])
     start_time_local_str = start_time_local.strftime("%Y-%m-%d %H:%M")
 
@@ -140,7 +140,7 @@ def location_from_polyline(
     return address.get("city"), address.get("country")
 
 
-def prompt_inputs(payload: dict) -> dict:
+def prompt_inputs(payload: dict[str, Any]) -> dict[str, Any]:
     activity = payload["activity"]
     weather_entries = payload["weather"]
     traffic_entries = payload["traffic"]
@@ -167,13 +167,13 @@ def prompt_inputs(payload: dict) -> dict:
     return summary
 
 
-def render_activity_context(inputs: dict, template_path: Path | None = None) -> str:
+def render_activity_context(inputs: dict[str, Any], template_path: Path | None = None) -> str:
     path = template_path or ACTIVITY_CONTEXT_PATH
     template = path.read_text(encoding="utf-8")
     return template.format(**inputs)
 
 
-def journal_path_from_activity(activity: dict) -> Path:
+def journal_path_from_activity(activity: dict[str, Any]) -> Path:
     start_time_local = parse_iso(activity["start_date_local"])
     return JOURNAL_DIR / f"{start_time_local.strftime('%Y-%m-%d')}.md"
 
@@ -339,8 +339,8 @@ def build_reflection(
 
 
 def build_run_reflection(
-    activity: dict,
-    inputs: dict,
+    activity: dict[str, Any],
+    inputs: dict[str, Any],
     model: str | None = None,
 ) -> str:
     selected_model = model or reflection_model()

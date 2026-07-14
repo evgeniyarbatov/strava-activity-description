@@ -3,6 +3,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from decimal import Decimal
+from typing import Any
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
@@ -21,7 +22,7 @@ TOMTOM_API_KEY = os.environ["TOMTOM_API_KEY"]
 dynamodb = boto3.resource("dynamodb")
 
 
-def call_weather_api(lat, lon):
+def call_weather_api(lat: float, lon: float) -> str | None:
     http = urllib3.PoolManager()
 
     url = "https://api.openweathermap.org/data/2.5/weather"
@@ -40,7 +41,7 @@ def call_weather_api(lat, lon):
     return response.data.decode("utf-8")
 
 
-def call_traffic_api(point):
+def call_traffic_api(point: str) -> dict[str, Any] | None:
     http = urllib3.PoolManager()
 
     url = "https://api.tomtom.com/traffic/services/4/flowSegmentData/absolute/22/json"
@@ -54,10 +55,11 @@ def call_traffic_api(point):
     if response.status != 200:
         return None
 
-    return json.loads(response.data.decode("utf-8"))
+    payload: dict[str, Any] = json.loads(response.data.decode("utf-8"))
+    return payload
 
 
-def query_traffic(point):
+def query_traffic(point: str) -> dict[str, Any] | None:
     result = call_traffic_api(point)
     if result is None or "flowSegmentData" not in result:
         return None
@@ -70,7 +72,7 @@ def query_traffic(point):
     }
 
 
-def lambda_handler(event, context):
+def lambda_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
     table = dynamodb.Table(DYNAMODB_TABLE)
 
     try:
@@ -91,7 +93,7 @@ def lambda_handler(event, context):
         feels_like = Decimal(str(weather_json["main"]["feels_like"]))
         weather_description = weather_json["weather"][0]["description"]
 
-        weather_item = {
+        weather_item: dict[str, Any] = {
             "id": str(uuid.uuid4()),
             "ttl": ttl,
             "context": "weather",
@@ -108,7 +110,7 @@ def lambda_handler(event, context):
         if traffic is None:
             raise Exception("Failed to get traffic data from API")
 
-        traffic_item = {
+        traffic_item: dict[str, Any] = {
             "id": str(uuid.uuid4()),
             "ttl": ttl,
             "context": "traffic",

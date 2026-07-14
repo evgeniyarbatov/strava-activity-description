@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from scripts.utils import load_json, parse_iso, write_json
 
@@ -337,12 +338,12 @@ def describe_goal(value: float, goal: float, words: list[str]) -> str:
     return words[index]
 
 
-def build_context(activity: dict, goals: dict[str, float]) -> dict:
+def build_context(activity: dict[str, Any], goals: dict[str, float]) -> dict[str, str]:
     context: dict[str, str] = {}
     for field, words in GOAL_FIELDS:
         value = activity.get(field)
         goal = goals.get(field)
-        if not isinstance(value, (int, float)) or not isinstance(goal, (int, float)):
+        if not isinstance(value, int | float) or not isinstance(goal, int | float):
             continue
         context[field] = describe_goal(float(value), float(goal), words)
     start_time = activity.get("start_date_local")

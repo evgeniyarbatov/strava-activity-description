@@ -2,8 +2,10 @@ from __future__ import annotations
 
 from pathlib import Path
 from statistics import median
+from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 import polyline
 from shapely.geometry import LineString
 
@@ -38,7 +40,10 @@ DISTANCE_WEIGHT = 0.35
 CENTROID_WEIGHT = 0.2
 
 
-def decode_points(activity: dict) -> list[tuple[float, float]] | None:
+FloatArray = npt.NDArray[np.float64]
+
+
+def decode_points(activity: dict[str, Any]) -> list[tuple[float, float]] | None:
     map_data = activity.get("map") or {}
     encoded = map_data.get("polyline")
     if not encoded:
@@ -57,7 +62,7 @@ def simplify_points(
     return [(lat, lon) for lon, lat in simplified.coords]
 
 
-def build_route_vector(points: list[tuple[float, float]]) -> np.ndarray:
+def build_route_vector(points: list[tuple[float, float]]) -> FloatArray:
     simplified = simplify_points(points, COARSE_SIMPLIFY_M)
     if not simplified:
         return np.array([], dtype=float)
@@ -65,11 +70,10 @@ def build_route_vector(points: list[tuple[float, float]]) -> np.ndarray:
     lons = np.array([point[1] for point in simplified], dtype=float)
     lats = zscore_array(lats)
     lons = zscore_array(lons)
-    vector = pad_or_trim_vector(lats, lons, ROUTE_MAX_POINTS)
-    return vector
+    return pad_or_trim_vector(lats, lons, ROUTE_MAX_POINTS)
 
 
-def zscore_array(values: np.ndarray) -> np.ndarray:
+def zscore_array(values: FloatArray) -> FloatArray:
     if values.size == 0:
         return values
     mean = float(values.mean())
@@ -79,7 +83,7 @@ def zscore_array(values: np.ndarray) -> np.ndarray:
     return (values - mean) / std
 
 
-def pad_or_trim_vector(lats: np.ndarray, lons: np.ndarray, target_points: int) -> np.ndarray:
+def pad_or_trim_vector(lats: FloatArray, lons: FloatArray, target_points: int) -> FloatArray:
     if target_points <= 0:
         return np.array([], dtype=float)
     count = min(len(lats), len(lons))
@@ -112,7 +116,9 @@ def zscore_values(values: list[float]) -> list[float]:
     return [float((value - mean) / std) for value in values]
 
 
-def build_run_item(payload: dict, activity_id: str | None = None) -> dict | None:
+def build_run_item(
+    payload: dict[str, Any], activity_id: str | None = None
+) -> dict[str, Any] | None:
     activity = payload.get("activity") or payload
     activity_id = activity.get("id") or activity_id
     if activity_id is None:
@@ -133,8 +139,8 @@ def build_run_item(payload: dict, activity_id: str | None = None) -> dict | None
     }
 
 
-def build_reference_runs(payloads: list[dict] | None = None) -> list[dict]:
-    runs: list[dict] = []
+def build_reference_runs(payloads: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    runs: list[dict[str, Any]] = []
     if payloads is None:
         for path in ACTIVITIES_DIR.glob("*.json"):
             payload = load_json(path)
@@ -164,7 +170,9 @@ def calculate_uniqueness_score(distances: list[float]) -> float | None:
 
 
 def uniqueness_for_activity(
-    payload: dict, reference_runs: list[dict], activity_id: str | None = None
+    payload: dict[str, Any],
+    reference_runs: list[dict[str, Any]],
+    activity_id: str | None = None,
 ) -> float | None:
     run_item = build_run_item(payload, activity_id=activity_id)
     if not run_item or not reference_runs:
@@ -172,13 +180,13 @@ def uniqueness_for_activity(
     filtered_runs = [run for run in reference_runs if run["id"] != run_item["id"]]
     if not filtered_runs:
         return None
-    distances = []
+    distances: list[float] = []
     route_distances = [
         float(np.linalg.norm(run_item["vector"] - reference["vector"]))
         for reference in filtered_runs
     ]
 
-    distance_values = [run_item.get("distance_m")] + [
+    distance_values: list[float | None] = [run_item.get("distance_m")] + [
         reference.get("distance_m") for reference in filtered_runs
     ]
     centroid_lats = [run_item["centroid"][0]] + [
@@ -200,7 +208,7 @@ def uniqueness_for_activity(
         for i in range(1, len(centroid_lat_z))
     ]
     if all(value is not None for value in distance_values):
-        zscores = zscore_values([float(value) for value in distance_values])
+        zscores = zscore_values([float(value) for value in distance_values if value is not None])
         activity_distance = zscores[0]
         reference_distances = zscores[1:]
         for route_distance, distance_score, centroid_distance in zip(
@@ -258,6 +266,7 @@ def main() -> None:
             payload["uniqueness"] = {"description": None}
             write_json(path, payload)
             continue
+        score: float
         if min_score == max_score:
             score = UNIQUENESS_MAX
         else:

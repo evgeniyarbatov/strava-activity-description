@@ -1,10 +1,10 @@
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
-from scripts.activity import activity_payload, parse_points, simplify_points
+from scripts.activity import Point, activity_payload, parse_points, simplify_points
 
 
-def make_point(lat: float, lon: float, ele: str, time: datetime) -> dict:
+def make_point(lat: float, lon: float, ele: str, time: datetime) -> Point:
     return {
         "lat": lat,
         "lon": lon,

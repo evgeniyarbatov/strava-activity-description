@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 
@@ -14,13 +15,14 @@ def parse_iso(value: str) -> datetime:
     return datetime.fromisoformat(value)
 
 
-def load_json(path: Path) -> dict | list:
+def load_json(path: Path) -> dict[str, Any]:
     """Load JSON payloads with UTF-8 encoding."""
     with path.open("r", encoding="utf-8") as handle:
-        return json.load(handle)
+        result: dict[str, Any] = json.load(handle)
+        return result
 
 
-def write_json(path: Path, payload: dict) -> None:
+def write_json(path: Path, payload: dict[str, Any]) -> None:
     """Write JSON payloads with stable indentation for diffs."""
     with path.open("w", encoding="utf-8") as handle:
         json.dump(payload, handle, ensure_ascii=True, indent=2)

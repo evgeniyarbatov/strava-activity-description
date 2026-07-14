@@ -4,9 +4,11 @@ import random
 from datetime import timedelta
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 import boto3
 from boto3.dynamodb.conditions import Attr
+from mypy_boto3_dynamodb.service_resource import Table
 
 from scripts.utils import load_json, parse_iso, write_json
 
@@ -43,8 +45,8 @@ TRAFFIC_CRAWLING = [
 
 
 def filter_items_by_hour(
-    items: list[dict], start_hour: int, end_hour: int, context: str | None = None
-) -> list[dict]:
+    items: list[dict[str, Any]], start_hour: int, end_hour: int, context: str | None = None
+) -> list[dict[str, Any]]:
     """Filter items by context and hour range (inclusive)."""
     items = [
         item
@@ -56,7 +58,7 @@ def filter_items_by_hour(
     return items
 
 
-def to_number(value: object) -> object:
+def to_number(value: Any) -> Any:
     """Convert DynamoDB Decimals to floats for math."""
     if isinstance(value, Decimal):
         return float(value)
@@ -349,7 +351,7 @@ def traffic_description(speed_ratio: float) -> str:
     )
 
 
-def build_weather_entries(items: list[dict]) -> list[dict]:
+def build_weather_entries(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [
         {
             "description": item["data"]["weather_description"],
@@ -359,7 +361,7 @@ def build_weather_entries(items: list[dict]) -> list[dict]:
     ]
 
 
-def build_traffic_entries(items: list[dict]) -> list[dict]:
+def build_traffic_entries(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [
         {
             "description": traffic_description(
@@ -371,9 +373,9 @@ def build_traffic_entries(items: list[dict]) -> list[dict]:
     ]
 
 
-def query_items(table, date: str) -> list[dict]:
+def query_items(table: Table, date: str) -> list[dict[str, Any]]:
     """Scan DynamoDB for a specific date, handling pagination."""
-    items = []
+    items: list[dict[str, Any]] = []
     response = table.scan(FilterExpression=Attr("date").eq(date))
     items.extend(response.get("Items", []))
     while "LastEvaluatedKey" in response:
@@ -399,7 +401,7 @@ def main() -> None:
         start_hour = start_time.hour
         end_hour = end_time.hour
 
-        items: list[dict] | None = None
+        items: list[dict[str, Any]] | None = None
         if not payload.get("weather") or not payload.get("traffic"):
             items = query_items(table, date)
 

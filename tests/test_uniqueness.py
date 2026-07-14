@@ -1,11 +1,13 @@
 import json
+from pathlib import Path
 
 import polyline
+import pytest
 
 from scripts import uniqueness
 
 
-def test_main_skips_existing_uniqueness(tmp_path, monkeypatch) -> None:
+def test_main_skips_existing_uniqueness(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     activities_dir = tmp_path / "activities"
     activities_dir.mkdir()
 
@@ -42,7 +44,9 @@ def test_main_skips_existing_uniqueness(tmp_path, monkeypatch) -> None:
     assert "description" in updated_new["uniqueness"]
 
 
-def test_main_writes_uniqueness_for_single_activity(tmp_path, monkeypatch) -> None:
+def test_main_writes_uniqueness_for_single_activity(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     activities_dir = tmp_path / "activities"
     activities_dir.mkdir()
 

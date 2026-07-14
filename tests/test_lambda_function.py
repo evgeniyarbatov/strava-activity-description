@@ -1,27 +1,31 @@
 import importlib.util
 import json
 from pathlib import Path
+from types import ModuleType
+from typing import Any
+
+import pytest
 
 
 class FakeTable:
     def __init__(self) -> None:
-        self.items = []
+        self.items: list[dict[str, Any]] = []
 
-    def put_item(self, Item):
+    def put_item(self, Item: dict[str, Any]) -> None:
         self.items.append(Item)
 
 
 class FakeDynamo:
     def __init__(self, table: FakeTable) -> None:
         self.table = table
-        self.table_name = None
+        self.table_name: str | None = None
 
-    def Table(self, name: str):
+    def Table(self, name: str) -> FakeTable:
         self.table_name = name
         return self.table
 
 
-def load_lambda_module(monkeypatch, dynamo):
+def load_lambda_module(monkeypatch: pytest.MonkeyPatch, dynamo: FakeDynamo) -> ModuleType:
     monkeypatch.setenv("DYNAMODB_TABLE", "test-table")
     monkeypatch.setenv("TTL_DAYS", "1")
     monkeypatch.setenv("LATITUDE", "10")
@@ -34,18 +38,20 @@ def load_lambda_module(monkeypatch, dynamo):
         Path(__file__).resolve().parents[1] / "terraform" / "lambda" / "lambda_function.py"
     )
     spec = importlib.util.spec_from_file_location("lambda_function_under_test", module_path)
+    assert spec is not None
+    assert spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
-def test_call_weather_api_returns_body(monkeypatch) -> None:
+def test_call_weather_api_returns_body(monkeypatch: pytest.MonkeyPatch) -> None:
     table = FakeTable()
     dynamo = FakeDynamo(table)
     module = load_lambda_module(monkeypatch, dynamo)
 
     class FakeHTTP:
-        def request(self, method, url):
+        def request(self, method: str, url: str) -> Any:
             assert method == "GET"
             assert "lat=10" in url
             assert "lon=20" in url
@@ -57,7 +63,7 @@ def test_call_weather_api_returns_body(monkeypatch) -> None:
     assert module.call_weather_api(10, 20) == "ok"
 
 
-def test_call_traffic_api_encodes_point(monkeypatch) -> None:
+def test_call_traffic_api_encodes_point(monkeypatch: pytest.MonkeyPatch) -> None:
     table = FakeTable()
     dynamo = FakeDynamo(table)
     module = load_lambda_module(monkeypatch, dynamo)
@@ -65,7 +71,7 @@ def test_call_traffic_api_encodes_point(monkeypatch) -> None:
     captured = {}
 
     class FakeHTTP:
-        def request(self, method, url):
+        def request(self, method: str, url: str) -> Any:
             captured["url"] = url
             return type(
                 "Resp",
@@ -85,7 +91,7 @@ def test_call_traffic_api_encodes_point(monkeypatch) -> None:
     assert result["flowSegmentData"]["currentSpeed"] == 5
 
 
-def test_query_traffic_returns_none_when_missing_data(monkeypatch) -> None:
+def test_query_traffic_returns_none_when_missing_data(monkeypatch: pytest.MonkeyPatch) -> None:
     table = FakeTable()
     dynamo = FakeDynamo(table)
     module = load_lambda_module(monkeypatch, dynamo)
@@ -95,7 +101,7 @@ def test_query_traffic_returns_none_when_missing_data(monkeypatch) -> None:
     assert module.query_traffic("1,2") is None
 
 
-def test_lambda_handler_stores_weather_and_traffic(monkeypatch) -> None:
+def test_lambda_handler_stores_weather_and_traffic(monkeypatch: pytest.MonkeyPatch) -> None:
     table = FakeTable()
     dynamo = FakeDynamo(table)
     module = load_lambda_module(monkeypatch, dynamo)

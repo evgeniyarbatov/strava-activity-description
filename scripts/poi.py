@@ -2,10 +2,13 @@ from __future__ import annotations
 
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import Any
 
+import defusedxml.ElementTree as DefusedET
 import polyline
 import pyproj
 from shapely.geometry import LineString, Point, Polygon
+from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
 
 from scripts.utils import load_json, write_json
@@ -22,7 +25,7 @@ POI_TAGS = [
 ]
 
 
-def parse_tags(element: ET.Element) -> dict:
+def parse_tags(element: ET.Element) -> dict[str, str]:
     tags = {}
     for tag in element.findall("tag"):
         key = tag.get("k")
@@ -32,7 +35,7 @@ def parse_tags(element: ET.Element) -> dict:
     return tags
 
 
-def match_poi(tags: dict) -> str | None:
+def match_poi(tags: dict[str, str]) -> str | None:
     for key, values in POI_TAGS:
         value = tags.get(key)
         if value in values:
@@ -40,11 +43,11 @@ def match_poi(tags: dict) -> str | None:
     return None
 
 
-def load_pois(osm_path: Path) -> list[dict]:
+def load_pois(osm_path: Path) -> list[dict[str, Any]]:
     """Parse OSM XML, extracting POI centroids for nodes and ways."""
     nodes: dict[str, tuple[float, float]] = {}
-    pois: list[dict] = []
-    context = ET.iterparse(osm_path, events=("end",))
+    pois: list[dict[str, Any]] = []
+    context = DefusedET.iterparse(osm_path, events=("end",))
     for _, element in context:
         if element.tag == "node":
             node_id = element.get("id")
@@ -61,13 +64,14 @@ def load_pois(osm_path: Path) -> list[dict]:
             tags = parse_tags(element)
             category = match_poi(tags)
             if category:
-                coords = []
+                coords: list[tuple[float, float]] = []
                 for node_ref in element.findall("nd"):
                     ref = node_ref.get("ref")
                     if ref and ref in nodes:
                         node_lat, node_lon = nodes[ref]
                         coords.append((node_lon, node_lat))
                 if len(coords) >= 2:
+                    geom: BaseGeometry
                     if coords[0] == coords[-1] and len(coords) >= 4:
                         geom = Polygon(coords)
                     else:
@@ -78,7 +82,7 @@ def load_pois(osm_path: Path) -> list[dict]:
     return pois
 
 
-def buffer_in_meters(geom, meters: float):
+def buffer_in_meters(geom: BaseGeometry, meters: float) -> BaseGeometry:
     """Buffer a geometry in meters by projecting to a local UTM zone."""
     if geom.is_empty:
         return geom
@@ -95,23 +99,24 @@ def buffer_in_meters(geom, meters: float):
     return transform(backward, buffered)
 
 
-def hull_from_polyline(encoded: str):
+def hull_from_polyline(encoded: str) -> BaseGeometry:
     """Build a convex hull around an encoded polyline."""
     points = polyline.decode(encoded)
     coords = [(lon, lat) for lat, lon in points]
     return LineString(coords).convex_hull
 
 
-def extract_polyline(activity: dict) -> str | None:
+def extract_polyline(activity: dict[str, Any]) -> str | None:
     activity_map = None
     if isinstance(activity.get("activity"), dict):
         activity_map = activity["activity"].get("map")
     if isinstance(activity_map, dict):
-        return activity_map.get("polyline")
+        polyline_value = activity_map.get("polyline")
+        return polyline_value if isinstance(polyline_value, str) else None
     return None
 
 
-def enrich_activity(path: Path, pois: list[dict]) -> None:
+def enrich_activity(path: Path, pois: list[dict[str, Any]]) -> None:
     activity = load_json(path)
     geo = activity.get("geo")
     if not isinstance(geo, dict):
