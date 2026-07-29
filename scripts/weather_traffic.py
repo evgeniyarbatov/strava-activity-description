@@ -3,16 +3,15 @@ from __future__ import annotations
 import random
 from datetime import timedelta
 from decimal import Decimal
-from pathlib import Path
 from typing import Any
 
 import boto3
 from boto3.dynamodb.conditions import Attr
 from mypy_boto3_dynamodb.service_resource import Table
 
-from scripts.utils import load_json, parse_iso, write_json
+from scripts.utils import env_path, load_json, parse_iso, write_json
 
-DATA_DIR = Path("data")
+DATA_DIR = env_path("DATA_DIR", "data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
 DYNAMODB_TABLE = "run-reflection-context"
 

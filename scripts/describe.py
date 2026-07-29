@@ -12,7 +12,7 @@ from crewai import LLM, Agent, Crew, Task
 from crewai.events.listeners.tracing.utils import set_suppress_tracing_messages
 from geopy.geocoders import Nominatim
 
-from scripts.utils import load_env, load_json, parse_iso
+from scripts.utils import env_path, load_env, load_json, parse_iso
 
 load_env(Path("ollama.env"))
 set_suppress_tracing_messages(True)
@@ -23,9 +23,9 @@ OLLAMA_MODELS = [
     "qwen2.5",
 ]
 
-DATA_DIR = Path("data")
+DATA_DIR = env_path("DATA_DIR", "data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
-JOURNAL_DIR = Path("journal")
+JOURNAL_DIR = env_path("JOURNAL_DIR", "journal")
 PROMPTS_DIR = Path("prompts")
 ACTIVITY_CONTEXT_PATH = PROMPTS_DIR / "activity-context.txt"
 PERSONA_LABELS = [

@@ -9,7 +9,7 @@ import numpy.typing as npt
 import polyline
 from shapely.geometry import LineString
 
-from scripts.utils import load_json, write_json
+from scripts.utils import env_path, load_json, write_json
 
 UNIQUENESS_MIN = 1
 UNIQUENESS_MAX = 100
@@ -32,7 +32,7 @@ UNIQUENESS_WORDS = [
     "novel",
 ]
 
-DATA_DIR = Path("data")
+DATA_DIR = env_path("DATA_DIR", "data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
 COARSE_SIMPLIFY_M = 35
 ROUTE_MAX_POINTS = 48

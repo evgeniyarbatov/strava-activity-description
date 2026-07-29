@@ -10,11 +10,11 @@ import polyline
 from geopy.distance import distance as geo_distance
 from shapely.geometry import LineString
 
-from scripts.utils import parse_iso, write_json
+from scripts.utils import env_path, parse_iso, write_json
 
 Point = dict[str, Any]
 
-DATA_DIR = Path("data")
+DATA_DIR = env_path("DATA_DIR", "data")
 RAW_DIR = DATA_DIR / "raw"
 OUTPUT_DIR = DATA_DIR / "activities"
 SIMPLIFY_DISTANCE_M = 10

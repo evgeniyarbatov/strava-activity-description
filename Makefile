@@ -1,10 +1,19 @@
 # Uses uv (https://docs.astral.sh/uv) for dependency management — uv sync creates/updates .venv; run commands via uv run, no manual activation.
-DATA_DIR = data
+DATA_ROOT ?= $(HOME)/data
+REPO_NAME := $(notdir $(CURDIR))
+DATA_DIR  ?= $(DATA_ROOT)/$(REPO_NAME)
+JOURNAL_DIR ?= $(DATA_DIR)/journal
+
+export DATA_DIR
+export JOURNAL_DIR
 
 BOUNDARY_POLY = osm/ho-chi-minh-city.poly
 OSM_URL = https://download.geofabrik.de/asia/vietnam-latest.osm.pbf
 
 DOTFILES_MK := $(HOME)/gitRepo/dotfiles/make/osm-country.mk
+
+OSM_DIR := $(DATA_DIR)/osm
+export OSM_DIR
 
 .PHONY: country osm-country-fetch
 
@@ -19,19 +28,19 @@ country osm-country-fetch:
 	@exit 1
 endif
 
-OSM_DIR = osm
 TERRAFORM_DIR = terraform
 
 .DEFAULT_GOAL := all
 
 install:
+	@mkdir -p $(DATA_DIR)/raw $(DATA_DIR)/activities $(JOURNAL_DIR)
 	@uv sync --dev
 
 city:
 	@osmconvert $(OSM_DIR)/$(COUNTRY_OSM_FILE) -B=$(BOUNDARY_POLY) -o=$(OSM_DIR)/city.osm.pbf
 	@osmium cat --overwrite $(OSM_DIR)/city.osm.pbf -o $(OSM_DIR)/city.osm
 
-# Enrichment only (GPX → data/activities). Idempotent; scripts skip existing fields.
+# Enrichment only (GPX → DATA_DIR/activities). Idempotent; scripts skip existing fields.
 analyze: install
 	@uv run python -m scripts.activity
 	@uv run python -m scripts.weather_traffic
@@ -39,7 +48,7 @@ analyze: install
 	@uv run python -m scripts.context
 	@uv run python -m scripts.poi
 
-# Full daily path: drop GPX in data/raw, then `make`.
+# Full daily path: drop GPX in DATA_DIR/raw, then `make`.
 reflect: analyze
 	@uv run python -m scripts.describe
 
@@ -66,7 +75,7 @@ clean:
 	rm -rf .venv
 
 help:
-	@echo "make         - drop GPX in data/raw, then this (analyze + reflect → journal/)"
+	@echo "make         - drop GPX in $(DATA_DIR)/raw, then this (analyze + reflect → $(JOURNAL_DIR))"
 	@echo "analyze      - enrichment pipeline only"
 	@echo "reflect      - analyze + journal reflection"
 	@echo "install      - uv sync --dev"

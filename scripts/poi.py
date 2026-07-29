@@ -11,10 +11,10 @@ from shapely.geometry import LineString, Point, Polygon
 from shapely.geometry.base import BaseGeometry
 from shapely.ops import transform
 
-from scripts.utils import load_json, write_json
+from scripts.utils import env_path, load_json, write_json
 
-DATA_DIR = Path("data/activities")
-OSM_PATH = Path("osm/city.osm")
+DATA_DIR = env_path("DATA_DIR", "data") / "activities"
+OSM_PATH = env_path("OSM_DIR", "osm") / "city.osm"
 
 POI_TAGS = [
     ("water", {"pond", "lake", "reservoir", "river"}),

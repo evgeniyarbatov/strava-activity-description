@@ -16,12 +16,14 @@ make install
 make country && make city
 
 # every run
-# 1. drop GPX into data/raw
+# 1. drop GPX into $DATA_DIR/raw (default: ~/data/run-reflection/raw)
 make
-# → journal/YYYY-MM-DD.md
+# → $DATA_DIR/journal/YYYY-MM-DD.md (default: ~/data/run-reflection/journal)
 ```
 
 `make` runs the full pipeline: parse GPX, enrich (weather, traffic, uniqueness, context, POI), then write the journal reflection. Steps are idempotent — re-running is safe.
+
+Generated/enriched data and the journal are written outside the repo, under `DATA_DIR` (default `$DATA_ROOT/run-reflection`, `DATA_ROOT` default `~/data`). Override per-run with `make <target> DATA_ROOT=/path/to/shared` or `make <target> DATA_DIR=/tmp/run-42`.
 
 First-time setup also needs Ollama models, AWS/Terraform for weather/traffic context, and API keys — see [docs/setup.md](docs/setup.md).
 
@@ -36,7 +38,7 @@ First-time setup also needs Ollama models, AWS/Terraform for weather/traffic con
 | Command | Purpose |
 |---------|---------|
 | `make` | Full pipeline: GPX → journal |
-| `make analyze` | Enrichment only (`data/activities/`) |
+| `make analyze` | Enrichment only (`$DATA_DIR/activities/`) |
 | `make reflect` | Analyze + journal reflection |
 | `make install` | Create venv and install dependencies |
 | `make country` / `make city` | One-time OSM setup |

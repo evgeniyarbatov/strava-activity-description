@@ -1,11 +1,17 @@
 from __future__ import annotations
 
 import json
+import os
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
+
+
+def env_path(name: str, default: str) -> Path:
+    """Resolve a directory path from an env var, falling back to a repo-relative default."""
+    return Path(os.environ.get(name, default))
 
 
 def parse_iso(value: str) -> datetime:

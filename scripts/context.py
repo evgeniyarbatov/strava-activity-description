@@ -5,9 +5,9 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from scripts.utils import load_json, parse_iso, write_json
+from scripts.utils import env_path, load_json, parse_iso, write_json
 
-DATA_DIR = Path("data")
+DATA_DIR = env_path("DATA_DIR", "data")
 ACTIVITIES_DIR = DATA_DIR / "activities"
 GOALS_PATH = Path("goals.json")
 
