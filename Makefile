@@ -30,7 +30,10 @@ endif
 
 TERRAFORM_DIR = terraform
 
-.DEFAULT_GOAL := all
+.DEFAULT_GOAL := run
+
+# Entry point: analyze + reflect.
+run: all
 
 install:
 	@mkdir -p $(DATA_DIR)/raw $(DATA_DIR)/activities $(JOURNAL_DIR)
