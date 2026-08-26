@@ -10,16 +10,6 @@ The output should not quantize the run into metrics and labels. It should **pull
 
 ---
 
-## Connects to
-
-This is the deepest instance of a pattern that shows up across the portfolio: turn a personal data trace into a second, non-literal reading of an experience — data as a set of eyes you don't have while it's happening.
-
-- **[private]** — its own description already calls itself a "companion spirit to gpx-art"; it's an even closer companion to this repo, since it's also built from morning runs and also aims at something abstract and felt rather than measured. Worth asking whether a run could eventually get both a visual ([private]) and a written (run-reflection) second-pass from the same GPX + footage.
-- **[private]** — same instinct (capture what the conscious mind drops during a run) through a different channel, voice instead of data enrichment. Could plausibly become a tenth "lens" here, or run-reflection could pull transcribed audio in as raw material for the archivist/memory personas.
-- **[private]** — same technique (LLM reading external signal for insight into a state of mind) applied to photographs instead of runs; the anti-quantization principles here (words over numbers, disagreement over consensus) are a rubric that repo doesn't have yet.
-- **[private]** — mines LLM chat history for self-knowledge; run-reflection mines runs. Both are instances of "build a corpus of yourself and read it back for what you missed," and the private-ranking idea in Phase 6 here is exactly the kind of calibration loop [private]' analysis pipeline could reuse.
-- **[private]**, **[private]** — narrower, single-effect versions of the same underlying move (physical sensation → a legible artifact); good places to test whether a technique proven here generalizes, before adding a tenth lens to this repo's already-rich set.
-
 ## What Exists Today
 
 **What works:**
